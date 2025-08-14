@@ -1,0 +1,6 @@
+@Flaadestation.ASP_HostAddress = http://localhost:5137
+
+GET {{Flaadestation.ASP_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
