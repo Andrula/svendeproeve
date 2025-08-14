@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\xAndr\\flaadestation\\flaadestation.api\\flaadestation.api.csproj": {}
+    "C:\\Users\\xAndr\\Desktop\\Svendeprøve-2025\\svendeproeve\\flaadestation.api\\flaadestation.api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\xAndr\\flaadestation\\flaadestation.api\\flaadestation.api.csproj": {
+    "C:\\Users\\xAndr\\Desktop\\Svendeprøve-2025\\svendeproeve\\flaadestation.api\\flaadestation.api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\xAndr\\flaadestation\\flaadestation.api\\flaadestation.api.csproj",
+        "projectUniqueName": "C:\\Users\\xAndr\\Desktop\\Svendeprøve-2025\\svendeproeve\\flaadestation.api\\flaadestation.api.csproj",
         "projectName": "flaadestation.api",
-        "projectPath": "C:\\Users\\xAndr\\flaadestation\\flaadestation.api\\flaadestation.api.csproj",
+        "projectPath": "C:\\Users\\xAndr\\Desktop\\Svendeprøve-2025\\svendeproeve\\flaadestation.api\\flaadestation.api.csproj",
         "packagesPath": "C:\\Users\\xAndr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\xAndr\\flaadestation\\flaadestation.api\\obj\\",
+        "outputPath": "C:\\Users\\xAndr\\Desktop\\Svendeprøve-2025\\svendeproeve\\flaadestation.api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
