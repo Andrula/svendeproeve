@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Flaadestation.Repository\Flaadestation.Repository.csproj" />
+  </ItemGroup>
+
 </Project>

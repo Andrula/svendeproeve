@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Flaadestation.Repository.Database.Entities
 {
-    public class Machine : Item
+    public class Machinery : Item
     {
         public string Name { get; set; } = string.Empty;
     }

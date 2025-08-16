@@ -18,5 +18,18 @@ namespace Flaadestation.Repository.Database.Entities
         public Company? Company { get; set; }
         public Image? Image { get; set; }
         public List<StorageItem> StorageItems { get; set; } = [];
+        public bool IsAvailableAt(DateTime checkTime)
+        {
+            var currentAssignment = StorageItems
+                .Where(si => si.ScheduledStart <= checkTime && si.ScheduledEnd >= checkTime)
+                .FirstOrDefault();
+
+            if (currentAssignment == null)
+                return false; 
+
+        
+            return currentAssignment.Storage?.Base != null &&
+                   currentAssignment.Storage?.Job == null;
+        }
     }
 }
