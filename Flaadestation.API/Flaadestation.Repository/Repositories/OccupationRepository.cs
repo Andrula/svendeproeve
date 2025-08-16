@@ -16,5 +16,11 @@ namespace Flaadestation.Repository.Repositories
         {
             
         }
+
+        public async Task<bool> OccupationExistsByNameAsync(string name)
+        {
+            return await _dbSet
+              .AnyAsync(c => c.Name.ToLower() == name.ToLower());
+        }
     }
 }

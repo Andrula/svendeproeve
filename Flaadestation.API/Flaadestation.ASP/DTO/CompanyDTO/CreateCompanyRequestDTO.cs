@@ -1,4 +1,4 @@
-﻿namespace Flaadestation.ASP.DTO
+﻿namespace Flaadestation.ASP.DTO.CompanyDTO
 {
     public class CreateCompanyRequestDTO
     {

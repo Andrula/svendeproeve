@@ -19,9 +19,11 @@ namespace Flaadestation.ASP
 
             // repositories
             builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<IOccupationRepository, OccupationRepository>();
 
             // services
             builder.Services.AddScoped<ICompanyService, CompanyService>();
+            builder.Services.AddScoped<IOccupationService, OccupationService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -9,5 +9,6 @@ namespace Flaadestation.Repository.Repositories.Interfaces
 {
     public interface IOccupationRepository : IRepository<Occupation>
     {
+        Task<bool> OccupationExistsByNameAsync(string name);
     }
 }
