@@ -24,7 +24,7 @@ namespace Flaadestation.Repository.Database
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Tool> Tools { get; set; }
-        public DbSet<Machine> Machines { get; set; }
+        public DbSet<Machinery> Machines { get; set; }
 
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Job> Jobs { get; set; }
@@ -45,7 +45,7 @@ namespace Flaadestation.Repository.Database
             builder.Entity<Employee>().ToTable("Employees");
             builder.Entity<Vehicle>().ToTable("Vehicles");
             builder.Entity<Tool>().ToTable("Tools");
-            builder.Entity<Machine>().ToTable("Machines");
+            builder.Entity<Machinery>().ToTable("Machines");
 
             // ============================
             // Customers ↔ Company

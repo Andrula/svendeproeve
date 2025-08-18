@@ -1,5 +1,9 @@
 
 using Flaadestation.Repository.Database;
+using Flaadestation.Repository.Repositories;
+using Flaadestation.Repository.Repositories.Interfaces;
+using Flaadestation.Service.Interfaces;
+using Flaadestation.Service.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,6 +16,14 @@ namespace Flaadestation.ASP
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+            // repositories
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<IOccupationRepository, OccupationRepository>();
+
+            // services
+            builder.Services.AddScoped<ICompanyService, CompanyService>();
+            builder.Services.AddScoped<IOccupationService, OccupationService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

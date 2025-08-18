@@ -15,11 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Flaadestation.Repository\Flaadestation.Repository.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Flaadestation.Service\Flaadestation.Service.csproj" />
   </ItemGroup>
 
 </Project>
