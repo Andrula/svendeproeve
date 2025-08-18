@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flaadestation.Repository.Repositories.Interfaces
+namespace Flaadestation.Service.Interfaces
 {
-    public interface IStorageRepository : IRepository<Storage>
+    public interface IStorageService
     {
+        Task<Storage?> GetStorageByIdAsync(Guid id);
         Task<Storage?> GetStorageWithItemsAsync(Guid storageId);
         Task<IEnumerable<Storage>> GetJobStoragesAsync();
         Task<IEnumerable<Storage>> GetBaseStoragesAsync();
