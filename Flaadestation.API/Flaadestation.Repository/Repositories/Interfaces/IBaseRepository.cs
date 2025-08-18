@@ -10,5 +10,7 @@ namespace Flaadestation.Repository.Repositories.Interfaces
     public interface IBaseRepository : IRepository<Base>
     {
         Task<IEnumerable<Base>> GetBasesByCompanyAsync(Guid companyId);
+        Task<bool> BaseExistsByNameAsync(string name, Guid companyId);
+        Task<Base?> GetBaseWithStorageAsync(Guid baseId);
     }
 }
