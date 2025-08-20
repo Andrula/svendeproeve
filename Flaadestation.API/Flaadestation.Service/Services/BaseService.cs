@@ -59,7 +59,7 @@ namespace Flaadestation.Service.Services
             }
         }
 
-        // Metode til at slette base.
+        /// Metode til at slette base.
         public async Task<bool> DeleteBaseAsync(Guid id)
         {
             var baseEntity = await _baseRepository.GetBaseWithStorageAsync(id);

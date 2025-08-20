@@ -1,11 +1,11 @@
 ﻿using Azure.Core;
-using Flaadestation.ASP.DTO;
-using Flaadestation.ASP.DTO.CompanyDTO;
+using Flaadestation.Service.DTO;
+using Flaadestation.Service.DTO.CompanyDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Flaadestation.ASP.Controllers
+namespace Flaadestation.Service.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

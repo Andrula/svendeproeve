@@ -1,4 +1,4 @@
-﻿namespace Flaadestation.ASP.DTO.OccupationDTO
+﻿namespace Flaadestation.Service.DTO.OccupationDTO
 {
     public class CreateOccupationRequestDTO
     {

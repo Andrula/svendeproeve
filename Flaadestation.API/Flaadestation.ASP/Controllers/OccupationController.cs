@@ -1,10 +1,10 @@
-﻿using Flaadestation.ASP.DTO.OccupationDTO;
+﻿using Flaadestation.Service.DTO.OccupationDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Flaadestation.ASP.Controllers
+namespace Flaadestation.Service.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

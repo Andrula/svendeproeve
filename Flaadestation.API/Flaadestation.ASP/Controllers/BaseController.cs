@@ -1,4 +1,4 @@
-﻿using Flaadestation.ASP.DTO.BaseDTO;
+﻿using Flaadestation.Service.DTO.BaseDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Flaadestation.Service.Services;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Flaadestation.ASP.Controllers
+namespace Flaadestation.Service.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

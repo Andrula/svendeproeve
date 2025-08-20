@@ -1,4 +1,4 @@
-﻿namespace Flaadestation.ASP.DTO.BaseDTO
+﻿namespace Flaadestation.Service.DTO.BaseDTO
 {
     public class BaseResponseDTO
     {

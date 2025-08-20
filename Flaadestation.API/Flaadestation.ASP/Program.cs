@@ -7,7 +7,7 @@ using Flaadestation.Service.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Flaadestation.ASP
+namespace Flaadestation.Service
 {
     public class Program
     {
@@ -23,6 +23,7 @@ namespace Flaadestation.ASP
             builder.Services.AddScoped<IBaseRepository, BaseRepository>();
             builder.Services.AddScoped<IStorageRepository, StorageRepository>();
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddScoped<IJobRepository, JobRepository>();
 
             // services
             builder.Services.AddScoped<ICompanyService, CompanyService>();
@@ -30,6 +31,7 @@ namespace Flaadestation.ASP
             builder.Services.AddScoped<IBaseService, BaseService>();
             builder.Services.AddScoped<IStorageService, StorageService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+            builder.Services.AddScoped<IJobService, JobService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Flaadestation.Repository\Flaadestation.Repository.csproj" />
     <ProjectReference Include="..\Flaadestation.Service\Flaadestation.Service.csproj" />
   </ItemGroup>
 
