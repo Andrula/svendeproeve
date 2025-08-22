@@ -7,7 +7,7 @@ using Flaadestation.Service.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
-namespace Flaadestation.Service
+namespace Flaadestation.ASP
 {
     public class Program
     {
