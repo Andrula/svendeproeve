@@ -33,14 +33,7 @@ namespace Flaadestation.Service.Controllers
             if (baseEntity == null)
                 return NotFound();
 
-            var response = new BaseResponseDTO
-            {
-                BaseId = baseEntity.BaseId,
-                Name = baseEntity.Name,
-                CompanyId = baseEntity.CompanyId,
-                AddressId = baseEntity.AddressId,
-            };
-            return Ok(response);
+            return Ok(baseEntity);
         }
 
         [HttpPost]
@@ -59,7 +52,7 @@ namespace Flaadestation.Service.Controllers
             {
                 var created = await _baseService.CreateBaseAsync(baseEntity);
 
-                var response = new BaseResponseDTO
+                var response = new BaseRequestDTO
                 {
                     BaseId = created.BaseId,
                     Name = created.Name,
@@ -84,7 +77,7 @@ namespace Flaadestation.Service.Controllers
                 if (updated == null)
                     return NotFound();
 
-                var updatedBaseResponse = new BaseResponseDTO
+                var updatedBaseResponse = new BaseRequestDTO
                 {
                     BaseId = updated.BaseId,
                     Name = updated.Name,

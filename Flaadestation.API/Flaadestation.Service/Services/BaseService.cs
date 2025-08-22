@@ -1,6 +1,7 @@
 ﻿using Flaadestation.Repository.Database;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Repository.Repositories.Interfaces;
+using Flaadestation.Service.DTO.BaseDTO;
 using Flaadestation.Service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -24,33 +25,32 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til at oprette en base med et tilknyttet storage entitet.
-        public async Task<Base> CreateBaseAsync(Base baseEntity)
+        public async Task<BaseResponseDTO> CreateBaseAsync(BaseRequestDTO baseRequest)
         {
-            var nameExists = await _baseRepository.BaseExistsByNameAsync(baseEntity.Name, baseEntity.CompanyId);
+            var nameExists = await _baseRepository.BaseExistsByNameAsync(baseRequest.Name, baseRequest.CompanyId);
             if (nameExists)
             {
-                throw new InvalidOperationException($"Base med navnet '{baseEntity.Name}' eksisterer allerede for denne virksomhed.");
+                throw new InvalidOperationException($"Base med navnet '{baseRequest.Name}' eksisterer allerede for denne virksomhed.");
             }
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var storage = new Storage
-                {
-                    StorageId = baseEntity.StorageId,
-                    Base = null, 
-                    Job = null  
-                };
+                var storage = new Storage();
 
                 await _storageRepository.AddAsync(storage);
 
-                var createdBase = await _baseRepository.AddAsync(baseEntity);
+                var createdBase = MapBaseRequestToBase(baseRequest);
+
+                createdBase.StorageId = storage.StorageId;
+                
+                var mappedBase =  await _baseRepository.AddAsync(createdBase); 
 
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return createdBase;
+                return MapBaseToBaseResponse(mappedBase);
             }
             catch
             {
@@ -95,9 +95,19 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til at hente base via. ID.
-        public async Task<Base?> GetBaseByIdAsync(Guid id)
+        public async Task<BaseRequestDTO> GetBaseByIdAsync(Guid id)
         {
-            return await _baseRepository.GetByIdAsync(id);
+            var baseEntity = await _baseRepository.GetByIdAsync(id);
+
+            var response = new BaseRequestDTO
+            {
+                BaseId = baseEntity.BaseId,
+                Name = baseEntity.Name,
+                CompanyId = baseEntity.CompanyId,
+                AddressId = baseEntity.AddressId,
+            };
+
+            return response;
         }
 
         // Metode til at hente base med en tilknyttet storage.
@@ -138,6 +148,46 @@ namespace Flaadestation.Service.Services
             _baseRepository.Update(existingBase);
             await _baseRepository.SaveChangesAsync();
             return existingBase;
+        }
+
+        private Base MapBaseRequestToBase(BaseRequestDTO request)
+        {
+            return new Base
+            {
+                Name = request.Name,
+                CompanyId = request.CompanyId,
+                AddressId = request.AddressId
+            };
+        }
+
+        private BaseResponseDTO MapBaseToBaseResponse(Base baseEntity)
+        {
+            return new BaseResponseDTO
+            {
+                Name = baseEntity.Name,
+                CompanyId = baseEntity.CompanyId,
+                AddressId = baseEntity.AddressId,
+                Employees = baseEntity.Employees.Select(employee => new BaseEmployeeResponseDTO
+                {
+                    EmployeeId = employee.ItemId,
+                    Name = (employee.FirstName + employee.LastName),
+                    Email = employee.Email,
+                    Phone = employee.Phone,
+                    CompanyId = employee.CompanyId
+                   
+                }).ToList(),
+                Storage = new BaseStorageResponseDTO
+                {
+                    StorageId = baseEntity.StorageId,
+                    StorageItems = baseEntity.Storage!.StorageItems.Select(si => new BaseStorageItemReponseDTO
+                    {
+                        StorageItemId = si.ItemId,
+                        Note = si.Note,
+                        ScheduledStart = si.ScheduledStart,
+                        ScheduledEnd = si.ScheduledEnd, 
+                    }).ToList()
+                }
+            };
         }
     }
 }
