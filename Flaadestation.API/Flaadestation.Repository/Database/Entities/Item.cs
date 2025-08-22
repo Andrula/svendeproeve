@@ -12,6 +12,7 @@ namespace Flaadestation.Repository.Database.Entities
         public Guid ItemId { get; set; }
         public ItemType ItemType { get; set; }
         public string Note { get; set; } = string.Empty;
+        public Guid DefaultStorageId { get; set; }
         public Guid CompanyId { get; set; }
         public Guid ImageId { get; set; }
 
