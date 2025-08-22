@@ -5,7 +5,7 @@ using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Flaadestation.Service.Controllers
+namespace Flaadestation.ASP.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]

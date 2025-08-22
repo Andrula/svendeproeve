@@ -1,4 +1,6 @@
-﻿namespace Flaadestation.Service.DTO.JobDTO
+﻿using Flaadestation.Service.DTO.SharedDTO;
+
+namespace Flaadestation.Service.DTO.JobDTO
 {
     public class JobResponseDTO
     {
@@ -24,15 +26,10 @@
     public class JobStorageResponseDTO
     {
         public Guid StorageId { get; set; }
-        public List<JobStorageItemReponseDTO> StorageItems { get; set; } = [];
+        public List<StorageItemEmployeeResponseDTO> Employees { get; set; } = [];
+        public List<StorageItemVehicleResponseDTO> Vehicles { get; set; } = [];
+        public List<StorageItemToolResponseDTO> Tools { get; set; } = [];
+        public List<StorageItemMachineryResponseDTO> Machines { get; set; } = [];
         
-    }
-
-    public class JobStorageItemReponseDTO
-    {
-        public Guid StorageItemId { get; set; }
-        public DateTime ScheduledStart { get; set; }
-        public DateTime ScheduledEnd { get; set; }
-        public string Note { get; set; } = string.Empty;
     }
 }

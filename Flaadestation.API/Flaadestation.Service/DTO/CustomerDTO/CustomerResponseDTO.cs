@@ -1,4 +1,4 @@
-﻿namespace Flaadestation.ASP.DTO.CustomerDTO
+﻿namespace Flaadestation.Service.DTO.CustomerDTO
 {
     public class CustomerResponseDTO
     {

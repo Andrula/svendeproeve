@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Flaadestation.Service.Controllers
+namespace Flaadestation.ASP.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
