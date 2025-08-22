@@ -21,6 +21,6 @@ namespace Flaadestation.Service.DTO.SharedDTO
         public string StorageItemNote { get; set; } = string.Empty;
         public string ItemNote { get; set; } = string.Empty;
         public Guid ImageId { get; set; }
-        public required byte[] ImageValue { get; set; }
+        public byte[]? ImageValue { get; set; }
     }
 }

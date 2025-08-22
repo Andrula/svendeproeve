@@ -18,30 +18,57 @@ namespace Flaadestation.Repository.Repositories
         public async Task<IEnumerable<Job>> GetActiveJobsAsync()
         {
             return await _context.Jobs
-                    .Include(j => j.Storage)
-                        .ThenInclude(s => s.StorageItems)
-                    .Include(j => j.Customers)
-                    .Where(j => j.ScheduledStart >= DateTime.Now && j.ScheduledEnd <= DateTime.Now)
-                    .ToListAsync();
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                            .ThenInclude(i => ((Vehicle)i).Employees)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                            .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Customers)
+                .Where(j => j.ScheduledStart <= DateTime.Now && j.ScheduledEnd >= DateTime.Now)
+                .ToListAsync();
         }
 
         public async Task<IEnumerable<Job>> GetJobsByCompanyAsync(Guid companyId)
         {
             return await _context.Jobs
-                    .Include(j => j.Storage)
-                        .ThenInclude(s => s.StorageItems)
-                    .Include(j => j.Customers)
-                    .Where(j => j.CompanyId == companyId)
-                    .ToListAsync();
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                            .ThenInclude(i => ((Vehicle)i).Employees)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                            .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Customers)
+                .Where(j => j.CompanyId == companyId)
+                .ToListAsync();
         }
 
         public async Task<Job?> GetJobByIdAsync(Guid jobId)
         {
             return await _context.Jobs
-                    .Include(j => j.Storage)
-                            .ThenInclude(s => s.StorageItems)
-                    .Include(j => j.Customers)
-                        .FirstOrDefaultAsync(j => j.JobId == jobId);
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                            .ThenInclude(i => ((Vehicle)i).Employees)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.StorageItems)
+                        .ThenInclude(si => si.Item)
+                            .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Customers)
+                .FirstOrDefaultAsync(j => j.JobId == jobId);
         }
 
         public async Task<bool> JobExistsByTitleAsync(string title, Guid companyId)

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Flaadestation.Service.DTO.JobDTO;
+using Flaadestation.Service.DTO.SharedDTO;
 
 namespace Flaadestation.Service.Services
 {
@@ -143,7 +144,7 @@ namespace Flaadestation.Service.Services
 
         private JobResponseDTO MapJobToJobResponse(Job job)
         {
-            return new JobResponseDTO
+            var jobResponse = new JobResponseDTO
             {
                 JobId = job.JobId,
                 Title = job.Title,
@@ -162,16 +163,105 @@ namespace Flaadestation.Service.Services
                 }).ToList(),
                 Storage = new JobStorageResponseDTO
                 {
-                    StorageId = job.StorageId,
-                    StorageItems = job.Storage!.StorageItems.Select(si => new JobStorageItemReponseDTO
-                    {
-                        StorageItemId = si.StorageItemId,
-                        Note = si.Note,
-                        ScheduledStart = si.ScheduledStart,
-                        ScheduledEnd = si.ScheduledEnd,
-                    }).ToList()
+                    StorageId = job.StorageId
                 }
             };
+
+            foreach (var storageItem in job.Storage!.StorageItems)
+            {
+                if (storageItem.Item is Employee employee)
+                {
+                    jobResponse.Storage.Employees.Add(new StorageItemEmployeeResponseDTO
+                    {
+                        ItemId = storageItem.ItemId,
+                        StorageItemId = storageItem.StorageItemId,
+                        ScheduledStart = storageItem.ScheduledStart,
+                        ScheduledEnd = storageItem.ScheduledEnd,
+                        FirstName = employee.FirstName,
+                        LastName = employee.LastName,
+                        Email = employee.Email,
+                        Phone = employee.Phone,
+                        OccupationId = employee.OccupationId,
+                        Occupation = employee.Occupation is null ? "" : employee.Occupation.Name,
+                        StorageItemNote = storageItem.Note,
+                        ItemNote = employee.Note,
+                        ImageId = employee.ImageId,
+                        ImageValue = employee.Image is null ? null : employee.Image.Value
+                    });
+                }
+
+                else if (storageItem.Item is Tool tool)
+                {
+                    jobResponse.Storage.Tools.Add(new StorageItemToolResponseDTO
+                    {
+                        ItemId = storageItem.ItemId,
+                        StorageItemId = storageItem.StorageItemId,
+                        ScheduledStart = storageItem.ScheduledStart,
+                        ScheduledEnd = storageItem.ScheduledEnd,
+                        Name = tool.Name,
+                        StorageItemNote = storageItem.Note,
+                        ItemNote = tool.Note,
+                        ImageId = tool.ImageId,
+                        ImageValue = tool.Image is null ? null : tool.Image.Value
+                    });
+                }
+
+                else if (storageItem.Item is Machinery machine)
+                {
+                    jobResponse.Storage.Machines.Add(new StorageItemMachineryResponseDTO
+                    {
+                        ItemId = storageItem.ItemId,
+                        StorageItemId = storageItem.StorageItemId,
+                        ScheduledStart = storageItem.ScheduledStart,
+                        ScheduledEnd = storageItem.ScheduledEnd,
+                        Name = machine.Name,
+                        StorageItemNote = storageItem.Note,
+                        ItemNote = machine.Note,
+                        ImageId = machine.ImageId,
+                        ImageValue = machine.Image is null ? null : machine.Image.Value
+                    });
+                }
+
+                else if (storageItem.Item is Vehicle vehicle)
+                {
+                    jobResponse.Storage.Vehicles.Add(new StorageItemVehicleResponseDTO
+                    {
+                        ItemId = storageItem.ItemId,
+                        StorageItemId = storageItem.StorageItemId,
+                        ScheduledStart = storageItem.ScheduledStart,
+                        ScheduledEnd = storageItem.ScheduledEnd,
+                        Model = vehicle.Model,
+                        LicensePlate = vehicle.LicensePlate,
+                        StorageItemNote = storageItem.Note,
+                        ItemNote = vehicle.Note,
+                        ImageId = vehicle.ImageId,
+                        ImageValue = vehicle.Image is null ? null : vehicle.Image.Value,
+                        Employees = vehicle.Employees.Select(employee => new StorageItemVehicleEmployeeResponseDTO
+                        {
+                            ItemId = employee.ItemId,
+                            FirstName = employee.FirstName,
+                            LastName = employee.LastName,
+                            Email = employee.Email,
+                            Phone = employee.Phone,
+                            OccupationId = employee.OccupationId,
+                            Occupation = employee.Occupation is null ? "" : employee.Occupation.Name,
+                            Note = employee.Note,
+                            ImageId = employee.ImageId,
+                            ImageValue = employee.Image is null ? null : employee.Image.Value
+                        }).ToList(),
+                        Tools = vehicle.Tools.Select(tool => new StorageItemVehicleToolResponseDTO
+                        {
+                            ItemId = storageItem.ItemId,
+                            Name = tool.Name,
+                            Note = tool.Note,
+                            ImageId = tool.ImageId,
+                            ImageValue = tool.Image is null ? null : tool.Image.Value
+                        }).ToList(),
+                    });
+                }
+            }
+
+            return jobResponse;
         }
 
         private Job MapJobRequestToJob(JobRequestDTO jobRequest)
