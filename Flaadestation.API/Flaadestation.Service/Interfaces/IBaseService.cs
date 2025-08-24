@@ -10,11 +10,11 @@ namespace Flaadestation.Service.Interfaces
 {
     public interface IBaseService
     {
-        Task<IEnumerable<Base>> GetBasesByCompanyAsync(Guid companyId);
-        Task<BaseRequestDTO> GetBaseByIdAsync(Guid id);
+        Task<IEnumerable<BaseResponseDTO>> GetBasesByCompanyAsync(Guid companyId);
+        Task<BaseResponseDTO> GetBaseByIdAsync(Guid id);
         Task<Base?> GetBaseWithStorageAsync(Guid baseId);
         Task<BaseResponseDTO> CreateBaseAsync(BaseRequestDTO baseEntity);
-        Task<Base?> UpdateBaseAsync(Guid id, string name);
+        Task<Base?> UpdateBaseAsync(Guid id, BaseRequestDTO baseRequest);
         Task<bool> DeleteBaseAsync(Guid id);
         Task<bool> IsBaseNameAvailableAsync(string name, Guid companyId);
     }
