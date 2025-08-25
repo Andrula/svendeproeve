@@ -1,5 +1,4 @@
 ﻿using Flaadestation.Service.DTO.BaseDTO;
-using Flaadestation.Service.DTO.CustomerDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Flaadestation.Service.Services;
@@ -21,9 +20,9 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetBasesByCompany(Guid companyId, BaseRequestDTO request)
+        public async Task<IActionResult> GetBasesByCompany(Guid companyId)
         {
-            var bases = await _baseService.GetBasesByCompanyAsync(companyId, request);
+            var bases = await _baseService.GetBasesByCompanyAsync(companyId);
             return Ok(bases);
         }
 
@@ -42,15 +41,7 @@ namespace Flaadestation.ASP.Controllers
         {
             try
             {
-                var created = await _baseService.CreateBaseAsync(request);
-
-                var response = new BaseRequestDTO
-                {
-                    BaseId = created.BaseId,
-                    Name = created.Name,
-                    CompanyId = created.CompanyId,
-                    AddressId = created.AddressId,
-                };
+                var response = await _baseService.CreateBaseAsync(request);
 
                 return Ok(response);
             }
