@@ -15,5 +15,11 @@ namespace Flaadestation.Shared
             Tool = 3,
             Machine = 4,
         }
+
+        public enum StorageType : int
+        {
+            Base = 1,
+            Job = 2,
+        }
     }
 }

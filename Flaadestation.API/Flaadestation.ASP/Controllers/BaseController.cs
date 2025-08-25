@@ -37,28 +37,11 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBase([FromBody] CreateBaseRequestDTO request)
+        public async Task<IActionResult> CreateBase([FromBody] BaseRequestDTO request)
         {
-            var baseEntity = new Base
-            {
-                BaseId = Guid.NewGuid(),
-                Name = request.Name,
-                CompanyId = request.CompanyId,
-                AddressId = request.AddressId,
-                StorageId = Guid.NewGuid()
-            };
-
             try
             {
-                var created = await _baseService.CreateBaseAsync(baseEntity);
-
-                var response = new BaseRequestDTO
-                {
-                    BaseId = created.BaseId,
-                    Name = created.Name,
-                    CompanyId = created.CompanyId,
-                    AddressId = created.AddressId,
-                };
+                var response = await _baseService.CreateBaseAsync(request);
 
                 return Ok(response);
             }
@@ -69,11 +52,11 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBase(Guid id, [FromBody] UpdateBaseRequestDTO request)
+        public async Task<IActionResult> UpdateBase(Guid id, [FromBody] BaseRequestDTO request)
         {
             try
             {
-                var updated = await _baseService.UpdateBaseAsync(id, request.Name);
+                var updated = await _baseService.UpdateBaseAsync(id, request);
                 if (updated == null)
                     return NotFound();
 
