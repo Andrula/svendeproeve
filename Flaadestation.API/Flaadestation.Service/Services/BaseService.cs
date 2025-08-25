@@ -111,7 +111,7 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til at hente virksomhedens baser.
-        public async Task<IEnumerable<BaseResponseDTO>> GetBasesByCompanyAsync(Guid companyId)
+        public async Task<IEnumerable<BaseResponseDTO>> GetBasesByCompanyAsync(Guid companyId, BaseRequestDTO baseRequest)
         {
             var baseEntities = await _baseRepository.GetBasesByCompanyAsync(companyId);
             return baseEntities.Select(MapBaseToBaseResponse);
@@ -124,7 +124,7 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til at opdatere informmationer på base.
-        public async Task<Base?> UpdateBaseAsync(Guid id, BaseRequestDTO baseRequest)
+        public async Task<BaseResponseDTO?> UpdateBaseAsync(Guid id, BaseRequestDTO baseRequest)
         {
             var existingBase = await _baseRepository.GetByIdAsync(id);
             if (existingBase == null)
@@ -143,7 +143,8 @@ namespace Flaadestation.Service.Services
             existingBase.AddressId = baseRequest.AddressId;
             _baseRepository.Update(existingBase);
             await _baseRepository.SaveChangesAsync();
-            return existingBase;
+
+            return MapBaseToBaseResponse(existingBase);
         }
 
         private Base MapBaseRequestToBase(BaseRequestDTO request)

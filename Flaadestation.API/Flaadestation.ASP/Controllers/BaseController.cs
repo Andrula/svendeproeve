@@ -1,4 +1,5 @@
 ﻿using Flaadestation.Service.DTO.BaseDTO;
+using Flaadestation.Service.DTO.CustomerDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Flaadestation.Service.Services;
@@ -20,9 +21,9 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetBasesByCompany(Guid companyId)
+        public async Task<IActionResult> GetBasesByCompany(Guid companyId, BaseRequestDTO request)
         {
-            var bases = await _baseService.GetBasesByCompanyAsync(companyId);
+            var bases = await _baseService.GetBasesByCompanyAsync(companyId, request);
             return Ok(bases);
         }
 
@@ -37,20 +38,11 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBase([FromBody] CreateBaseRequestDTO request)
+        public async Task<IActionResult> CreateBase([FromBody] BaseRequestDTO request)
         {
-            var baseEntity = new Base
-            {
-                BaseId = Guid.NewGuid(),
-                Name = request.Name,
-                CompanyId = request.CompanyId,
-                AddressId = request.AddressId,
-                StorageId = Guid.NewGuid()
-            };
-
             try
             {
-                var created = await _baseService.CreateBaseAsync(baseEntity);
+                var created = await _baseService.CreateBaseAsync(request);
 
                 var response = new BaseRequestDTO
                 {
@@ -69,11 +61,11 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBase(Guid id, [FromBody] UpdateBaseRequestDTO request)
+        public async Task<IActionResult> UpdateBase(Guid id, [FromBody] BaseRequestDTO request)
         {
             try
             {
-                var updated = await _baseService.UpdateBaseAsync(id, request.Name);
+                var updated = await _baseService.UpdateBaseAsync(id, request);
                 if (updated == null)
                     return NotFound();
 
