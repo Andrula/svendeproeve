@@ -16,5 +16,6 @@ namespace Flaadestation.Repository.Database.Entities
 
         public Company? Company { get; set; }
         public Storage? Storage { get; set; }
+        public List<Employee> Employees { get; set; } = [];
     }
 }
