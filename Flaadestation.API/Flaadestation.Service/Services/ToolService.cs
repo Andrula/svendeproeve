@@ -45,7 +45,7 @@ namespace Flaadestation.Service.Services
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return await MapToolToToolResponse(createdTool);
+                return MapToolToToolResponse(createdTool);
             }
             catch
             {
@@ -82,16 +82,13 @@ namespace Flaadestation.Service.Services
         public async Task<ToolResponseDTO?> GetToolByIdAsync(Guid toolId)
         {
             var tool = await _toolRepository.GetByIdAsync(toolId);
-            return tool is null ? null : await MapToolToToolResponse(tool);
+            return tool is null ? null : MapToolToToolResponse(tool);
         }
 
         public async Task<IEnumerable<ToolResponseDTO>> GetToolsByCompanyAsync(Guid companyId)
         {
             var tools = await _toolRepository.GetToolsByCompanyIdAsync(companyId);
-            var toolTasks = tools.Select(MapToolToToolResponse);
-            var toolResponses = await Task.WhenAll(toolTasks); // Der er sikkert en bedre måde, fordi vi bruger async i mapping, er vi nødt til det her
-
-            return toolResponses;
+            return tools.Select(MapToolToToolResponse);
         }
 
         public async Task<ToolResponseDTO?> UpdateToolAsync(Guid toolId, ToolRequestDTO toolRequest)
@@ -107,19 +104,17 @@ namespace Flaadestation.Service.Services
 
             _toolRepository.Update(existingTool);
             await _toolRepository.SaveChangesAsync();
-            return await MapToolToToolResponse(existingTool);
+            return MapToolToToolResponse(existingTool);
         }
 
-        private async Task<ToolResponseDTO> MapToolToToolResponse(Tool tool)
+        private ToolResponseDTO MapToolToToolResponse(Tool tool)
         {
-            var toolDefaultStorage = await _storageRepository.GetStorageWithItemsAsync(tool.DefaultStorageId);
-
             var toolResponse = new ToolResponseDTO
             {
                 ItemId = tool.ItemId,
                 Name = tool.Name,
                 Note = tool.Note,
-                DefaultStorage = toolDefaultStorage is null ? null : MapStorageToStorageResponseDTO(toolDefaultStorage),
+                DefaultStorage = tool.DefaultStorage is null ? null : MapStorageToStorageResponseDTO(tool.DefaultStorage),
                 CompanyId = tool.CompanyId,
                 ImageId = tool.ImageId,
                 ImageValue = tool.Image?.Value,
