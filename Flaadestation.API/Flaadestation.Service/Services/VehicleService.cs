@@ -165,6 +165,7 @@ namespace Flaadestation.Service.Services
                 LicensePlate = vehicleRequest.LicensePlate,
                 Note = vehicleRequest.Note,
                 DefaultStorageId = vehicleRequest.DefaultStorageId,
+                CompanyId = vehicleRequest.CompanyId,
                 // TODO: Vi skal have implementeret noget logik til at håndtere Image - Dette gælder for alle items
             };
         }

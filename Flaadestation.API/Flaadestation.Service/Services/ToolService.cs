@@ -152,6 +152,7 @@ namespace Flaadestation.Service.Services
                 Note = toolRequest.Note,
                 VehicleId = toolRequest.VehicleId,
                 DefaultStorageId = toolRequest.DefaultStorageId,
+                CompanyId = toolRequest.CompanyId,
             };
         }
     }
