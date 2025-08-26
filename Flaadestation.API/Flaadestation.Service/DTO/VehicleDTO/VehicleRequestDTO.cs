@@ -12,6 +12,7 @@ namespace Flaadestation.Service.DTO.VehicleDTO
         public required string LicensePlate { get; set; }
         public required string Note { get; set; }
         public Guid DefaultStorageId { get; set; }
+        public Guid CompanyId { get; set; }
         public byte[]? ImageValue { get; set; }
     } 
 }
