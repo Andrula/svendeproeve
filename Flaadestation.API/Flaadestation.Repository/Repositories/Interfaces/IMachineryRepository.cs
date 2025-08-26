@@ -10,5 +10,6 @@ namespace Flaadestation.Repository.Repositories.Interfaces
 {
     public interface IMachineryRepository : IRepository<Machinery>
     {
+        Task<IEnumerable<Machinery>> GetMachineryByCompanyIdAsync(Guid companyId);
     }
 }

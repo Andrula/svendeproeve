@@ -16,19 +16,20 @@ namespace Flaadestation.Repository.Repositories
 
         public async Task<IEnumerable<Base>> GetBasesByCompanyAsync(Guid companyId)
         {
-            return await _dbSet
-                .Where(b => b.CompanyId == companyId)
-                .Select(b => new Base
-                {
-                    BaseId = b.BaseId,
-                    Name = b.Name,
-                    CompanyId = b.CompanyId,
-                    AddressId = b.AddressId,
-                    StorageId = b.StorageId,
-                    Company = b.Company
-                })
-                .OrderBy(b => b.Name)
-                .ToListAsync();
+            return await _context.Bases
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Employees)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Tools)
+               .Where(j => j.CompanyId == companyId)
+               .ToListAsync();
         }
 
         public async Task<bool> BaseExistsByNameAsync(string name, Guid companyId)
@@ -49,6 +50,8 @@ namespace Flaadestation.Repository.Repositories
         public override async Task<Base?> GetByIdAsync(Guid id)
         {
             return await _dbSet
+                .Include(b => b.Storage)        
+                    .ThenInclude(s => s.StorageItems)
                 .Include(b => b.Company)
                 .FirstOrDefaultAsync(b => b.BaseId == id);
         }

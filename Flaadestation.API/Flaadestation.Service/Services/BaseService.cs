@@ -111,7 +111,7 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til at hente virksomhedens baser.
-        public async Task<IEnumerable<BaseResponseDTO>> GetBasesByCompanyAsync(Guid companyId, BaseRequestDTO baseRequest)
+        public async Task<IEnumerable<BaseResponseDTO>> GetBasesByCompanyAsync(Guid companyId)
         {
             var baseEntities = await _baseRepository.GetBasesByCompanyAsync(companyId);
             return baseEntities.Select(MapBaseToBaseResponse);
@@ -179,7 +179,9 @@ namespace Flaadestation.Service.Services
                 }
             };
 
-            foreach (var storageItem in baseEntity.Storage!.StorageItems)
+            var storageItems = baseEntity.Storage?.StorageItems ?? new List<StorageItem>();
+
+            foreach (var storageItem in storageItems)
             {
                 if (storageItem.Item is Employee employee)
                 {

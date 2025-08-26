@@ -16,7 +16,7 @@ namespace Flaadestation.Service.DTO.SharedDTO
         public string LicensePlate { get; set; } = string.Empty;
         public string StorageItemNote { get; set; } = string.Empty;
         public string ItemNote { get; set; } = string.Empty;
-        public Guid ImageId { get; set; }
+        public Guid? ImageId { get; set; }
         public byte[]? ImageValue { get; set; }
 
         public List<StorageItemVehicleEmployeeResponseDTO> Employees { get; set; } = [];
@@ -33,7 +33,7 @@ namespace Flaadestation.Service.DTO.SharedDTO
         public Guid? OccupationId { get; set; }
         public string Occupation { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
-        public Guid ImageId { get; set; }
+        public Guid? ImageId { get; set; }
         public byte[]? ImageValue { get; set; }
     }
 
@@ -42,7 +42,7 @@ namespace Flaadestation.Service.DTO.SharedDTO
         public Guid ItemId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
-        public Guid ImageId { get; set; }
+        public Guid? ImageId { get; set; }
         public byte[]? ImageValue { get; set; }
     }
 }

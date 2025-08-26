@@ -12,9 +12,14 @@ namespace Flaadestation.Service.Interfaces
 {
     public interface IMachineryService
     {
-        Task<IEnumerable<MachineryResponseDTO>> GetMachineryByCompanyAsync(Guid companyId);
-        Task<IEnumerable<MachineryResponseDTO>> GetAvailableMachineryAsync(DateTime? startDate = null, DateTime? endDate = null);
+        Task<IEnumerable<MachineryResponseDTO>> GetAllAsync();
+        Task<IEnumerable<MachineryResponseDTO>> GetMachineryByCompanyIdAsync(Guid companyId);
+        Task<IEnumerable<MachineryResponseDTO>> GetAvailableMachineryAsync(Guid companyId, DateTime? startDate = null, DateTime? endDate = null);
         Task<MachineryResponseDTO?> GetMachineryByIdAsync(Guid id);
         Task<MachineryResponseDTO> CreateMachineryAsync(MachineryRequestDTO request);
+        Task<bool> DeleteMachineryAsync(Guid id);
+        Task<MachineryResponseDTO?> UpdateMachineryAsync(Guid id, MachineryRequestDTO request);
+        Task<bool> ExistsAsync(Guid id);
+        Task<Machinery?> GetByIdAsync(Guid id);
     }
 }
