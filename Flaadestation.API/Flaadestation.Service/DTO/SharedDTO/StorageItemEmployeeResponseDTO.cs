@@ -16,11 +16,9 @@ namespace Flaadestation.Service.DTO.SharedDTO
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public Guid? OccupationId { get; set; }
-        public string Occupation { get; set; } = string.Empty;
+        public OccupationResponseDTO? Occupation { get; set; }
         public string StorageItemNote { get; set; } = string.Empty;
         public string ItemNote { get; set; } = string.Empty;
-        public Guid ImageId { get; set; }
-        public byte[]? ImageValue { get; set; }
+        public ImageResponseDTO? Image { get; set; }
     }
 }

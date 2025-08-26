@@ -192,12 +192,18 @@ namespace Flaadestation.Service.Services
                         LastName = employee.LastName,
                         Email = employee.Email,
                         Phone = employee.Phone,
-                        OccupationId = employee.OccupationId,
-                        Occupation = employee.Occupation is null ? "" : employee.Occupation.Name,
+                        Occupation = employee.Occupation is null ? null : new OccupationResponseDTO
+                        {
+                            OccupationId = employee.Occupation.OccupationId,
+                            Name = employee.Occupation.Name,
+                        },
                         StorageItemNote = storageItem.Note,
                         ItemNote = employee.Note,
-                        ImageId = employee.ImageId,
-                        ImageValue = employee.Image is null ? null : employee.Image.Value
+                        Image = employee.Image is null ? null : new ImageResponseDTO
+                        {
+                            ImageId = employee.Image.ImageId,
+                            Value = employee.Image.Value,
+                        }
                     });
                 }
 
@@ -212,8 +218,11 @@ namespace Flaadestation.Service.Services
                         Name = tool.Name,
                         StorageItemNote = storageItem.Note,
                         ItemNote = tool.Note,
-                        ImageId = tool.ImageId,
-                        ImageValue = tool.Image is null ? null : tool.Image.Value
+                        Image = tool.Image is null ? null : new ImageResponseDTO
+                        {
+                            ImageId = tool.Image.ImageId,
+                            Value = tool.Image.Value,
+                        }
                     });
                 }
 
@@ -228,8 +237,11 @@ namespace Flaadestation.Service.Services
                         Name = machine.Name,
                         StorageItemNote = storageItem.Note,
                         ItemNote = machine.Note,
-                        ImageId = machine.ImageId,
-                        ImageValue = machine.Image is null ? null : machine.Image.Value
+                        Image = machine.Image is null ? null : new ImageResponseDTO
+                        {
+                            ImageId = machine.Image.ImageId,
+                            Value = machine.Image.Value,
+                        }
                     });
                 }
 
@@ -245,8 +257,11 @@ namespace Flaadestation.Service.Services
                         LicensePlate = vehicle.LicensePlate,
                         StorageItemNote = storageItem.Note,
                         ItemNote = vehicle.Note,
-                        ImageId = vehicle.ImageId,
-                        ImageValue = vehicle.Image is null ? null : vehicle.Image.Value,
+                        Image = vehicle.Image is null ? null : new ImageResponseDTO
+                        {
+                            ImageId = vehicle.Image.ImageId,
+                            Value = vehicle.Image.Value,
+                        },
                         Employees = vehicle.Employees.Select(employee => new StorageItemVehicleEmployeeResponseDTO
                         {
                             ItemId = employee.ItemId,
@@ -254,19 +269,28 @@ namespace Flaadestation.Service.Services
                             LastName = employee.LastName,
                             Email = employee.Email,
                             Phone = employee.Phone,
-                            OccupationId = employee.OccupationId,
-                            Occupation = employee.Occupation is null ? "" : employee.Occupation.Name,
+                            Occupation = employee.Occupation is null ? null : new OccupationResponseDTO
+                            {
+                                OccupationId = employee.Occupation.OccupationId,
+                                Name = employee.Occupation.Name,
+                            },
                             Note = employee.Note,
-                            ImageId = employee.ImageId,
-                            ImageValue = employee.Image is null ? null : employee.Image.Value
+                            Image = employee.Image is null ? null : new ImageResponseDTO
+                            {
+                                ImageId = employee.Image.ImageId,
+                                Value = employee.Image.Value,
+                            }
                         }).ToList(),
                         Tools = vehicle.Tools.Select(tool => new StorageItemVehicleToolResponseDTO
                         {
                             ItemId = storageItem.ItemId,
                             Name = tool.Name,
                             Note = tool.Note,
-                            ImageId = tool.ImageId,
-                            ImageValue = tool.Image is null ? null : tool.Image.Value
+                            Image = tool.Image is null ? null : new ImageResponseDTO
+                            {
+                                ImageId = tool.Image.ImageId,
+                                Value = tool.Image.Value,
+                            }
                         }).ToList(),
                     });
                 }

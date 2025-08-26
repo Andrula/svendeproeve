@@ -1,40 +1,39 @@
-﻿using System;
+﻿using Flaadestation.Service.DTO.SharedDTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flaadestation.Service.DTO.SharedDTO
+namespace Flaadestation.Service.DTO.VehicleDTO
 {
-    public class StorageItemVehicleResponseDTO
+    public class VehicleResponseDTO
     {
         public Guid ItemId { get; set; }
-        public Guid StorageItemId { get; set; }
-        public DateTime ScheduledStart { get; set; }
-        public DateTime ScheduledEnd { get; set; }
         public string Model { get; set; } = string.Empty;
         public string LicensePlate { get; set; } = string.Empty;
-        public string StorageItemNote { get; set; } = string.Empty;
-        public string ItemNote { get; set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
+        public StorageResponseDTO? DefaultStorage { get; set; }
+        public Guid CompanyId { get; set; }
         public ImageResponseDTO? Image { get; set; }
-
-        public List<StorageItemVehicleEmployeeResponseDTO> Employees { get; set; } = [];
-        public List<StorageItemVehicleToolResponseDTO> Tools { get; set; } = [];
+        public List<StorageItemResponseDTO> StorageItems { get; set; } = [];
+        public List<VehicleEmployeeResponseDTO> Employees { get; set; } = [];
+        public List<VehicleToolResponseDTO> Tools { get; set; } = [];
     }
 
-    public class StorageItemVehicleEmployeeResponseDTO
+    public class VehicleEmployeeResponseDTO
     {
         public Guid ItemId { get; set; }
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public OccupationResponseDTO? Occupation { get; set; }
         public string Note { get; set; } = string.Empty;
         public ImageResponseDTO? Image { get; set; }
+        public OccupationResponseDTO? Occupation { get; set; }
     }
 
-    public class StorageItemVehicleToolResponseDTO
+    public class VehicleToolResponseDTO
     {
         public Guid ItemId { get; set; }
         public string Name { get; set; } = string.Empty;
