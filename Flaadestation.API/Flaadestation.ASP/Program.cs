@@ -26,6 +26,7 @@ namespace Flaadestation.ASP
             builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
             builder.Services.AddScoped<IJobRepository, JobRepository>();
             builder.Services.AddScoped<IToolRepository, ToolRepository>();
+            builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
             builder.Services.AddScoped<IMachineryRepository, MachineryRepository>();
 
             // services
@@ -36,7 +37,6 @@ namespace Flaadestation.ASP
             builder.Services.AddScoped<ICustomerService, CustomerService>();
             builder.Services.AddScoped<IJobService, JobService>();
             builder.Services.AddScoped<IToolService, ToolService>();
-            builder.Services.AddScoped<IMachineryService, MachineryService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -18,6 +18,7 @@ namespace Flaadestation.Repository.Database.Entities
 
         public Company? Company { get; set; }
         public Image? Image { get; set; }
+        public Storage? DefaultStorage { get; set; }
         public List<StorageItem> StorageItems { get; set; } = [];
         public bool IsAvailableAt(DateTime checkTime)
         {

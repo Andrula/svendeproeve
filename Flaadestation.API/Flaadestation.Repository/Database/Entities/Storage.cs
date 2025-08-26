@@ -11,6 +11,7 @@ namespace Flaadestation.Repository.Database.Entities
         public Guid StorageId { get; set; }
 
         public List<StorageItem> StorageItems { get; set; } = [];
+        public List<Item> ItemsWithThisStorageAsDefault { get; set; } = [];
 
         public Job? Job { get; set; }
         public Base? Base { get; set; }

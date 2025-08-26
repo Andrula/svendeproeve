@@ -34,10 +34,6 @@ namespace Flaadestation.Service.Services
 
             try
             {
-                var storage = new Storage();
-
-                await _storageRepository.AddAsync(storage);
-
                 var tool = MapToolRequestToTool(toolRequest);
 
                 var createdTool = await _toolRepository.AddAsync(tool);
@@ -45,7 +41,7 @@ namespace Flaadestation.Service.Services
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync();
 
-                return await MapToolToToolResponse(createdTool);
+                return MapToolToToolResponse(createdTool);
             }
             catch
             {
@@ -82,16 +78,13 @@ namespace Flaadestation.Service.Services
         public async Task<ToolResponseDTO?> GetToolByIdAsync(Guid toolId)
         {
             var tool = await _toolRepository.GetByIdAsync(toolId);
-            return tool is null ? null : await MapToolToToolResponse(tool);
+            return tool is null ? null : MapToolToToolResponse(tool);
         }
 
         public async Task<IEnumerable<ToolResponseDTO>> GetToolsByCompanyAsync(Guid companyId)
         {
             var tools = await _toolRepository.GetToolsByCompanyIdAsync(companyId);
-            var toolTasks = tools.Select(MapToolToToolResponse);
-            var toolResponses = await Task.WhenAll(toolTasks); // Der er sikkert en bedre måde, fordi vi bruger async i mapping, er vi nødt til det her
-
-            return toolResponses;
+            return tools.Select(MapToolToToolResponse);
         }
 
         public async Task<ToolResponseDTO?> UpdateToolAsync(Guid toolId, ToolRequestDTO toolRequest)
@@ -107,26 +100,24 @@ namespace Flaadestation.Service.Services
 
             _toolRepository.Update(existingTool);
             await _toolRepository.SaveChangesAsync();
-            return await MapToolToToolResponse(existingTool);
+            return MapToolToToolResponse(existingTool);
         }
 
-        private async Task<ToolResponseDTO> MapToolToToolResponse(Tool tool)
+        private ToolResponseDTO MapToolToToolResponse(Tool tool)
         {
-            var toolDefaultStorage = await _storageRepository.GetStorageWithItemsAsync(tool.DefaultStorageId);
-
             var toolResponse = new ToolResponseDTO
             {
                 ItemId = tool.ItemId,
                 Name = tool.Name,
                 Note = tool.Note,
-                DefaultStorage = toolDefaultStorage is null ? null : MapStorageToStorageResponseDTO(toolDefaultStorage),
+                DefaultStorage = tool.DefaultStorage is null ? null : StorageResponseDTO.MapStorageToStorageResponseDTO(tool.DefaultStorage),
                 CompanyId = tool.CompanyId,
                 ImageId = tool.ImageId,
                 ImageValue = tool.Image?.Value,
-                StorageItems = tool.StorageItems.Select(si => new ToolStorageItemResponseDTO
+                StorageItems = tool.StorageItems.Select(si => new StorageItemResponseDTO
                 {
                     StorageItemId = si.StorageItemId,
-                    Storage = MapStorageToStorageResponseDTO(si.Storage!),
+                    Storage = StorageResponseDTO.MapStorageToStorageResponseDTO(si.Storage!),
                     ScheduledStart = si.ScheduledStart,
                     ScheduledEnd = si.ScheduledEnd,
                     Note = si.Note,
@@ -147,24 +138,10 @@ namespace Flaadestation.Service.Services
                 var vehicleActiveStorage = tool.Vehicle.StorageItems.FirstOrDefault(si => si.ScheduledStart <= DateTime.Now && si.ScheduledEnd >= DateTime.Now)?.Storage ?? null;
 
                 if (vehicleActiveStorage != null)
-                    toolResponse.Vehicle!.Storage = MapStorageToStorageResponseDTO(vehicleActiveStorage);
+                    toolResponse.Vehicle!.Storage = StorageResponseDTO.MapStorageToStorageResponseDTO(vehicleActiveStorage);
             }
 
             return toolResponse;
-        }
-
-        private StorageResponseDTO MapStorageToStorageResponseDTO(Storage storage)
-        {
-            StorageType storageType = storage.Base is null ? StorageType.Job : StorageType.Base;
-
-            return new StorageResponseDTO
-            {
-                StorageId = storage.StorageId,
-                RelevantId = storageType == StorageType.Base ? storage.Base!.BaseId : storage.Job!.JobId,
-                StorageType = storageType,
-                Name = storageType == StorageType.Base ? storage.Base!.Name : storage.Job!.Title,
-                AddressId = storageType == StorageType.Base ? storage.Base!.AddressId : storage.Job!.AddressId,
-            };
         }
 
         private Tool MapToolRequestToTool(ToolRequestDTO toolRequest)
@@ -175,6 +152,7 @@ namespace Flaadestation.Service.Services
                 Note = toolRequest.Note,
                 VehicleId = toolRequest.VehicleId,
                 DefaultStorageId = toolRequest.DefaultStorageId,
+                CompanyId = toolRequest.CompanyId,
             };
         }
     }

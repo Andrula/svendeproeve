@@ -19,11 +19,13 @@ namespace Flaadestation.Repository.Repositories
         public async Task<IEnumerable<Tool>> GetToolsByCompanyIdAsync(Guid companyId)
         {
             return await _context.Tools
+                .Include(v => v.Image)
                 .Include(t => t.Vehicle)
                     .ThenInclude(v => v.StorageItems)
                         .ThenInclude(si => si.Storage)
                 .Include(t => t.StorageItems)
                     .ThenInclude(si => si.Storage)
+                .Include(t => t.DefaultStorage)
                 .Where(t => t.CompanyId == companyId)
                 .ToListAsync();
         }

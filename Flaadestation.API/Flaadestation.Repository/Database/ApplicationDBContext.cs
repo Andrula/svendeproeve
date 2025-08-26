@@ -157,6 +157,15 @@ namespace Flaadestation.Repository.Database
                 .WithOne(img => img.Item)
                 .HasForeignKey<Item>(i => i.ImageId);
 
+            // ============================
+            // Items ↔ DefaultStorage
+            // ============================
+            builder.Entity<Item>()
+                .HasOne(i => i.DefaultStorage)
+                .WithMany(s => s.ItemsWithThisStorageAsDefault)
+                .HasForeignKey(i => i.DefaultStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
             base.OnModelCreating(builder);
         }
     }

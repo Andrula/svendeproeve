@@ -6,15 +6,12 @@ using System.Threading.Tasks;
 
 namespace Flaadestation.Service.DTO.SharedDTO
 {
-    public class StorageItemToolResponseDTO
+    public class StorageItemResponseDTO
     {
-        public Guid ItemId { get; set; }
         public Guid StorageItemId { get; set; }
         public DateTime ScheduledStart { get; set; }
         public DateTime ScheduledEnd { get; set; }
-        public string Name { get; set; } = string.Empty;
-        public string StorageItemNote { get; set; } = string.Empty;
-        public string ItemNote { get; set; } = string.Empty;
-        public ImageResponseDTO? Image { get; set; }
+        public string Note { get; set; } = string.Empty;
+        public StorageResponseDTO? Storage { get; set; }
     }
 }
