@@ -25,7 +25,14 @@ namespace Flaadestation.Repository.Repositories
                         .ThenInclude(si => si.Storage)
                 .Include(t => t.StorageItems)
                     .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Base)
+                .Include(t => t.StorageItems)
+                    .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Job)
                 .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Base)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Job)
                 .Where(t => t.CompanyId == companyId)
                 .ToListAsync();
         }

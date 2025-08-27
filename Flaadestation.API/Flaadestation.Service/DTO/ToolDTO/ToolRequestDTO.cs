@@ -12,7 +12,7 @@ namespace Flaadestation.Service.DTO.ToolDTO
         public string Name { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
         public Guid? VehicleId { get; set; }
-        public Guid DefaultStorageId { get; set; }
+        public Guid? DefaultStorageId { get; set; }
         public Guid CompanyId { get; set; }
     }
 }

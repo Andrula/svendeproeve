@@ -1,6 +1,7 @@
 ﻿using Flaadestation.Repository.Database;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Repository.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,14 +14,18 @@ namespace Flaadestation.Repository.Repositories
     {
         public StorageItemRepository(ApplicationDBContext dBContext) : base(dBContext) { }
 
-        public Task<StorageItem?> GetActiveStorageItemAsync(Guid itemId, DateTime checkTime)
+        public async Task<IEnumerable<StorageItem>> GetStorageItemsByItemIdAsync(Guid itemId)
         {
-            throw new NotImplementedException();
+            return await _context.StorageItems
+                .Include(si => si.Storage)
+                .Where(si => si.ItemId == itemId).ToListAsync();
         }
 
-        public Task<IEnumerable<StorageItem>> GetStorageItemsByItemIdAsync(Guid itemId)
+        public async Task<IEnumerable<StorageItem>> GetStorageItemsByStorageIdAsync(Guid storageId)
         {
-            throw new NotImplementedException();
+            return await _context.StorageItems
+                .Include(si => si.Storage)
+                .Where(si => si.StorageId == storageId).ToListAsync();
         }
     }
 }

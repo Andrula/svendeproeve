@@ -11,6 +11,6 @@ namespace Flaadestation.Service.DTO.MachineryDTO
         public string Name { get; set; } = string.Empty;
         public Guid CompanyId { get; set; }
         public string? Note { get; set; }
-        public Guid DefaultStorageId { get; set; }
+        public Guid? DefaultStorageId { get; set; }
     }
 }

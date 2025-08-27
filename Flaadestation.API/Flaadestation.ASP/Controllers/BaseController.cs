@@ -62,7 +62,6 @@ namespace Flaadestation.ASP.Controllers
 
                 var updatedBaseResponse = new BaseRequestDTO
                 {
-                    BaseId = updated.BaseId,
                     Name = updated.Name,
                     CompanyId = updated.CompanyId,
                     AddressId = updated.AddressId
