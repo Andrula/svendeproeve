@@ -17,11 +17,18 @@ namespace Flaadestation.Repository.Repositories
         {
         }
 
-        public override async Task<IEnumerable<Employee>> GetAllAsync()
+        public async Task<IEnumerable<Employee>> GetEmployeesByCompanyIdAsync(Guid companyId)
         {
-            return await _dbSet
+            return await _context.Employees
+                .Include(e => e.Image)
                 .Include(e => e.Occupation)
                 .Include(e => e.Vehicle)
+                    .ThenInclude(v => v.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                .Include(e => e.StorageItems)
+                    .ThenInclude(si => si.Storage)
+                .Include(e => e.DefaultStorage)
+                .Where(e => e.CompanyId == companyId)
                 .ToListAsync();
         }
 

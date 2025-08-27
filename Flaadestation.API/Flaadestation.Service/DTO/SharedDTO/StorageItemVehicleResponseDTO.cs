@@ -31,7 +31,7 @@ namespace Flaadestation.Service.DTO.SharedDTO
         public string Phone { get; set; } = string.Empty;
         public OccupationResponseDTO? Occupation { get; set; }
         public string Note { get; set; } = string.Empty;
-        public ImageResponseDTO? Image { get; set; }
+        public ImageResponseDTO? Image { get; set; }  
     }
 
     public class StorageItemVehicleToolResponseDTO
