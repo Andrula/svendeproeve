@@ -122,7 +122,8 @@ namespace Flaadestation.Service.Services
                     Note = si.Note,
                     ScheduledStart = si.ScheduledStart,
                     ScheduledEnd = si.ScheduledEnd,
-                    Storage = si.Storage is null ? null : StorageResponseDTO.MapStorageToStorageResponseDTO(si.Storage)
+                    Storage = si.Storage is null ? null : StorageResponseDTO.MapStorageToStorageResponseDTO(si.Storage),
+                    ItemId = si.ItemId,
                 }).ToList(),
                 Employees = vehicle.Employees.Select(e => new VehicleEmployeeResponseDTO
                 {

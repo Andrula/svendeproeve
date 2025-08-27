@@ -10,6 +10,6 @@ namespace Flaadestation.Repository.Repositories.Interfaces
     public interface IStorageItemRepository : IRepository<StorageItem>
     {
         Task<IEnumerable<StorageItem>> GetStorageItemsByItemIdAsync(Guid itemId);
-        Task<StorageItem?> GetActiveStorageItemAsync(Guid itemId, DateTime checkTime);
+        Task<IEnumerable<StorageItem>> GetStorageItemsByStorageIdAsync(Guid storageId);
     }
 }

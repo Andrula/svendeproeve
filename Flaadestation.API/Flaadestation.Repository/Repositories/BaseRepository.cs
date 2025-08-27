@@ -28,6 +28,9 @@ namespace Flaadestation.Repository.Repositories
                    .ThenInclude(s => s.StorageItems)
                        .ThenInclude(si => si.Item)
                            .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                .Where(j => j.CompanyId == companyId)
                .ToListAsync();
         }
@@ -41,26 +44,60 @@ namespace Flaadestation.Repository.Repositories
         public async Task<Base?> GetBaseWithStorageAsync(Guid baseId)
         {
             return await _dbSet
-                .Include(b => b.Storage)
-                    .ThenInclude(s => s.StorageItems)
-                .Include(b => b.Company)
+                .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Employees)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                 .FirstOrDefaultAsync(b => b.BaseId == baseId);
         }
 
         public override async Task<Base?> GetByIdAsync(Guid id)
         {
             return await _dbSet
-                .Include(b => b.Storage)        
-                    .ThenInclude(s => s.StorageItems)
-                .Include(b => b.Company)
+                .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Employees)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                 .FirstOrDefaultAsync(b => b.BaseId == id);
         }
 
         public override async Task<IEnumerable<Base>> GetAllAsync()
         {
             return await _dbSet
-                .Include(b => b.Company)
-                .OrderBy(b => b.Name)
+                .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Employees)
+               .Include(j => j.Storage)
+                   .ThenInclude(s => s.StorageItems)
+                       .ThenInclude(si => si.Item)
+                           .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                 .ToListAsync();
         }
     }

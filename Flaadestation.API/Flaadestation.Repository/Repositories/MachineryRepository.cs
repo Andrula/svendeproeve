@@ -16,18 +16,27 @@ namespace Flaadestation.Repository.Repositories
         public async Task<IEnumerable<Machinery>> GetMachineryByCompanyIdAsync(Guid companyId)
         {
             return await _context.Set<Machinery>()
-                .Include(m => m.StorageItems)
+                .Include(t => t.StorageItems)
                     .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Base)
+                .Include(t => t.StorageItems)
+                    .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Job)
+                .Include(t => t.DefaultStorage)
                 .Where(m => m.CompanyId == companyId)
                 .ToListAsync();
         }
         public override async Task<Machinery?> GetByIdAsync(Guid id)
         {
             return await _dbSet
-                .Include(m => m.StorageItems)
+                .Include(t => t.StorageItems)
                     .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Base)
+                .Include(t => t.StorageItems)
+                    .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Job)
+                .Include(t => t.DefaultStorage)
                 .FirstOrDefaultAsync(m => m.ItemId == id);
         }
-
     }
 }
