@@ -29,6 +29,9 @@ namespace Flaadestation.Repository.Repositories
                     .ThenInclude(s => s.StorageItems)
                         .ThenInclude(si => si.Item)
                             .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                 .Include(j => j.Customers)
                 .Where(j => j.ScheduledStart <= DateTime.Now && j.ScheduledEnd >= DateTime.Now)
                 .ToListAsync();
@@ -48,6 +51,9 @@ namespace Flaadestation.Repository.Repositories
                     .ThenInclude(s => s.StorageItems)
                         .ThenInclude(si => si.Item)
                             .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                 .Include(j => j.Customers)
                 .Where(j => j.CompanyId == companyId)
                 .ToListAsync();
@@ -67,6 +73,9 @@ namespace Flaadestation.Repository.Repositories
                     .ThenInclude(s => s.StorageItems)
                         .ThenInclude(si => si.Item)
                             .ThenInclude(i => ((Vehicle)i).Tools)
+                .Include(j => j.Storage)
+                    .ThenInclude(s => s.ItemsWithThisStorageAsDefault)
+                        .ThenInclude(i => i.StorageItems)
                 .Include(j => j.Customers)
                 .FirstOrDefaultAsync(j => j.JobId == jobId);
         }

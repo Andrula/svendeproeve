@@ -2,6 +2,7 @@
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Repository.Repositories.Interfaces;
 using Flaadestation.Service.DTO.BaseDTO;
+using Flaadestation.Service.DTO.JobDTO;
 using Flaadestation.Service.DTO.SharedDTO;
 using Flaadestation.Service.Interfaces;
 using System;
@@ -98,7 +99,7 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til at hente base via. ID.
-        public async Task<BaseResponseDTO> GetBaseByIdAsync(Guid id)
+        public async Task<BaseResponseDTO?> GetBaseByIdAsync(Guid id)
         {
             var baseEntity = await _baseRepository.GetByIdAsync(id);
             return baseEntity is null ? null : MapBaseToBaseResponse(baseEntity);
@@ -161,18 +162,10 @@ namespace Flaadestation.Service.Services
         {
             var baseResponse =  new BaseResponseDTO
             {
+                BaseId = baseEntity.BaseId,
                 Name = baseEntity.Name,
                 CompanyId = baseEntity.CompanyId,
                 AddressId = baseEntity.AddressId,
-                Employees = baseEntity.Employees.Select(employee => new BaseEmployeeResponseDTO
-                {
-                    EmployeeId = employee.ItemId,
-                    Name = (employee.FirstName + employee.LastName),
-                    Email = employee.Email,
-                    Phone = employee.Phone,
-                    CompanyId = employee.CompanyId
-                   
-                }).ToList(),
                 Storage = new BaseStorageResponseDTO
                 {
                     StorageId = baseEntity.StorageId,
@@ -183,123 +176,146 @@ namespace Flaadestation.Service.Services
 
             foreach (var storageItem in storageItems)
             {
-                if (storageItem.Item is Employee employee)
+                if (storageItem.Item is Employee)
                 {
-                    baseResponse.Storage.Employees.Add(new StorageItemEmployeeResponseDTO
+                    baseResponse.Storage.Employees.Add(StorageItemEmployeeResponseDTO.MapStorageItemEmployeeToResponse(storageItem));
+                }
+
+                else if (storageItem.Item is Tool)
+                {
+                    baseResponse.Storage.Tools.Add(StorageItemToolResponseDTO.MapStorageItemToolToResponse(storageItem));
+                }
+
+                else if (storageItem.Item is Machinery)
+                {
+                    baseResponse.Storage.Machines.Add(StorageItemMachineryResponseDTO.MapStorageItemMechineryToResponse(storageItem));
+                }
+
+                else if (storageItem.Item is Vehicle)
+                {
+                    baseResponse.Storage.Vehicles.Add(StorageItemVehicleResponseDTO.MapStorageItemVehicleToResponse(storageItem));
+                }
+            }
+
+            var defaultItems = GetItemsWithThisStorageAsDefaultAndNoCurrentAllocations(baseEntity);
+
+            foreach (var item in defaultItems)
+            {
+                if (item is Employee employee)
+                {
+                    baseResponse.Storage.DefaultEmployees.Add(new BaseStorageDefaultEmployeeResponseDTO
                     {
-                        ItemId = storageItem.ItemId,
-                        StorageItemId = storageItem.StorageItemId,
-                        ScheduledStart = storageItem.ScheduledStart,
-                        ScheduledEnd = storageItem.ScheduledEnd,
+                        ItemId = employee.ItemId,
                         FirstName = employee.FirstName,
                         LastName = employee.LastName,
                         Email = employee.Email,
                         Phone = employee.Phone,
+                        Note = employee.Note,
+                        Image = employee.Image is null ? null : new ImageResponseDTO
+                        {
+                            ImageId = employee.Image.ImageId,
+                            Value = employee.Image.Value
+                        },
                         Occupation = employee.Occupation is null ? null : new OccupationResponseDTO
                         {
                             OccupationId = employee.Occupation.OccupationId,
                             Name = employee.Occupation.Name,
-                        },
-                        StorageItemNote = storageItem.Note,
-                        ItemNote = employee.Note,
-                        Image = employee.Image is null ? null : new ImageResponseDTO
-                        {
-                            ImageId = employee.Image.ImageId,
-                            Value = employee.Image.Value,
                         }
                     });
                 }
 
-                else if (storageItem.Item is Tool tool)
+                else if (item is Tool tool)
                 {
-                    baseResponse.Storage.Tools.Add(new StorageItemToolResponseDTO
+                    baseResponse.Storage.DefaultTools.Add(new BaseStorageDefaultToolResponseDTO
                     {
-                        ItemId = storageItem.ItemId,
-                        StorageItemId = storageItem.StorageItemId,
-                        ScheduledStart = storageItem.ScheduledStart,
-                        ScheduledEnd = storageItem.ScheduledEnd,
+                        ItemId = tool.ItemId,
+                        Note = tool.Note,
                         Name = tool.Name,
-                        StorageItemNote = storageItem.Note,
-                        ItemNote = tool.Note,
                         Image = tool.Image is null ? null : new ImageResponseDTO
                         {
                             ImageId = tool.Image.ImageId,
-                            Value = tool.Image.Value,
-                        }
+                            Value = tool.Image.Value
+                        },
                     });
                 }
 
-                else if (storageItem.Item is Machinery machine)
+                else if (item is Machinery machine)
                 {
-                    baseResponse.Storage.Machines.Add(new StorageItemMachineryResponseDTO
+                    baseResponse.Storage.DefaultMachines.Add(new BaseStorageDefaultMachineryResponseDTO
                     {
-                        ItemId = storageItem.ItemId,
-                        StorageItemId = storageItem.StorageItemId,
-                        ScheduledStart = storageItem.ScheduledStart,
-                        ScheduledEnd = storageItem.ScheduledEnd,
+                        ItemId = machine.ItemId,
+                        Note = machine.Note,
                         Name = machine.Name,
-                        StorageItemNote = storageItem.Note,
-                        ItemNote = machine.Note,
                         Image = machine.Image is null ? null : new ImageResponseDTO
                         {
                             ImageId = machine.Image.ImageId,
-                            Value = machine.Image.Value,
-                        }
+                            Value = machine.Image.Value
+                        },
                     });
                 }
 
-                else if (storageItem.Item is Vehicle vehicle)
+                else if (item is Vehicle vehicle)
                 {
-                    baseResponse.Storage.Vehicles.Add(new StorageItemVehicleResponseDTO
+                    baseResponse.Storage.DefaultVehicles.Add(new BaseStorageDefaultVehicleResponseDTO
                     {
-                        ItemId = storageItem.ItemId,
-                        StorageItemId = storageItem.StorageItemId,
-                        ScheduledStart = storageItem.ScheduledStart,
-                        ScheduledEnd = storageItem.ScheduledEnd,
+                        ItemId = vehicle.ItemId,
                         Model = vehicle.Model,
                         LicensePlate = vehicle.LicensePlate,
-                        StorageItemNote = storageItem.Note,
-                        ItemNote = vehicle.Note,
+                        Note = vehicle.Note,
                         Image = vehicle.Image is null ? null : new ImageResponseDTO
                         {
                             ImageId = vehicle.Image.ImageId,
-                            Value = vehicle.Image.Value,
+                            Value = vehicle.Image.Value
                         },
-                        Employees = vehicle.Employees.Select(employee => new StorageItemVehicleEmployeeResponseDTO
+                        Employees = vehicle.Employees.Select(employee => new BaseStorageDefaultEmployeeResponseDTO
                         {
                             ItemId = employee.ItemId,
                             FirstName = employee.FirstName,
                             LastName = employee.LastName,
                             Email = employee.Email,
                             Phone = employee.Phone,
-                            Occupation = employee.Occupation is null ? null : new OccupationResponseDTO
-                            {
-                                OccupationId = employee.Occupation.OccupationId,
-                                Name = employee.Occupation.Name,
-                            },
                             Note = employee.Note,
                             Image = employee.Image is null ? null : new ImageResponseDTO
                             {
                                 ImageId = employee.Image.ImageId,
-                                Value = employee.Image.Value,
+                                Value = employee.Image.Value
+                            },
+                            Occupation = employee.Occupation is null ? null : new OccupationResponseDTO
+                            {
+                                OccupationId = employee.Occupation.OccupationId,
+                                Name = employee.Occupation.Name,
                             }
                         }).ToList(),
-                        Tools = vehicle.Tools.Select(tool => new StorageItemVehicleToolResponseDTO
+                        Tools = vehicle.Tools.Select(tool => new BaseStorageDefaultToolResponseDTO
                         {
-                            ItemId = storageItem.ItemId,
-                            Name = tool.Name,
+                            ItemId = tool.ItemId,
                             Note = tool.Note,
+                            Name = tool.Name,
                             Image = tool.Image is null ? null : new ImageResponseDTO
                             {
                                 ImageId = tool.Image.ImageId,
-                                Value = tool.Image.Value,
-                            }
+                                Value = tool.Image.Value
+                            },
                         }).ToList(),
                     });
                 }
             }
 
             return baseResponse;
+        }
+
+        private List<Item> GetItemsWithThisStorageAsDefaultAndNoCurrentAllocations(Base baseEntity)
+        {
+            return baseEntity.Storage!.ItemsWithThisStorageAsDefault
+                .Where(i =>
+                    (
+                        (i is Employee e && (e.VehicleId != null || e.VehicleId != Guid.Empty)) ||
+                        (i is Tool t && (t.VehicleId != null || t.VehicleId != Guid.Empty))
+                    )
+                    &&
+                    !i.StorageItems.Any(si =>
+                        si.ScheduledStart.Date <= DateTime.Today &&
+                        si.ScheduledEnd.Date >= DateTime.Today)).ToList();
         }
     }
 }

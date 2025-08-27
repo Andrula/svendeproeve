@@ -18,13 +18,11 @@ namespace Flaadestation.Service.Services
     public class ToolService : IToolService
     {
         private readonly IToolRepository _toolRepository;
-        private readonly IStorageRepository _storageRepository;
         private readonly ApplicationDBContext _context;
 
-        public ToolService(IToolRepository toolRepository, IStorageRepository storageRepository, ApplicationDBContext context)
+        public ToolService(IToolRepository toolRepository, ApplicationDBContext context)
         {
             _toolRepository = toolRepository;
-            _storageRepository = storageRepository;
             _context = context;
         }
 
@@ -121,6 +119,7 @@ namespace Flaadestation.Service.Services
                     ScheduledStart = si.ScheduledStart,
                     ScheduledEnd = si.ScheduledEnd,
                     Note = si.Note,
+                    ItemId = si.ItemId,
                 }).ToList(),
                 Vehicle = tool.Vehicle is null ? null : new ToolVehicleResponseDTO
                 {

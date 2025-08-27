@@ -22,6 +22,16 @@ namespace Flaadestation.Repository.Repositories
             return await _dbSet
                 .Include(e => e.Occupation)
                 .Include(e => e.Vehicle)
+                .Include(t => t.StorageItems)
+                    .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Base)
+                .Include(t => t.StorageItems)
+                    .ThenInclude(si => si.Storage)
+                        .ThenInclude(s => s.Job)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Base)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Job)
                 .ToListAsync();
         }
 
@@ -37,6 +47,16 @@ namespace Flaadestation.Repository.Repositories
                         si.ScheduledStart < endTime && si.ScheduledEnd > startTime))
                     .Include(e => e.Occupation)
                     .Include(e => e.Vehicle)
+                    .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Base)
+                    .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Job)
+                    .Include(t => t.DefaultStorage)
+                        .ThenInclude(ds => ds.Base)
+                    .Include(t => t.DefaultStorage)
+                        .ThenInclude(ds => ds.Job)
                     .ToListAsync();
             }
 
@@ -47,6 +67,16 @@ namespace Flaadestation.Repository.Repositories
                     si.ScheduledStart <= now && si.ScheduledEnd >= now))
                 .Include(e => e.Occupation)
                 .Include(e => e.Vehicle)
+                .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Base)
+                    .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Job)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Base)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Job)
                 .ToListAsync();
         }
 
@@ -55,6 +85,16 @@ namespace Flaadestation.Repository.Repositories
             return await _dbSet
                 .Include(e => e.Occupation)
                 .Include(e => e.Vehicle)
+                .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Base)
+                    .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Job)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Base)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Job)
                 .FirstOrDefaultAsync(e => e.ItemId == id);
         }
 
@@ -64,6 +104,16 @@ namespace Flaadestation.Repository.Repositories
                 .Where(e => e.OccupationId == occupationId)
                 .Include(e => e.Occupation)
                 .Include(e => e.Vehicle)
+                .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Base)
+                    .Include(t => t.StorageItems)
+                        .ThenInclude(si => si.Storage)
+                            .ThenInclude(s => s.Job)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Base)
+                .Include(t => t.DefaultStorage)
+                    .ThenInclude(ds => ds.Job)
                 .ToListAsync();
         }
     }
