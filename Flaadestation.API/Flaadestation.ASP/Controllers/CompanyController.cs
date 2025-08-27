@@ -29,7 +29,7 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyRequestDTO request)
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyRequestDTO request)
         {
             var company = new Company
             {

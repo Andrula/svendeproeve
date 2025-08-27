@@ -53,7 +53,7 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequestDTO request)
+        public async Task<IActionResult> CreateCustomer([FromBody] CustomerRequestDTO request)
         {
             var customer = new Customer
             {
@@ -77,7 +77,7 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(Guid id, [FromBody] UpdateCustomerRequestDTO request)
+        public async Task<IActionResult> UpdateCustomer(Guid id, [FromBody] CustomerRequestDTO request)
         {
             var customer = new Customer
             {

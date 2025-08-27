@@ -14,7 +14,7 @@ namespace Flaadestation.Service.Interfaces
         Task<BaseResponseDTO> GetBaseByIdAsync(Guid id);
         Task<Base?> GetBaseWithStorageAsync(Guid baseId);
         Task<BaseResponseDTO> CreateBaseAsync(BaseRequestDTO baseEntity);
-        Task<Base?> UpdateBaseAsync(Guid id, BaseRequestDTO baseRequest);
+        Task<BaseResponseDTO?> UpdateBaseAsync(Guid id, BaseRequestDTO baseRequest);
         Task<bool> DeleteBaseAsync(Guid id);
         Task<bool> IsBaseNameAvailableAsync(string name, Guid companyId);
     }

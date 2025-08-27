@@ -34,7 +34,7 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOccupation([FromBody] CreateOccupationRequestDTO request)
+        public async Task<IActionResult> CreateOccupation([FromBody] OccupationRequestDTO request)
         {
             var occupation = new Occupation
             {
