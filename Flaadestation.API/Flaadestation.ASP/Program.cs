@@ -41,6 +41,7 @@ namespace Flaadestation.ASP
             builder.Services.AddScoped<IToolService, ToolService>();
             builder.Services.AddScoped<IVehicleService, VehicleService>();
             builder.Services.AddScoped<IMachineryService, MachineryService>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();    
 
 
             builder.Services.AddControllers();
