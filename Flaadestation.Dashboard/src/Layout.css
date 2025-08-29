@@ -1,0 +1,15 @@
+.page-content {
+    transition: margin-left 0.3s ease;
+    width: 100%;
+}
+
+.page-content.shifted {
+    margin-left: 250px;
+}
+
+
+html,
+body,
+#root {
+    height: 100;
+}

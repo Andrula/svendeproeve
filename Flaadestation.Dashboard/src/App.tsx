@@ -1,34 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.min.css";
+import Layout from './Layout';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import EmployeeComponent from './Components/EmployeeComponent/EmployeeComponent';
+import VehicleComponent from './Components/VehicleComponent/VehicleComponent';
+import MachineryComponent from './Components/MachineryComponent/MachineryComponent';
+import ToolComponent from './Components/ToolComponent/ToolComponent';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <BrowserRouter>
+      <Layout>
+        <Routes>
+          {/* 'container mt-4' skal inkluderes i komponenter/pages, som vi gerne vil give en 'fixed width' og centrere på skærmen
+              Jeg har ikke gjort den global, da jeg tænker vi ikke skal bruge samme styling i 'Map' */}
+          <Route path="/" element={<div className='container mt-4'><h1>Home</h1></div>} /> { /* TODO: Home/Forside component*/ }
+          <Route path="/employees" element={<EmployeeComponent />} />
+          <Route path="/vehicles" element={<VehicleComponent />} />
+          <Route path="/machines" element={<MachineryComponent />} />
+          <Route path="/tools" element={<ToolComponent />} />
+        </Routes>
+      </Layout>
+    </BrowserRouter>
   )
 }
 
