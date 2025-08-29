@@ -1,4 +1,5 @@
 
+using Flaadestation.ASP.Extensions;
 using Flaadestation.Repository.Database;
 using Flaadestation.Repository.Repositories;
 using Flaadestation.Repository.Repositories.Interfaces;
@@ -17,31 +18,8 @@ namespace Flaadestation.ASP
 
             // Add services to the container.
 
-            // repositories
-            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-            builder.Services.AddScoped<IOccupationRepository, OccupationRepository>();
-            builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-            builder.Services.AddScoped<IStorageRepository, StorageRepository>();
-            builder.Services.AddScoped<IStorageItemRepository, StorageItemRepository>();
-            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-            builder.Services.AddScoped<IJobRepository, JobRepository>();
-            builder.Services.AddScoped<IToolRepository, ToolRepository>();
-            builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
-            builder.Services.AddScoped<IMachineryRepository, MachineryRepository>();
-            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-
-            // services
-            builder.Services.AddScoped<ICompanyService, CompanyService>();
-            builder.Services.AddScoped<IOccupationService, OccupationService>();
-            builder.Services.AddScoped<IBaseService, BaseService>();
-            builder.Services.AddScoped<IStorageService, StorageService>();
-            builder.Services.AddScoped<IStorageItemService, StorageItemService>();
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
-            builder.Services.AddScoped<IJobService, JobService>();
-            builder.Services.AddScoped<IToolService, ToolService>();
-            builder.Services.AddScoped<IVehicleService, VehicleService>();
-            builder.Services.AddScoped<IMachineryService, MachineryService>();
-            builder.Services.AddScoped<IEmployeeService, EmployeeService>();    
+            builder.Services.AddRepositories();
+            builder.Services.AddBusinessServices();
 
 
             builder.Services.AddControllers();
