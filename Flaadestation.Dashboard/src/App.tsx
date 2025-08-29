@@ -7,6 +7,7 @@ import EmployeeComponent from './Components/EmployeeComponent/EmployeeComponent'
 import VehicleComponent from './Components/VehicleComponent/VehicleComponent';
 import MachineryComponent from './Components/MachineryComponent/MachineryComponent';
 import ToolComponent from './Components/ToolComponent/ToolComponent';
+import MapComponent from './Components/MapComponent/MapComponent';
 
 function App() {
 
@@ -21,6 +22,7 @@ function App() {
           <Route path="/vehicles" element={<VehicleComponent />} />
           <Route path="/machines" element={<MachineryComponent />} />
           <Route path="/tools" element={<ToolComponent />} />
+          <Route path="/map" element={<MapComponent />} />
         </Routes>
       </Layout>
     </BrowserRouter>
