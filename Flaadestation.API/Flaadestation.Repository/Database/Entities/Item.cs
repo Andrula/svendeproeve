@@ -1,0 +1,22 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using static Flaadestation.Shared.Constants;
+
+namespace Flaadestation.Repository.Database.Entities
+{
+    public class Item
+    {
+        public Guid ItemId { get; set; }
+        public ItemType ItemType { get; set; }
+        public string Note { get; set; } = string.Empty;
+        public Guid CompanyId { get; set; }
+        public Guid ImageId { get; set; }
+
+        public Company? Company { get; set; }
+        public Image? Image { get; set; }
+        public List<StorageItem> StorageItems { get; set; } = [];
+    }
+}

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Flaadestation.Repository.Database.Entities;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,6 @@ namespace Flaadestation.Repository.Database
     {
         public Guid CompanyId { get; set; }
 
-        public Guid RoleId { get; set; }
-
-        // TODO: Tilføj navigaion propety til Company og Role
+        public Company? Company { get; set; }
     }
 }
