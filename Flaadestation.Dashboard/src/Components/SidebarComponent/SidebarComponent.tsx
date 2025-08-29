@@ -57,6 +57,16 @@ const SidebarComponent: React.FC<SidebarProps> = ({ isOpen }) => {
             Værktøjer
           </NavLink>
         </li>
+                <li className="nav-item">
+          <NavLink
+            to="/map"
+            className={({ isActive }) =>
+              `nav-link sidebar-link ${isActive ? "active-link" : ""}`
+            }
+          >
+            Kort
+          </NavLink>
+        </li>
       </ul>
     </div>
   );
