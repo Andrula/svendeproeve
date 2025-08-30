@@ -45,6 +45,16 @@ namespace Flaadestation.ASP
                 options.Cookie.HttpOnly = true;
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -53,6 +63,8 @@ namespace Flaadestation.ASP
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseCors("AllowReactApp");
 
             app.UseHttpsRedirection();
 
