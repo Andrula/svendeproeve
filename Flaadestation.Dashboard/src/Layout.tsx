@@ -8,13 +8,14 @@ const Layout: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="d-flex">
+    <div className="d-flex min-vh-100">
       <SidebarComponent isOpen={isOpen} />
 
-      <div className={`flex-grow-1 page-content ${isOpen ? "shifted" : ""}`}>
+      <div className={`d-flex flex-column page-content ${isOpen ? "shifted" : ""}`}>
         <NavbarComponent toggleSidebar={() => setIsOpen(!isOpen)} />
-        <main>{children}</main>
+        <main className="flex-grow-1">{children}</main>
       </div>
+      
     </div>
   );
 };

@@ -67,19 +67,17 @@ export default function VehicleComponent() {
 
   if (loading) {
     return (
-      <div className="container mt-4">
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">
             <span className="visually-hidden">Indlæser data...</span>
           </div>
           <span className="ms-2">Indlæser køretøjer...</span>
         </div>
-      </div>
     );
   }
 
   return (
-    <div className="container mt-4">
+    <>
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Køretøjer</h1>
       </div>
@@ -102,21 +100,21 @@ export default function VehicleComponent() {
         </div>
       ) : (
         <div className="row">
-          {vehicles.map((vehicleModel) => {
-            const currentAssignment = vehicleModel.currentAssignment;
+          {vehicles.map((vehicle) => {
+            const currentAssignment = vehicle.currentAssignment;
             
             return (
               <div
-                key={vehicleModel.data.itemId}
+                key={vehicle.data.itemId}
                 className="col-md-6 col-lg-4 mb-3"
               >
                 <div className="card">
                   <div className="card-header bg-dark">
                     <h5 className="card-title">
                       <strong className="text-app-primary">
-                        {vehicleModel.model}
+                        {vehicle.model}
                       </strong>
-                      {vehicleModel.isAvailable && (
+                      {vehicle.isAvailable && (
                         <span className="badge bg-success ms-2">Ledig</span>
                       )}
                     </h5>
@@ -126,7 +124,7 @@ export default function VehicleComponent() {
                       {false ? (
                         <>
                           <p><strong>Nummerplade: </strong></p>
-                          <p>{vehicleModel.licensePlate}</p>
+                          <p>{vehicle.licensePlate}</p>
                         </>
                       ) : (
                         <>
@@ -135,10 +133,10 @@ export default function VehicleComponent() {
                           </p>
                         </>
                       )}
-                      <p><strong>Standard lager:</strong> {vehicleModel.data.defaultStorage.name}</p>
-                      {vehicleModel.data.note && (
+                      <p><strong>Standard lager:</strong> {vehicle.data.defaultStorage.name}</p>
+                      {vehicle.data.note && (
                         <>
-                          <p><strong>Note:</strong> {vehicleModel.data.note}</p>
+                          <p><strong>Note:</strong> {vehicle.data.note}</p>
                         </>
                       )}
                       {currentAssignment ? (
@@ -168,9 +166,9 @@ export default function VehicleComponent() {
                           </p>
                         </>
                       )}
-                      {vehicleModel.employees.length > 0 ? (
+                      {vehicle.employees.length > 0 ? (
                         <>
-                            <button className="btn btn-primary btn-sm mb-2">{vehicleModel.employees.length} Medarbejdere</button>
+                            <button className="btn btn-primary btn-sm mb-2">{vehicle.employees.length} Medarbejdere</button>
                             <br/>
                         </>
                       ) : (
@@ -180,9 +178,9 @@ export default function VehicleComponent() {
                           </p>
                         </>
                       )}
-                      {vehicleModel.tools.length > 0 ? (
+                      {vehicle.tools.length > 0 ? (
                         <>
-                            <button className="btn btn-primary btn-sm">{vehicleModel.tools.length} Værktøjer</button>
+                            <button className="btn btn-primary btn-sm">{vehicle.tools.length} Værktøjer</button>
                             <br/>
                         </>
                       ) : (
@@ -199,7 +197,8 @@ export default function VehicleComponent() {
                     <button className="btn btn-sm btn-outline-primary me-2">
                       <i className="bi bi-pencil"></i> Rediger
                     </button>
-                    <button className="btn btn-sm btn-outline-danger">
+                    <button className="btn btn-sm btn-outline-danger"
+                    onClick={() => handleDeleteVehicle(vehicle)}>
                       <i className="bi bi-trash"></i> Slet
                     </button>
                   </div>
@@ -215,6 +214,6 @@ export default function VehicleComponent() {
           Viser {vehicles.length} køretøjer
         </small>
       </div>
-    </div>
+    </>
   );
 }
