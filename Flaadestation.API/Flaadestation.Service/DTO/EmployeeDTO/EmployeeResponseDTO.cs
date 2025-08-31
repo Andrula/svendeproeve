@@ -18,8 +18,7 @@ namespace Flaadestation.Service.DTO.EmployeeDTO
         public EmployeeOccupationResponseDTO? Occupation { get; set; }
         public StorageResponseDTO? DefaultStorage { get; set; }
         public Guid CompanyId { get; set; }
-        public Guid? ImageId { get; set; }
-        public byte[]? ImageValue { get; set; }
+        public ImageResponseDTO? Image { get; set; }
         public List<StorageItemResponseDTO> StorageItems { get; set; } = [];
         public EmployeeVehicleResponseDTO? Vehicle { get; set; }
     }
@@ -30,8 +29,7 @@ namespace Flaadestation.Service.DTO.EmployeeDTO
         public string Model { get; set; } = string.Empty;
         public string LicensePlate { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
-        public Guid? ImageId { get; set; }
-        public byte[]? ImageValue { get; set; }
+        public ImageResponseDTO? Image { get; set; }
         public StorageResponseDTO? Storage { get; set; }
     }
 

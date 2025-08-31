@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { employeeService, EmployeeModel, HttpError, DEFAULT_COMPANY_ID } from '../../Services/employeeService';
+import { employeeService, EmployeeModel, HttpError, DEFAULT_COMPANY_ID } from '../../Services/EmployeeService';
 
 export default function EmployeeComponent() {
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);

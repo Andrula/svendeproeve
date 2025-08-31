@@ -1,9 +1,29 @@
+p {
+  margin-bottom: .25rem !important;
+}
+
 .bg-app-primary {
   background-color: var(--app-primary) !important;
 }
 
+.bg-app-primary-light {
+  background-color: var(--app-primary-light) !important;
+}
+
+.bg-app-primary-dark {
+  background-color: var(--app-primary-dark) !important;
+}
+
 .text-app-primary {
   color: var(--app-primary) !important;
+}
+
+.text-app-primary-light {
+  color: var(--app-primary-light) !important;
+}
+
+.text-app-primary-dark {
+  color: var(--app-primary-dark) !important;
 }
 
 :root {
