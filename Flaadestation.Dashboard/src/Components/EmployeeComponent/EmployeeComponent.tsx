@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { employeeService, EmployeeModel, HttpError, DEFAULT_COMPANY_ID } from '../../Services/employeeService';
+import { employeeService, EmployeeModel, HttpError, DEFAULT_COMPANY_ID } from '../../Services/EmployeeService';
 import EmployeeModal, { type EmployeeFormData } from './EmployeeModal';
-
+        
 export default function EmployeeComponent() {
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
   const [loading, setLoading] = useState(true);

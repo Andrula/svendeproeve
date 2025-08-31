@@ -1,24 +1,6 @@
-export interface Occupation {
-  occupationId: string;
-  name: string;
-}
-
-export interface Storage {
-  relevantId: string;
-  storageType: number;
-  name: string;
-  storageId: string;
-  addressId: string;
-}
-
-export interface StorageItem {
-  storageItemId: string;
-  scheduledStart: string;
-  scheduledEnd: string;
-  note: string;
-  itemId: string;
-  storage: Storage;
-}
+import type { Image } from "./Image";
+import type { Occupation } from "./Occupation";
+import type { StorageItem } from "./StorageItem";
 
 export interface Employee {
   itemId: string;
@@ -30,8 +12,7 @@ export interface Employee {
   occupation: Occupation;
   defaultStorage: Storage;
   companyId: string;
-  imageId: string | null;
-  imageValue: string | null;
+  image : Image | null;
   storageItems: StorageItem[];
   vehicle: any | null;
 }

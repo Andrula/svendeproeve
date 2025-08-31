@@ -54,7 +54,7 @@ const SidebarComponent: React.FC<SidebarProps> = ({ isOpen }) => {
               `nav-link sidebar-link ${isActive ? "active-link" : ""}`
             }
           >
-            Værktøjer
+            Værktøj
           </NavLink>
         </li>
           <li className="nav-item">

@@ -1,4 +1,4 @@
-import { HttpClient } from './httpClient';
+import { HttpClient } from './HttpClient';
 import { type Employee, EmployeeModel } from '../Models/Employee';
 import type { EmployeeFormData } from '../Components/EmployeeComponent/EmployeeModal';
 
@@ -52,5 +52,5 @@ export class EmployeeService {
 export const employeeService = new EmployeeService(httpClient);
 
 export const DEFAULT_COMPANY_ID = import.meta.env.VITE_COMPANY_ID || '';
-export { HttpError } from './httpClient';
+export { HttpError } from './HttpClient';
 export { EmployeeModel } from '../Models/Employee';
