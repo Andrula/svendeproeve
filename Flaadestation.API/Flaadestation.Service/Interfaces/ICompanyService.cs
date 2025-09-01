@@ -1,4 +1,5 @@
 ﻿using Flaadestation.Repository.Database.Entities;
+using Flaadestation.Service.DTO.CompanyDTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ namespace Flaadestation.Service.Interfaces
 {
     public interface ICompanyService
     {
-        Task<Company?> GetCompanyByIdAsync(Guid id);
-        Task<Company> CreateCompanyAsync(Company company);
-        Task<Company?> UpdateCompanyAsync(Guid id, Company company);
+        Task<CompanyResponseDTO?> GetCompanyByIdAsync(Guid id);
+        Task<CompanyResponseDTO> CreateCompanyAsync(CompanyRequestDTO companyRequest);
+        Task<CompanyResponseDTO?> UpdateCompanyAsync(Guid id, CompanyRequestDTO companyRequest);
         Task<bool> DeleteCompanyAsync(Guid id);
         Task<bool> IsCompanyNameAvailableAsync(string name);
     }
