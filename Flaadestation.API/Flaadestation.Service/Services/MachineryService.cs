@@ -1,6 +1,7 @@
 ﻿using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Repository.Repositories.Interfaces;
 using Flaadestation.Service.DTO.MachineryDTO;
+using Flaadestation.Service.DTO.SharedDTO;
 using Flaadestation.Service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -122,7 +123,16 @@ namespace Flaadestation.Service.Services
                 Note = machinery.Note,
                 CompanyId = machinery.CompanyId,
                 ImageId = machinery.ImageId,
-                IsCurrentlyAvailable = IsAvailableDuringPeriod(machinery.StorageItems, DateTime.Now, DateTime.Now)
+                DefaultStorage = machinery.DefaultStorage is null ? null : StorageResponseDTO.MapStorageToStorageResponseDTO(machinery.DefaultStorage),
+                StorageItems = machinery.StorageItems.Select(si => new StorageItemResponseDTO
+                {
+                    StorageItemId = si.StorageItemId,
+                    Storage = StorageResponseDTO.MapStorageToStorageResponseDTO(si.Storage!),
+                    ScheduledStart = si.ScheduledStart,
+                    ScheduledEnd = si.ScheduledEnd,
+                    Note = si.Note,
+                    ItemId = si.ItemId,
+                }).ToList(),
             };
         }
     }

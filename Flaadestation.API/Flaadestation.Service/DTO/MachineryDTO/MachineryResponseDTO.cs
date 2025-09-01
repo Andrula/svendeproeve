@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Flaadestation.Service.DTO.SharedDTO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,11 @@ namespace Flaadestation.Service.DTO.MachineryDTO
         public Guid ItemId { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
+        public StorageResponseDTO? DefaultStorage { get; set; }  
         public Guid CompanyId { get; set; }
         public Guid? ImageId { get; set; }
-        public bool IsCurrentlyAvailable { get; set; }
+        public byte[]? ImageValue { get; set; }  
+        public List<StorageItemResponseDTO> StorageItems { get; set; } = [];  
+                                                                             
     }
 }
