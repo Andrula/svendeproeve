@@ -557,7 +557,7 @@ namespace Flaadestation.Repository.Database
                     ScheduledStart = new DateTime(2025, 9, 15, 8, 0, 0),
                     ScheduledEnd = new DateTime(2025, 12, 20, 16, 0, 0),
                     CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
-                    StorageId = new Guid("A4222222-2222-2222-2222-222222222222"),
+                    StorageId = new Guid("A4222341-2222-2222-2222-222222222222"), // Changed to orphaned Storage
                     AddressId = new Guid("0A3F507B-321E-32B8-E044-0003BA298018")
                 },
                 new Job
@@ -568,7 +568,7 @@ namespace Flaadestation.Repository.Database
                     ScheduledStart = new DateTime(2025, 10, 1, 7, 0, 0),
                     ScheduledEnd = new DateTime(2025, 11, 30, 15, 0, 0),
                     CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
-                    StorageId = new Guid("A4111111-1111-1111-1111-111111111111"), 
+                    StorageId = new Guid("A4222341-2222-2255-9988-222222222222"), // Changed to other orphaned Storage
                     AddressId = new Guid("A48646AD-BE62-4A15-97DE-AFD124056462")
                 }
             );
