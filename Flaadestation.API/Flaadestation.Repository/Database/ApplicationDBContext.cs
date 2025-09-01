@@ -184,10 +184,6 @@ namespace Flaadestation.Repository.Database
                 .HasForeignKey(i => i.DefaultStorageId)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
-            // ============================
-            // SEEDING AF DATA
-            // ============================
-
             base.OnModelCreating(builder);
         }
     }
