@@ -121,8 +121,11 @@ namespace Flaadestation.Service.Services
                 Note = employee.Note,
                 DefaultStorage = employee.DefaultStorage is null ? null : StorageResponseDTO.MapStorageToStorageResponseDTO(employee.DefaultStorage),
                 CompanyId = employee.CompanyId,
-                ImageId = employee.ImageId,
-                ImageValue = employee.Image?.Value,
+                Image = employee.Image is null ? null : new ImageResponseDTO
+                {
+                    ImageId = employee.Image.ImageId,
+                    Value = employee.Image.Value
+                },
                 StorageItems = employee.StorageItems.Select(si => new StorageItemResponseDTO
                 {
                     StorageItemId = si.StorageItemId,
@@ -137,8 +140,11 @@ namespace Flaadestation.Service.Services
                     Model = employee.Vehicle.Model,
                     LicensePlate = employee.Vehicle.LicensePlate,
                     Note = employee.Vehicle.Note,
-                    ImageId = employee.Vehicle.ImageId,
-                    ImageValue = employee.Vehicle.Image?.Value
+                    Image = employee.Vehicle.Image is null ? null : new ImageResponseDTO
+                    {
+                        ImageId = employee.Vehicle.Image.ImageId,
+                        Value = employee.Vehicle.Image.Value
+                    },
                 }
             };
 
