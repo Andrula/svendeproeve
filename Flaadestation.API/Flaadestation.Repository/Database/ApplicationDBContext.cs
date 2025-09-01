@@ -1,4 +1,5 @@
 ﻿using Flaadestation.Repository.Database.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,6 +22,7 @@ namespace Flaadestation.Repository.Database
 
         }
 
+        public DbSet<License> Licenses { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -38,6 +40,21 @@ namespace Flaadestation.Repository.Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            // ============================
+            // License ↔ User
+            // ============================
+            builder.Entity<License>()
+                .HasOne(l => l.User)
+                .WithOne(u => u.License)
+                .HasForeignKey<License>(l => l.UserId);
+
+            // ============================
+            // License ↔ Company
+            // ============================
+            builder.Entity<License>()
+                .HasOne(l => l.Company)
+                .WithMany(c => c.Licenses)
+                .HasForeignKey(l => l.CompanyId);
 
             // ============================
             // TPT inheritance mapping
@@ -212,6 +229,133 @@ namespace Flaadestation.Repository.Database
                 }
             );
 
+            /////////////////////
+            // Users
+            /////////////////////
+
+            var hasher = new PasswordHasher<ApplicationUser>();
+
+            builder.Entity<ApplicationUser>().HasData(
+                new ApplicationUser
+                {
+                    Id = "67CE63C5-B13F-45A1-9990-581CC06C8FFB",
+                    CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
+
+                    IsCompanyOwner = true,
+
+                    UserName = "Erik CEO",
+                    NormalizedUserName = "ERIK CEO",
+
+                    Email = "admin@hvirts.dk",
+                    NormalizedEmail = "ADMIN@HVIRTS.DK",
+
+                    EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString("D"),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+
+                    PasswordHash = hasher.HashPassword(null, "Admin123!")
+                },
+                new ApplicationUser
+                {
+                    Id = "A281B565-0154-4CF3-9556-59004B7D2F46",
+                    CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
+
+                    IsCompanyOwner = false,
+
+                    UserName = "staff@hvirts.dk",
+                    NormalizedUserName = "STAFF@HVIRTS.DK",
+
+                    Email = "staff@hvirts.dk",
+                    NormalizedEmail = "STAFF@HVIRTS.DK",
+
+                    EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString("D"),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+
+                    PasswordHash = hasher.HashPassword(null, "Staff123!")
+                },
+                new ApplicationUser
+                {
+                    Id = "57A924E7-CE11-4C46-BEB5-41FD91793F06",
+                    CompanyId = new Guid("D74F0E90-EDB4-4A6C-A282-F3CC9D7D613A"),
+
+                    IsCompanyOwner = true,
+
+                    UserName = "admin@bf.dk",
+                    NormalizedUserName = "ADMIN@BF.DK",
+
+                    Email = "admin@bf.dk",
+                    NormalizedEmail = "ADMIN@BF.DK",
+
+                    EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString("D"),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+
+                    PasswordHash = hasher.HashPassword(null, "Admin123!")
+                },
+                new ApplicationUser
+                {
+                    Id = "5F8B806B-045A-4FCF-94EA-5C12F7DEA35A",
+                    CompanyId = new Guid("D74F0E90-EDB4-4A6C-A282-F3CC9D7D613A"),
+
+                    IsCompanyOwner = false,
+
+                    UserName = "staff@bf.dk",
+                    NormalizedUserName = "STAFF@BF.DK",
+
+                    Email = "staff@bf.dk",
+                    NormalizedEmail = "STAFF@BF.DK",
+
+                    EmailConfirmed = true,
+                    SecurityStamp = Guid.NewGuid().ToString("D"),
+                    ConcurrencyStamp = Guid.NewGuid().ToString("D"),
+
+                    PasswordHash = hasher.HashPassword(null, "Staff123!")
+                }
+            );
+
+            /////////////////////
+            // Licenses
+            /////////////////////
+
+            builder.Entity<License>().HasData(
+                new License
+                {
+                    LicenseId = new Guid("3B955728-1526-400D-A859-299850E74E3E"),
+                    LicenseKey = new Guid("29EA26BD-02C9-41D1-BCB6-9FC72F2C44EF"),
+                    CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
+                    UserId = "67CE63C5-B13F-45A1-9990-581CC06C8FFB",
+                    ValidFrom = DateTime.Today.AddDays(-1),
+                    ValidTo = DateTime.Today.AddYears(1),
+                },
+                new License
+                {
+                    LicenseId = new Guid("DED3BB29-A60D-4102-AEE7-E6D6F2839E4B"),
+                    LicenseKey = new Guid("E79DEF5B-18AB-4DE0-8ACD-949D0B473683"),
+                    CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
+                    UserId = "A281B565-0154-4CF3-9556-59004B7D2F46",
+                    ValidFrom = DateTime.Today.AddDays(-1),
+                    ValidTo = DateTime.Today.AddYears(1),
+                },
+                new License
+                {
+                    LicenseId = new Guid("61B79B8A-3D50-4739-9E7A-3A3A0E8AFBCF"),
+                    LicenseKey = new Guid("21047F2E-27B6-46C4-8AD4-840AB6CFB7D8"),
+                    CompanyId = new Guid("D74F0E90-EDB4-4A6C-A282-F3CC9D7D613A"),
+                    UserId = "57A924E7-CE11-4C46-BEB5-41FD91793F06",
+                    ValidFrom = DateTime.Today.AddDays(-1),
+                    ValidTo = DateTime.Today.AddYears(1),
+                },
+                new License
+                {
+                    LicenseId = new Guid("2E115BDD-753F-4B98-A578-C95A2C95CF41"),
+                    LicenseKey = new Guid("D4BB261A-B7EB-4879-A16C-E4B100F21E86"),
+                    CompanyId = new Guid("D74F0E90-EDB4-4A6C-A282-F3CC9D7D613A"),
+                    UserId = "5F8B806B-045A-4FCF-94EA-5C12F7DEA35A",
+                    ValidFrom = DateTime.Today.AddDays(-1),
+                    ValidTo = DateTime.Today.AddYears(1),
+                }
+            );
             /////////////////////
             // Occupation
             /////////////////////
@@ -437,30 +581,12 @@ namespace Flaadestation.Repository.Database
             builder.Entity<StorageItem>().HasData(
                 new StorageItem
                 {
-                    StorageItemId = new Guid("61111111-1111-1111-1111-111111111111"),
-                    ScheduledStart = new DateTime(2025, 8, 29, 0, 0, 0),
-                    ScheduledEnd = new DateTime(2025, 9, 14, 23, 59, 59),
-                    Note = "Standby på hovedlager",
-                    ItemId = new Guid("E1111111-1111-1111-1111-111111111111"),
-                    StorageId = new Guid("A4111111-1111-1111-1111-111111111111")
-                },
-                new StorageItem
-                {
                     StorageItemId = new Guid("61111112-1111-1111-1111-111111111111"),
                     ScheduledStart = new DateTime(2025, 9, 15, 0, 0, 0),
                     ScheduledEnd = new DateTime(2025, 12, 20, 23, 59, 59),
                     Note = "Tildelt Københavns Rådhus projekt",
                     ItemId = new Guid("E1111111-1111-1111-1111-111111111111"),
                     StorageId = new Guid("A4222222-2222-2222-2222-222222222222")
-                },
-                new StorageItem
-                {
-                    StorageItemId = new Guid("A5222221-1111-1111-1111-111111111111"),
-                    ScheduledStart = new DateTime(2025, 8, 29, 0, 0, 0),
-                    ScheduledEnd = new DateTime(2025, 9, 30, 23, 59, 59),
-                    Note = "Standby på hovedlager",
-                    ItemId = new Guid("E2222222-2222-2222-2222-222222222222"),
-                    StorageId = new Guid("A4111111-1111-1111-1111-111111111111")
                 },
                 new StorageItem
                 {
@@ -473,15 +599,6 @@ namespace Flaadestation.Repository.Database
                 },
                 new StorageItem
                 {
-                    StorageItemId = new Guid("B9333331-1111-1111-1111-111111111111"),
-                    ScheduledStart = new DateTime(2025, 8, 29, 0, 0, 0),
-                    ScheduledEnd = new DateTime(2025, 9, 14, 23, 59, 59),
-                    Note = "Lager på hovedlager",
-                    ItemId = new Guid("A2111111-1111-1111-1111-111111111111"),
-                    StorageId = new Guid("A4111111-1111-1111-1111-111111111111")
-                },
-                new StorageItem
-                {
                     StorageItemId = new Guid("B0333332-1111-1111-1111-111111111111"),
                     ScheduledStart = new DateTime(2025, 9, 15, 0, 0, 0),
                     ScheduledEnd = new DateTime(2025, 12, 20, 23, 59, 59),
@@ -491,29 +608,11 @@ namespace Flaadestation.Repository.Database
                 },
                 new StorageItem
                 {
-                    StorageItemId = new Guid("B0044441-1111-1111-1111-111111111111"),
-                    ScheduledStart = new DateTime(2025, 8, 29, 0, 0, 0),
-                    ScheduledEnd = new DateTime(2025, 9, 30, 23, 59, 59),
-                    Note = "Parkeret på speciallager",
-                    ItemId = new Guid("A3111111-1111-3211-1111-523111111111"),
-                    StorageId = new Guid("A4222341-2222-2222-2222-222222222222")
-                },
-                new StorageItem
-                {
                     StorageItemId = new Guid("B7944442-1111-1111-1111-111111111111"),
                     ScheduledStart = new DateTime(2025, 10, 1, 0, 0, 0),
                     ScheduledEnd = new DateTime(2025, 11, 30, 23, 59, 59),
                     Note = "Tildelt Odense Park projekt",
                     ItemId = new Guid("A3111111-1111-3211-1111-523111111111"),
-                    StorageId = new Guid("A4111111-1111-1111-1111-111111111111")
-                },
-                new StorageItem
-                {
-                    StorageItemId = new Guid("B1555551-1111-1111-1111-111111111111"),
-                    ScheduledStart = new DateTime(2025, 8, 29, 0, 0, 0),
-                    ScheduledEnd = new DateTime(2025, 9, 14, 23, 59, 59),
-                    Note = "Parkeret på hovedlager",
-                    ItemId = new Guid("F1111111-2312-1111-1111-136111111111"),
                     StorageId = new Guid("A4111111-1111-1111-1111-111111111111")
                 },
                 new StorageItem

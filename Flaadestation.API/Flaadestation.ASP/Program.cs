@@ -34,7 +34,7 @@ namespace Flaadestation.ASP
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                //options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = true;
             })
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
