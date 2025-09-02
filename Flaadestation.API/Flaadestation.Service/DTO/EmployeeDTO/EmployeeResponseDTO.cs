@@ -20,7 +20,7 @@ namespace Flaadestation.Service.DTO.EmployeeDTO
         public Guid CompanyId { get; set; }
         public ImageResponseDTO? Image { get; set; }
         public List<StorageItemResponseDTO> StorageItems { get; set; } = [];
-        public EmployeeVehicleResponseDTO? Vehicle { get; set; }
+        public EmployeeVehicleResponseDTO? Vehicle { get; set; } 
     }
 
     public class EmployeeVehicleResponseDTO
@@ -31,6 +31,7 @@ namespace Flaadestation.Service.DTO.EmployeeDTO
         public string Note { get; set; } = string.Empty;
         public ImageResponseDTO? Image { get; set; }
         public StorageResponseDTO? Storage { get; set; }
+        public List<StorageItemResponseDTO?> StorageItems { get; set; } = [];
     }
 
     public class EmployeeOccupationResponseDTO
