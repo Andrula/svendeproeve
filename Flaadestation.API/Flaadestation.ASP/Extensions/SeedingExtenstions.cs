@@ -3,6 +3,7 @@ using Flaadestation.Repository.Database;
 using Microsoft.AspNetCore.Identity;
 using static Flaadestation.Shared.Constants;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Flaadestation.ASP.Extensions
 {
@@ -18,10 +19,8 @@ namespace Flaadestation.ASP.Extensions
                 var context = services.GetRequiredService<ApplicationDBContext>();
                 var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-                // Ensure database is created
                 await context.Database.MigrateAsync();
 
-                // Seed data
                 await SeedDataAsync(context, userManager);
             }
             catch (Exception ex)
@@ -36,10 +35,8 @@ namespace Flaadestation.ASP.Extensions
 
         private static async Task SeedDataAsync(ApplicationDBContext context, UserManager<ApplicationUser> userManager)
         {
-            // Seed base data first
             await SeedBaseDataAsync(context);
 
-            // Seed users last (they depend on companies)
             await SeedUsersAsync(context, userManager);
         }
 
@@ -141,7 +138,6 @@ namespace Flaadestation.ASP.Extensions
                 await context.SaveChangesAsync();
             }
 
-            // Seed other entities (Customers, Jobs, etc.)
             await SeedCustomersAsync(context);
             await SeedJobsAsync(context);
             await SeedItemsAsync(context);
@@ -187,7 +183,6 @@ namespace Flaadestation.ASP.Extensions
 
             foreach (var userData in users)
             {
-                // Check if user already exists
                 var existingUser = await userManager.FindByEmailAsync(userData.Email);
                 if (existingUser == null)
                 {
@@ -205,7 +200,7 @@ namespace Flaadestation.ASP.Extensions
 
                     if (result.Succeeded)
                     {
-                        // Create corresponding license
+                        await userManager.AddClaimAsync(user, new Claim("IsCompanyOwner", user.IsCompanyOwner.ToString().ToLower(), ClaimValueTypes.Boolean));
                         await CreateLicenseForUser(context, user);
                     }
                     else
@@ -305,7 +300,6 @@ namespace Flaadestation.ASP.Extensions
                 context.Jobs.AddRange(jobs);
                 await context.SaveChangesAsync();
 
-                // Add customer-job relationships
                 var job1 = await context.Jobs.FirstAsync(j => j.JobId == new Guid("21111111-1111-1111-1111-111111111111"));
                 var job2 = await context.Jobs.FirstAsync(j => j.JobId == new Guid("42222222-2222-2222-2222-222222222222"));
                 var customer1 = await context.Customers.FirstAsync(c => c.CustomerId == new Guid("C1111111-1111-1111-1111-111111111111"));
@@ -320,7 +314,6 @@ namespace Flaadestation.ASP.Extensions
 
         private static async Task SeedItemsAsync(ApplicationDBContext context)
         {
-            // Seed Employees
             if (!context.Employees.Any())
             {
                 var employees = new[]
@@ -361,7 +354,6 @@ namespace Flaadestation.ASP.Extensions
                 await context.SaveChangesAsync();
             }
 
-            // Seed Tools
             if (!context.Tools.Any())
             {
                 var tools = new[]
@@ -392,7 +384,6 @@ namespace Flaadestation.ASP.Extensions
                 await context.SaveChangesAsync();
             }
 
-            // Seed Machinery
             if (!context.Machines.Any())
             {
                 var machinery = new[]
@@ -423,7 +414,6 @@ namespace Flaadestation.ASP.Extensions
                 await context.SaveChangesAsync();
             }
 
-            // Seed Vehicles
             if (!context.Vehicles.Any())
             {
                 var vehicles = new[]
@@ -444,7 +434,6 @@ namespace Flaadestation.ASP.Extensions
                 await context.SaveChangesAsync();
             }
 
-            // Seed StorageItems
             if (!context.StorageItems.Any())
             {
                 var storageItems = new[]

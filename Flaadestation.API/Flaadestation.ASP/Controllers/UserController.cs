@@ -108,6 +108,8 @@ namespace Flaadestation.ASP.Controllers
                 if (createdUser is null)
                     return BadRequest("Couldn't find new user");
 
+                await _userManager.AddClaimAsync(createdUser, new Claim("IsCompanyOwner", createdUser.IsCompanyOwner.ToString().ToLower(), ClaimValueTypes.Boolean));
+
                 await _licenseService.CreateLicenseAsync(new LicenseRequestDTO
                 {
                     CompanyId = createdCompany.CompanyId,
@@ -151,6 +153,8 @@ namespace Flaadestation.ASP.Controllers
 
                 if (createdUser is null)
                     return BadRequest("Couldn't find new user");
+
+                await _userManager.AddClaimAsync(createdUser, new Claim("IsCompanyOwner", createdUser.IsCompanyOwner.ToString().ToLower(), ClaimValueTypes.Boolean));
 
                 await _licenseService.UpdateLicenseByIdAsync(license.Company.CompanyId, new LicenseRequestDTO
                 {

@@ -35,6 +35,17 @@ namespace Flaadestation.ASP.Controllers
             return Ok(license);
         }
 
+        [HttpGet("key/{key}")]
+        public async Task<IActionResult> GetLicenseByLicenseKey(Guid key)
+        {
+            var license = await _licenseService.GetLicenseByLicenseKeyAsync(key);
+
+            if (license == null)
+                return NotFound();
+
+            return Ok(license);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateLicense([FromBody] LicenseRequestDTO licenseRequest)
         {
