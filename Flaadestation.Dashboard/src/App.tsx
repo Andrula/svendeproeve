@@ -8,6 +8,11 @@ import VehicleComponent from "./Components/VehicleComponent/VehicleComponent";
 import MachineryComponent from "./Components/MachineryComponent/MachineryComponent";
 import ToolComponent from "./Components/ToolComponent/ToolComponent";
 import MapComponent from "./Components/MapComponent/MapComponent";
+import { ProtectedRoute } from "./Auth/ProtectedRoute";
+import HomeComponent from "./Components/HomeComponent/HomeComponent";
+import LoginComponent from "./Components/LoginComponent/LoginComponent";
+import RegisterComponent from "./Components/RegisterComponent/RegisterComponent";
+import CheckoutComponent from "./Components/CheckoutComponent/CheckoutComponent";
 
 function App() {
   return (
@@ -17,18 +22,51 @@ function App() {
           <Route
             path="/"
             element={
-              <div className="container mt-4">
-                <h1>Home</h1>
+              <div className="position-relative p-4 h-100">
+                <div className="container">
+                    <HomeComponent />
+                </div>
               </div>
             }
-          />{" "}
-          {/* TODO: Home/Forside component*/}
+          />
+          <Route
+            path="/login"
+            element={
+              <div className="position-relative p-4 h-100">
+                <div className="container">
+                    <LoginComponent />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <div className="position-relative p-4 h-100">
+                <div className="container">
+                    <RegisterComponent />
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/register/checkout"
+            element={
+              <div className="position-relative p-4 h-100">
+                <div className="container">
+                    <CheckoutComponent />
+                </div>
+              </div>
+            }
+          />
           <Route
             path="/employees"
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                  <EmployeeComponent />
+                  <ProtectedRoute>
+                    <EmployeeComponent />
+                  </ProtectedRoute>
                 </div>
               </div>
             }
@@ -38,7 +76,9 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                  <VehicleComponent />
+                  <ProtectedRoute>
+                    <VehicleComponent />
+                  </ProtectedRoute>
                 </div>
               </div>
             }
@@ -48,7 +88,9 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                  <MachineryComponent />
+                  <ProtectedRoute>
+                    <MachineryComponent />
+                  </ProtectedRoute>
                 </div>
               </div>
             }
@@ -58,12 +100,21 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                  <ToolComponent />
+                  <ProtectedRoute>
+                    <ToolComponent />
+                  </ProtectedRoute>
                 </div>
               </div>
             }
           />
-          <Route path="/map" element={<MapComponent />} />
+          <Route
+            path="/map"
+            element={
+              <ProtectedRoute>
+                <MapComponent />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Layout>
     </BrowserRouter>
