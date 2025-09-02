@@ -34,7 +34,8 @@ namespace Flaadestation.ASP
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                //options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedAccount = false;
             })
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
@@ -51,7 +52,8 @@ namespace Flaadestation.ASP
                 {
                     policy.WithOrigins("http://localhost:5173")
                           .AllowAnyMethod()
-                          .AllowAnyHeader();
+                          .AllowAnyHeader()
+                          .AllowCredentials();
                 });
             });
 
@@ -62,6 +64,8 @@ namespace Flaadestation.ASP
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+
+                app.SeedDatabaseAsync().GetAwaiter().GetResult();
             }
 
             app.UseCors("AllowReactApp");

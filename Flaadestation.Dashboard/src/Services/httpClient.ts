@@ -2,21 +2,25 @@ interface HttpClientOptions {
   baseURL: string;
   timeout?: number;
   headers?: Record<string, string>;
+  withCredentials?: boolean;
 }
 
 interface RequestOptions {
   headers?: Record<string, string>;
   timeout?: number;
+  withCredentials?: boolean;
 }
 
 export class HttpClient {
   baseURL: string;
   defaultHeaders: Record<string, string>;
   timeout: number;
+  withCredentials: boolean
 
   constructor(options: HttpClientOptions) {
     this.baseURL = options.baseURL.replace(/\/$/, ''); 
     this.timeout = options.timeout || 30000;
+    this.withCredentials = options.withCredentials || false;
     this.defaultHeaders = {
       'Content-Type': 'application/json',
       ...options.headers,
@@ -28,7 +32,7 @@ export class HttpClient {
     options: RequestInit & RequestOptions = {}
   ): Promise<T> {
     const url = `${this.baseURL}${endpoint}`;
-    const { timeout = this.timeout, ...fetchOptions } = options;
+    const { timeout = this.timeout, withCredentials = this.withCredentials, ...fetchOptions } = options;
 
     const headers = {
       ...this.defaultHeaders,
@@ -41,11 +45,13 @@ export class HttpClient {
 
     try {
       console.log(`HTTP ${options.method || 'GET'}:`, url);
+      console.log(options.credentials)
       
       const response = await fetch(url, {
         ...fetchOptions,
         headers,
         signal: controller.signal,
+        credentials: withCredentials ? 'include' : 'omit'
       });
 
       clearTimeout(timeoutId);

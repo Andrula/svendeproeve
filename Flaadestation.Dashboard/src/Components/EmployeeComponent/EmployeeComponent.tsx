@@ -70,7 +70,7 @@ export default function EmployeeComponent() {
       ));
     } else {
       await employeeService.createEmployee(formData, DEFAULT_COMPANY_ID);
-      await loadEmployees(); 
+      await loadEmployees(); // Reload all employees to get complete data
     }
   };
 

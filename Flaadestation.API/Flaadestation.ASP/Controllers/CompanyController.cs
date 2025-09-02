@@ -31,16 +31,9 @@ namespace Flaadestation.ASP.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyRequestDTO request)
         {
-            var company = new Company
-            {
-                CompanyId = Guid.NewGuid(),
-                Name = request.Name,
-                AddressId = request.AddressId
-            };
-
             try
             {
-                var created = await _companyService.CreateCompanyAsync(company);
+                var created = await _companyService.CreateCompanyAsync(request);
                 return Ok(created);
             }
             catch (InvalidOperationException ex)

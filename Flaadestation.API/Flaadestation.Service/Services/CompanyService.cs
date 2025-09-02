@@ -1,5 +1,6 @@
 ﻿using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Repository.Repositories.Interfaces;
+using Flaadestation.Service.DTO.CompanyDTO;
 using Flaadestation.Service.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -19,47 +20,50 @@ namespace Flaadestation.Service.Services
         }
 
         // Metode til og hente virksomhedsinformationer
-        public async Task<Company?> GetCompanyByIdAsync(Guid id)
+        public async Task<CompanyResponseDTO?> GetCompanyByIdAsync(Guid id)
         {
-            return await _companyRepository.GetByIdAsync(id);
+            var company = await _companyRepository.GetByIdAsync(id);
+            return company == null ? null : MapCompanyToCompanyResponse(company);
         }
 
         // Metode til at oprette virksommhed
-        public async Task<Company> CreateCompanyAsync(Company company)
+        public async Task<CompanyResponseDTO> CreateCompanyAsync(CompanyRequestDTO companyRequest)
         {
-            var nameExists = await _companyRepository.CompanyExistsByNameAsync(company.Name);
+            var nameExists = await _companyRepository.CompanyExistsByNameAsync(companyRequest.Name);
             if (nameExists)
             {
-                throw new InvalidOperationException($"Virksomhed med navnet '{company.Name}' eksisterer allerede.");
+                throw new InvalidOperationException($"Virksomhed med navnet '{companyRequest.Name}' eksisterer allerede.");
             }
+
+            var company = MapCompanyRequestToCompany(companyRequest);
 
             var createdCompany = await _companyRepository.AddAsync(company);
             await _companyRepository.SaveChangesAsync();
-            return createdCompany;
+            return MapCompanyToCompanyResponse(createdCompany);
         }
 
         // Metode til at opdatere virksomhedsinformationer
-        public async Task<Company?> UpdateCompanyAsync(Guid id, Company company)
+        public async Task<CompanyResponseDTO?> UpdateCompanyAsync(Guid id, CompanyRequestDTO companyRequest)
         {
             var existingCompany = await _companyRepository.GetByIdAsync(id);
             if (existingCompany == null)
                 return null;
 
-            if (existingCompany.Name != company.Name)
+            if (existingCompany.Name != companyRequest.Name)
             {
-                var nameExists = await _companyRepository.CompanyExistsByNameAsync(company.Name);
+                var nameExists = await _companyRepository.CompanyExistsByNameAsync(companyRequest.Name);
                 if (nameExists)
                 {
-                    throw new InvalidOperationException($"Virksomhed med navnet '{company.Name}' eksisterer allerede.");
+                    throw new InvalidOperationException($"Virksomhed med navnet '{companyRequest.Name}' eksisterer allerede.");
                 }
             }
 
-            existingCompany.Name = company.Name;
-            existingCompany.AddressId = company.AddressId;
+            existingCompany.Name = companyRequest.Name;
+            existingCompany.AddressId = companyRequest.AddressId;
 
             _companyRepository.Update(existingCompany);
             await _companyRepository.SaveChangesAsync();
-            return existingCompany;
+            return MapCompanyToCompanyResponse(existingCompany);
         }
 
         // Metode til at slette virksomhed
@@ -82,6 +86,24 @@ namespace Flaadestation.Service.Services
         public async Task<bool> IsCompanyNameAvailableAsync(string name)
         {
             return !await _companyRepository.CompanyExistsByNameAsync(name);
+        }
+
+        private CompanyResponseDTO MapCompanyToCompanyResponse(Company company)
+        {
+            return new CompanyResponseDTO
+            {
+                CompanyId = company.CompanyId,
+                Name = company.Name,
+            };
+        }
+
+        private Company MapCompanyRequestToCompany(CompanyRequestDTO companyRequest)
+        {
+            return new Company
+            {
+                Name = companyRequest.Name,
+                AddressId = companyRequest.AddressId,
+            };
         }
     }
 }

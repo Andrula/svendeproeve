@@ -19,6 +19,7 @@ namespace Flaadestation.ASP.Extensions
             services.AddScoped<IVehicleService, VehicleService>();
             services.AddScoped<IMachineryService, MachineryService>();
             services.AddScoped<IEmployeeService, EmployeeService>();
+            services.AddScoped<ILicenseService, LicenseService>();
             return services;
         }
     }

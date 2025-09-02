@@ -145,6 +145,16 @@ namespace Flaadestation.Service.Services
                         ImageId = employee.Vehicle.Image.ImageId,
                         Value = employee.Vehicle.Image.Value
                     },
+                    Storage = employee.Vehicle.DefaultStorage != null ? StorageResponseDTO.MapStorageToStorageResponseDTO(employee.Vehicle.DefaultStorage!) : null,
+                    StorageItems = employee.Vehicle.StorageItems?.Select(si => new StorageItemResponseDTO
+                    {
+                        StorageItemId = si.StorageItemId,
+                        ScheduledStart = si.ScheduledStart,
+                        ScheduledEnd = si.ScheduledEnd,
+                        Note = si.Note,
+                        ItemId = si.ItemId,
+                        Storage = StorageResponseDTO.MapStorageToStorageResponseDTO(si.Storage!)
+                    }).ToList() ?? []
                 }
             };
 
