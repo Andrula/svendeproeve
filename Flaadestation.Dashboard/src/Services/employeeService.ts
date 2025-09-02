@@ -1,4 +1,4 @@
-import { HttpClient } from './HttpClient';
+import { HttpClient } from '../Services/httpClient';
 import { type Employee, EmployeeModel } from '../Models/Employee';
 import type { EmployeeFormData } from '../Components/EmployeeComponent/EmployeeModal';
 

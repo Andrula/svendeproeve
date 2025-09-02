@@ -5,11 +5,17 @@ import {
   HttpError,
   vehicleService,
 } from "../../Services/VehicleService";
+import VehicleModal, { type VehicleFormData } from './VehicleModal';
+import VehicleInventoryModal from './VehicleInventoryModal';
 
 export default function VehicleComponent() {
   const [vehicles, setVehicles] = useState<VehicleModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [inventoryModalOpen, setInventoryModalOpen] = useState(false);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleModel | null>(null);
+  const [selectedInventoryVehicle, setSelectedInventoryVehicle] = useState<VehicleModel | null>(null);
 
   useEffect(() => {
     loadVehicles();
@@ -50,6 +56,43 @@ export default function VehicleComponent() {
     }
   };
 
+  const openCreateModal = () => {
+    setSelectedVehicle(null);
+    setModalOpen(true);
+  };
+
+  const openEditModal = (vehicle: VehicleModel) => {
+    setSelectedVehicle(vehicle);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setSelectedVehicle(null);
+  };
+
+  const openInventoryModal = (vehicle: VehicleModel) => {
+    setSelectedInventoryVehicle(vehicle);
+    setInventoryModalOpen(true);
+  };
+
+  const closeInventoryModal = () => {
+    setInventoryModalOpen(false);
+    setSelectedInventoryVehicle(null);
+  };
+
+  const handleSaveVehicle = async (formData: VehicleFormData) => {
+    if (selectedVehicle) {
+      const updatedVehicle = await vehicleService.updateVehicle(selectedVehicle.data.itemId, formData);
+      setVehicles(vehicles.map(vehicle =>
+        vehicle.data.itemId === updatedVehicle.data.itemId ? updatedVehicle : vehicle
+      ));
+    } else {
+      await vehicleService.createVehicle(formData, DEFAULT_COMPANY_ID);
+      await loadVehicles(); // Reload all vehicles to get complete data
+    }
+  };
+
   const handleDeleteVehicle = async (vehicleModel: VehicleModel) => {
     if (
       window.confirm(`Er du sikker på, at du vil slette ${vehicleModel.model}?`)
@@ -79,9 +122,13 @@ export default function VehicleComponent() {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="position-relative" style={{ minHeight: '100vh' }}>
+      <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Køretøjer</h1>
+        <button className="btn btn-primary" onClick={openCreateModal}>
+          <i className="bi bi-plus"></i> Tilføj køretøj
+        </button>
       </div>
 
       {error && (
@@ -104,38 +151,36 @@ export default function VehicleComponent() {
         <div className="row">
           {vehicles.map((vehicleModel) => {
             const currentAssignment = vehicleModel.currentAssignment;
+            const nextAssignment = vehicleModel.nextAssignment;
+            
+            const isLedig = !currentAssignment;
             
             return (
               <div
                 key={vehicleModel.data.itemId}
-                className="col-md-6 col-lg-4 mb-3"
+                className="col-md-6 col-lg-6 mb-3 d-flex"
               >
-                <div className="card">
+                <div className="card w-100">
                   <div className="card-header bg-dark">
-                    <h5 className="card-title">
+                    <h5 className="card-title d-flex justify-content-between align-items-center">
                       <strong className="text-app-primary">
                         {vehicleModel.model}
                       </strong>
-                      {vehicleModel.isAvailable && (
-                        <span className="badge bg-success ms-2">Ledig</span>
+                      {isLedig && (
+                        <span className="badge bg-success">Ledig</span>
                       )}
                     </h5>
                   </div>
                   <div className="card-body">
                     <div className="card-text">
-                      {false ? (
-                        <>
-                          <p><strong>Nummerplade: </strong></p>
-                          <p>{vehicleModel.licensePlate}</p>
-                        </>
+                      {vehicleModel.licensePlate ? (
+                        <p><strong>Nummerplade:</strong> {vehicleModel.licensePlate}</p>
                       ) : (
-                        <>
-                          <p className="text-muted fst-italic">
-                            ingen nummerplade registreret
-                          </p>
-                        </>
+                        <p className="text-muted fst-italic">
+                          Ingen nummerplade registreret
+                        </p>
                       )}
-                      <p><strong>Standard lager:</strong> {vehicleModel.data.defaultStorage.name}</p>
+                      <p><strong>Tilknyttet:</strong> {vehicleModel.data.defaultStorage.name}</p>
                       {vehicleModel.data.note && (
                         <>
                           <p><strong>Note:</strong> {vehicleModel.data.note}</p>
@@ -145,61 +190,92 @@ export default function VehicleComponent() {
                         <>
                           <strong>Nuværende opgave:</strong>
                           <div className="bg-light p-2 rounded small">
-
-                          <small className="text-muted">
-                            {currentAssignment.storage.name}
-                            <br />
-                            {currentAssignment.note}
-                            <br />
-                            {new Date(
-                                currentAssignment.scheduledStart
-                            ).toLocaleDateString("da-DK")}{" "}
-                            -{" "}
-                            {new Date(
-                                currentAssignment.scheduledEnd
-                            ).toLocaleDateString("da-DK")}
-                          </small>
-                            </div>
+                            <small className="text-muted">
+                              {currentAssignment.note}
+                              <br />
+                              {new Date(
+                                  currentAssignment.scheduledStart
+                              ).toLocaleDateString("da-DK")}{" "}
+                              -{" "}
+                              {new Date(
+                                  currentAssignment.scheduledEnd
+                              ).toLocaleDateString("da-DK")}
+                            </small>
+                          </div>
+                        </>
+                      ) : nextAssignment ? (
+                        <>
+                          <strong>Næste opgave:</strong>
+                          <div className="bg-light p-2 rounded small">
+                            <small className="text-muted">
+                              {nextAssignment.note}
+                              <br />
+                              {new Date(
+                                  nextAssignment.scheduledStart
+                              ).toLocaleDateString("da-DK")}{" "}
+                              -{" "}
+                              {new Date(
+                                  nextAssignment.scheduledEnd
+                              ).toLocaleDateString("da-DK")}
+                            </small>
+                          </div>
                         </>
                       ) : (
                         <>
                           <p className="text-muted fst-italic">
-                            ingen nuværende opgaver
+                            Ikke allokeret til nogle opgaver
                           </p>
                         </>
                       )}
                       {vehicleModel.employees.length > 0 ? (
                         <>
-                            <button className="btn btn-primary btn-sm mb-2">{vehicleModel.employees.length} Medarbejdere</button>
-                            <br/>
+                          <p><strong>Medarbejdere:</strong></p>
+                          <div className="mb-2">
+                            {vehicleModel.employees.map((employee, index) => (
+                              <span key={employee.itemId} className="badge bg-secondary me-1 mb-1">
+                                {employee.firstName} {employee.lastName}
+                              </span>
+                            ))}
+                          </div>
                         </>
                       ) : (
                         <>
-                            <p className="text-muted fst-italic">
-                            ingen medarbejdere
+                          <p className="text-muted fst-italic">
+                            Ingen medarbejdere allokeret
                           </p>
                         </>
                       )}
                       {vehicleModel.tools.length > 0 ? (
                         <>
-                            <button className="btn btn-primary btn-sm">{vehicleModel.tools.length} Værktøjer</button>
-                            <br/>
+                          <button 
+                            className="btn btn-primary btn-sm"
+                            onClick={() => openInventoryModal(vehicleModel)}
+                          >
+                            <i className="bi bi-eye me-1"></i>
+                            Se indhold ({vehicleModel.tools.length})
+                          </button>
+                          <br/>
                         </>
                       ) : (
                         <>
-                            <p className="text-muted fst-italic">
-                            ingen værktøjer
+                          <p className="text-muted fst-italic">
+                            Intet værktøj allokeret
                           </p>
                         </>
                       )}
                     </div>
-                    {}
                   </div>
                   <div className="card-footer d-flex justify-content-between">
-                    <button className="btn btn-sm btn-outline-primary me-2">
+                    <button 
+                      className="btn btn-sm btn-outline-primary me-2"
+                      onClick={() => openEditModal(vehicleModel)}
+                    >
                       <i className="bi bi-pencil"></i> Rediger
                     </button>
-                    <button className="btn btn-sm btn-outline-danger">
+                    <button 
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDeleteVehicle(vehicleModel)}
+                    >
                       <i className="bi bi-trash"></i> Slet
                     </button>
                   </div>
@@ -210,11 +286,30 @@ export default function VehicleComponent() {
         </div>
       )}
 
+      {modalOpen && (
+        <VehicleModal
+          isOpen={modalOpen}
+          onClose={closeModal}
+          onSave={handleSaveVehicle}
+          vehicle={selectedVehicle}
+          title={selectedVehicle ? 'Rediger køretøj' : 'Tilføj nyt køretøj'}
+        />
+      )}
+
+      {inventoryModalOpen && (
+        <VehicleInventoryModal
+          isOpen={inventoryModalOpen}
+          onClose={closeInventoryModal}
+          vehicle={selectedInventoryVehicle}
+        />
+      )}
+
       <div className="mt-3">
         <small className="text-muted">
           Viser {vehicles.length} køretøjer
         </small>
       </div>
+    </div>
     </div>
   );
 }

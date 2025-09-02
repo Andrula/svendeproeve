@@ -14,7 +14,13 @@ export interface Employee {
   companyId: string;
   image : Image | null;
   storageItems: StorageItem[];
-  vehicle: any | null;
+  vehicle: {
+    itemId: string;
+    model: string;
+    licensePlate: string;
+    note: string;
+    storageItems: StorageItem[];
+  } | null;
 }
 
 export class EmployeeModel {
@@ -30,11 +36,45 @@ export class EmployeeModel {
 
   get currentAssignment(): StorageItem | null {
     const now = new Date();
+    
+
+    if (this.employee.vehicle?.storageItems) {
+      return this.employee.vehicle.storageItems.find(item => {
+        const start = new Date(item.scheduledStart);
+        const end = new Date(item.scheduledEnd);
+        return now >= start && now <= end;
+      }) || null;
+    }
+    
+    // If no vehicle, use employee's own assignments
     return this.employee.storageItems.find(item => {
       const start = new Date(item.scheduledStart);
       const end = new Date(item.scheduledEnd);
       return now >= start && now <= end;
     }) || null;
+  }
+
+  get nextAssignment(): StorageItem | null {
+    const now = new Date();
+    let assignmentsToCheck: StorageItem[];
+    
+
+    if (this.employee.vehicle?.storageItems) {
+      assignmentsToCheck = this.employee.vehicle.storageItems;
+    } else {
+      assignmentsToCheck = this.employee.storageItems;
+    }
+    
+    const futureAssignments = assignmentsToCheck.filter(item => {
+      const start = new Date(item.scheduledStart);
+      return start > now;
+    });
+    
+    if (futureAssignments.length === 0) return null;
+    
+    return futureAssignments.sort((a, b) => 
+      new Date(a.scheduledStart).getTime() - new Date(b.scheduledStart).getTime()
+    )[0];
   }
 
   get isAvailable(): boolean {
