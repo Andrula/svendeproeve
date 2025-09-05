@@ -1,19 +1,14 @@
-import { useState, useEffect } from "react";
-import {
-  employeeService,
-  EmployeeModel,
-  HttpError,
-  DEFAULT_COMPANY_ID,
-} from "../../Services/EmployeeService";
-import EmployeeModal, { type EmployeeFormData } from "./EmployeeModal";
+import { useState, useEffect } from 'react';
+import { employeeService, EmployeeModel, HttpError, DEFAULT_COMPANY_ID } from '../../Services/employeeService';
+import { vehicleService, VehicleModel } from '../../Services/VehicleService';
+import EmployeeModal, { type EmployeeFormData } from '../EmployeeComponent/EmployeeModal';
 
 export default function EmployeeComponent() {
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] =
-    useState<EmployeeModel | null>(null);
+  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeModel | null>(null);
 
   useEffect(() => {
     loadEmployees();
@@ -25,24 +20,28 @@ export default function EmployeeComponent() {
       setError(null);
 
       if (!DEFAULT_COMPANY_ID) {
-        throw new Error("Company ID ikke konfigureret.");
+        throw new Error('Company ID ikke konfigureret. Kontakt administrator.');
       }
 
-      const employeeModels = await employeeService.getAllEmployees(
-        DEFAULT_COMPANY_ID
-      );
+      const employeeModels = await employeeService.getAllEmployees(DEFAULT_COMPANY_ID);
       setEmployees(employeeModels);
     } catch (err) {
-      let errorMessage = "Ukendt fejl";
+      let errorMessage = 'Ukendt fejl';
 
       if (err instanceof HttpError) {
-        errorMessage = `Fejl ${err.status}: ${err.message}`;
+        if (err.isClientError) {
+          errorMessage = `Klient fejl (${err.status}): ${err.message}`;
+        } else if (err.isServerError) {
+          errorMessage = `Server fejl (${err.status}): ${err.message}`;
+        } else {
+          errorMessage = err.message;
+        }
       } else if (err instanceof Error) {
         errorMessage = err.message;
       }
 
       setError(`Fejl ved indlæsning af medarbejdere: ${errorMessage}`);
-      console.error("Error loading employees:", err);
+      console.error('Fejl ved indlæsning af medarbejdere:', err);
     } finally {
       setLoading(false);
     }
@@ -65,55 +64,43 @@ export default function EmployeeComponent() {
 
   const handleSaveEmployee = async (formData: EmployeeFormData) => {
     if (selectedEmployee) {
-      const updatedEmployee = await employeeService.updateEmployee(
-        selectedEmployee.data.itemId,
-        formData
-      );
-      setEmployees(
-        employees.map((emp) =>
-          emp.data.itemId === updatedEmployee.data.itemId
-            ? updatedEmployee
-            : emp
-        )
-      );
+      const updatedEmployee = await employeeService.updateEmployee(selectedEmployee.data.itemId, formData);
+      setEmployees(employees.map(emp =>
+        emp.data.itemId === updatedEmployee.data.itemId ? updatedEmployee : emp
+      ));
     } else {
-      const newEmployee = await employeeService.createEmployee(
-        formData,
-        DEFAULT_COMPANY_ID
-      );
-      setEmployees([...employees, newEmployee]);
+      await employeeService.createEmployee(formData, DEFAULT_COMPANY_ID);
+      await loadEmployees(); // Reload all employees to get complete data
     }
   };
 
   const handleDeleteEmployee = async (employee: EmployeeModel) => {
-    if (
-      window.confirm(`Er du sikker på, at du vil slette ${employee.fullName}?`)
-    ) {
+    if (window.confirm(`Er du sikker på, at du vil slette ${employee.fullName}?`)) {
       try {
         await employeeService.deleteEmployee(employee.data.itemId);
-        setEmployees(
-          employees.filter((emp) => emp.data.itemId !== employee.data.itemId)
-        );
+        setEmployees(employees.filter(emp => emp.data.itemId !== employee.data.itemId));
       } catch (err) {
-        console.error("Error deleting employee:", err);
+        console.error('Error deleting employee:', err);
       }
     }
   };
 
   if (loading) {
     return (
+      <div className="container mt-4">
         <div className="d-flex justify-content-center">
           <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
+            <span className="visually-hidden">Indlæser data...</span>
           </div>
           <span className="ms-2">Indlæser medarbejdere...</span>
         </div>
+      </div>
     );
   }
 
   return (
-
-    <>
+    <div className="position-relative" style={{ minHeight: '100vh' }}>
+      <div className="container mt-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Medarbejdere</h1>
           <button className="btn btn-primary" onClick={openCreateModal}>
@@ -124,83 +111,112 @@ export default function EmployeeComponent() {
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
-            <button className="btn btn-link p-0 ms-2" onClick={loadEmployees}>
+            <button 
+              className="btn btn-link p-0 ms-2" 
+              onClick={loadEmployees}
+            >
               Prøv igen
             </button>
           </div>
         )}
 
         {!error && employees.length === 0 ? (
-          <div className="alert alert-info">Ingen medarbejdere fundet.</div>
+          <div className="alert alert-info">
+            Ingen medarbejdere fundet.
+          </div>
         ) : (
           <div className="row">
             {employees.map((employee) => {
               const currentAssignment = employee.currentAssignment;
+              const nextAssignment = employee.nextAssignment;
+              
+              const isLedig = !currentAssignment;
 
               return (
                 <div
                   key={employee.data.itemId}
-                  className="col-md-6 col-lg-4 mb-3"
+                  className="col-md-6 col-lg-6 mb-3 d-flex"
                 >
-                  <div className="card">
-                    <div className="card-body">
-                      <h5 className="card-title">
-                        {employee.fullName}
-                        {employee.isAvailable && (
-                          <span className="badge bg-success ms-2">Ledig</span>
+                  <div className="card w-100">
+                    <div className="card-header bg-dark">
+                      <h5 className="card-title d-flex justify-content-between align-items-center">
+                        <strong className="text-app-primary">
+                          {employee.fullName}
+                        </strong>
+                        {isLedig && (
+                          <span className="badge bg-success">Ledig</span>
                         )}
                       </h5>
-                      <p className="card-text">
-                        <strong>Stilling:</strong>{" "}
-                        {employee.data.occupation.name}
-                        <br />
-                        <strong>Email:</strong> {employee.data.email}
-                        <br />
-                        <strong>Telefon:</strong> {employee.formatPhoneNumber()}
-                        <br />
-                        <strong>Standard lager:</strong>{" "}
-                        {employee.data.defaultStorage.name}
-                        <br />
+                    </div>
+                    <div className="card-body">
+                      <div className="card-text">
+                        <p><strong>Stilling:</strong> {employee.data.occupation.name}</p>
+                        <p><strong>Email:</strong> {employee.data.email}</p>
+                        <p><strong>Telefon:</strong> {employee.formatPhoneNumber()}</p>
+                        <p><strong>Tilknyttet:</strong> {employee.data.defaultStorage.name}</p>
                         {employee.data.note && (
                           <>
-                            <strong>Note:</strong> {employee.data.note}
-                            <br />
+                            <p><strong>Note:</strong> {employee.data.note}</p>
                           </>
                         )}
-                        {currentAssignment && (
+                        {currentAssignment ? (
                           <>
                             <strong>Nuværende opgave:</strong>
-                            <br />
-                            <small className="text-muted">
-                              {currentAssignment.storage.name}
-                              <br />
-                              {currentAssignment.note}
-                              <br />
-                              {new Date(
-                                currentAssignment.scheduledStart
-                              ).toLocaleDateString("da-DK")}{" "}
-                              -{" "}
-                              {new Date(
-                                currentAssignment.scheduledEnd
-                              ).toLocaleDateString("da-DK")}
-                            </small>
+                            <div className="bg-light p-2 rounded small">
+                              <small className="text-muted">
+                                {currentAssignment.storage.name}
+                                <br />
+                                {currentAssignment.note}
+                                <br />
+                                {new Date(
+                                    currentAssignment.scheduledStart
+                                ).toLocaleDateString("da-DK")}{" "}
+                                -{" "}
+                                {new Date(
+                                    currentAssignment.scheduledEnd
+                                ).toLocaleDateString("da-DK")}
+                              </small>
+                            </div>
+                          </>
+                        ) : nextAssignment ? (
+                          <>
+                            <strong>Næste opgave:</strong>
+                            <div className="bg-light p-2 rounded small">
+                              <small className="text-muted">
+                                {nextAssignment.note}
+                                <br />
+                                {new Date(
+                                    nextAssignment.scheduledStart
+                                ).toLocaleDateString("da-DK")}{" "}
+                                -{" "}
+                                {new Date(
+                                    nextAssignment.scheduledEnd
+                                ).toLocaleDateString("da-DK")}
+                              </small>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <p className="text-muted fst-italic">
+                              Ikke allokeret til nogle opgaver
+                            </p>
                           </>
                         )}
-                      </p>
-                      <div className="btn-group" role="group">
-                        <button
-                          className="btn btn-sm btn-outline-primary"
-                          onClick={() => openEditModal(employee)}
-                        >
-                          <i className="bi bi-pencil"></i> Rediger
-                        </button>
-                        <button
-                          className="btn btn-sm btn-outline-danger"
-                          onClick={() => handleDeleteEmployee(employee)}
-                        >
-                          <i className="bi bi-trash"></i> Slet
-                        </button>
                       </div>
+                    </div>
+                    <div className="card-footer d-flex justify-content-between">
+                      <button 
+                        className="btn btn-sm btn-outline-primary me-2"
+                        onClick={() => openEditModal(employee)}
+                      >
+                        <i className="bi bi-pencil"></i> Rediger
+                      </button>
+                      <button 
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDeleteEmployee(employee)}
+                      >
+                        <i className="bi bi-trash"></i> Slet
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -209,23 +225,22 @@ export default function EmployeeComponent() {
           </div>
         )}
 
-
-        <div className="mt-3">
-          <small className="text-muted">
-            Viser {employees.length} medarbejdere
-          </small>
-        </div>
         {modalOpen && (
           <EmployeeModal
             isOpen={modalOpen}
             onClose={closeModal}
             onSave={handleSaveEmployee}
             employee={selectedEmployee}
-            title={
-              selectedEmployee ? "Rediger medarbejder" : "Tilføj ny medarbejder"
-            }
+            title={selectedEmployee ? 'Rediger medarbejder' : 'Tilføj ny medarbejder'}
           />
         )}
-    </>
+
+        <div className="mt-3">
+          <small className="text-muted">
+            Viser {employees.length} medarbejdere
+          </small>
+        </div>
+      </div>
+    </div>
   );
 }

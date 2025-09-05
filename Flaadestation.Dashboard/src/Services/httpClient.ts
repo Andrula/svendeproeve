@@ -45,6 +45,7 @@ export class HttpClient {
 
     try {
       console.log(`HTTP ${options.method || 'GET'}:`, url);
+      console.log(options.credentials)
       
       const response = await fetch(url, {
         ...fetchOptions,
