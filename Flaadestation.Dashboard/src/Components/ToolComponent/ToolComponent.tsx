@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { ToolModel } from '../../Models/Tool';
 import { 
   toolService, 
-  HttpError, 
-  DEFAULT_COMPANY_ID 
+  HttpError
 } from '../../Services/ToolService';
 import ToolModal, { type ToolFormData } from './ToolModal';
+import { useAuth } from '../../Auth/AuthContext';
 
 export default function ToolComponent() {
+  const { user } = useAuth();
   const [tools, setTools] = useState<ToolModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +24,7 @@ export default function ToolComponent() {
       setLoading(true);
       setError(null);
 
-      if (!DEFAULT_COMPANY_ID) {
-        throw new Error('Company ID ikke konfigureret. Kontakt administrator.');
-      }
-
-      const toolModels = await toolService.getAllTools(DEFAULT_COMPANY_ID);
+      const toolModels = await toolService.getAllTools();
       setTools(toolModels);
     } catch (err) {
       let errorMessage = 'Ukendt fejl';
@@ -73,7 +70,7 @@ export default function ToolComponent() {
         tool.data.itemId === updatedTool.data.itemId ? updatedTool : tool
       ));
     } else {
-      const newTool = await toolService.createTool(formData, DEFAULT_COMPANY_ID);
+      const newTool = await toolService.createTool(formData, user!.companyId);
       setTools([...tools, newTool]);
     }
   };

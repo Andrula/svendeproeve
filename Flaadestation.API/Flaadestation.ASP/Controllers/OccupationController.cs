@@ -3,9 +3,11 @@ using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class OccupationController : ControllerBase
@@ -24,10 +26,10 @@ namespace Flaadestation.ASP.Controllers
             return Ok(occupations);
         }
 
-        [HttpGet("GetAllOccupations")]
-        public async Task<IActionResult> GetOccupation(Guid id)
+        [HttpGet("/{occupationId}")]
+        public async Task<IActionResult> GetOccupationById(Guid occupationId)
         {
-            var occupation = await _occupationService.GetOccupationByIdAsync(id);
+            var occupation = await _occupationService.GetOccupationByIdAsync(occupationId);
             if (occupation == null)
                 return NotFound();
             return Ok(occupation);

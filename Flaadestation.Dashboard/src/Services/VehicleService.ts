@@ -1,6 +1,6 @@
 import type { VehicleFormData } from "../Components/VehicleComponent/VehicleModal";
 import { type Vehicle, VehicleModel } from "../Models/Vehicle";
-import { HttpClient } from "./httpClient";
+import { HttpClient } from "./HttpClient";
 
 interface CreateVehicleRequest extends VehicleFormData {
   companyId: string;
@@ -9,6 +9,7 @@ interface CreateVehicleRequest extends VehicleFormData {
 const httpClient = new HttpClient({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 30000,
+  withCredentials: true
 });
 
 export class VehicleService {
@@ -18,9 +19,9 @@ export class VehicleService {
     this.httpClient = httpClient;
   }
 
-  async getAllVehicles(companyId: string): Promise<VehicleModel[]> {
+  async getAllVehicles(): Promise<VehicleModel[]> {
     const vehicles = await this.httpClient.get<Vehicle[]>(
-      `/Vehicle/company/${companyId}`
+      `/Vehicle/company`
     );
     return vehicles.map((vehicle) => new VehicleModel(vehicle));
   }
@@ -47,6 +48,5 @@ export class VehicleService {
 
 export const vehicleService = new VehicleService(httpClient);
 
-export const DEFAULT_COMPANY_ID = import.meta.env.VITE_COMPANY_ID || '';
-export { HttpError } from './httpClient';
+export { HttpError } from './HttpClient';
 export { VehicleModel } from "../Models/Vehicle"

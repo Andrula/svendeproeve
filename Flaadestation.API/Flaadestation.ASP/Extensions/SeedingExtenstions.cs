@@ -201,6 +201,7 @@ namespace Flaadestation.ASP.Extensions
                     if (result.Succeeded)
                     {
                         await userManager.AddClaimAsync(user, new Claim("IsCompanyOwner", user.IsCompanyOwner.ToString().ToLower(), ClaimValueTypes.Boolean));
+                        await userManager.AddClaimAsync(user, new Claim("CompanyId", user.CompanyId.ToString().ToUpper()));
                         await CreateLicenseForUser(context, user);
                     }
                     else

@@ -1,9 +1,12 @@
+using Flaadestation.ASP.Utils;
 using Flaadestation.Service.DTO.EmployeeDTO;
 using Flaadestation.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController : Controller
@@ -15,11 +18,25 @@ namespace Flaadestation.ASP.Controllers
             _employeeService = employeeService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetEmployeesByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetEmployeesByCompany()
         {
-            var employees = await _employeeService.GetEmployeesByCompanyAsync(companyId);
-            return Ok(employees);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var employees = await _employeeService.GetEmployeesByCompanyAsync(companyId);
+                    return Ok(employees);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

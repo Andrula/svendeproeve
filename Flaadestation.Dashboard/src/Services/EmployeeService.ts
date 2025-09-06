@@ -1,4 +1,4 @@
-import { HttpClient } from '../Services/httpClient';
+import { HttpClient } from './HttpClient';
 import { type Employee, EmployeeModel } from '../Models/Employee';
 import type { EmployeeFormData } from '../Components/EmployeeComponent/EmployeeModal';
 
@@ -9,6 +9,7 @@ interface CreateEmployeeRequest extends EmployeeFormData {
 const httpClient = new HttpClient({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 30000,
+  withCredentials: true
 });
 
 export class EmployeeService {
@@ -18,8 +19,8 @@ export class EmployeeService {
     this.httpClient = httpClient;
   }
 
-  async getAllEmployees(companyId: string): Promise<EmployeeModel[]> {
-    const employees = await this.httpClient.get<Employee[]>(`/Employee/company/${companyId}`);
+  async getAllEmployees(): Promise<EmployeeModel[]> {
+    const employees = await this.httpClient.get<Employee[]>(`/Employee/company`);
     return employees.map(emp => new EmployeeModel(emp));
   }
 
@@ -51,6 +52,5 @@ export class EmployeeService {
 
 export const employeeService = new EmployeeService(httpClient);
 
-export const DEFAULT_COMPANY_ID = import.meta.env.VITE_COMPANY_ID || '';
 export { HttpError } from './HttpClient';
 export { EmployeeModel } from '../Models/Employee';

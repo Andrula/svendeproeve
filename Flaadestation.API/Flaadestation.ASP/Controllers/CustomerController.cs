@@ -2,6 +2,7 @@
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Flaadestation.ASP.Utils;
 
 namespace Flaadestation.ASP.Controllers
 {
@@ -16,12 +17,26 @@ namespace Flaadestation.ASP.Controllers
             _customerService = customerService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetCustomersByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetCustomersByCompany()
         {
-            var customers = await _customerService.GetCustomersByCompanyAsync(companyId);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
 
-            return Ok(customers);
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var customers = await _customerService.GetCustomersByCompanyAsync(companyId);
+
+                    return Ok(customers);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

@@ -1,9 +1,12 @@
-﻿using Flaadestation.Service.DTO.MachineryDTO;
+﻿using Flaadestation.ASP.Utils;
+using Flaadestation.Service.DTO.MachineryDTO;
 using Flaadestation.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class MachineryController : ControllerBase
@@ -15,11 +18,18 @@ namespace Flaadestation.ASP.Controllers
             _machineryService = machineryService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetMachineryByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetMachineryByCompany()
         {
-            var machinery = await _machineryService.GetMachineryByCompanyIdAsync(companyId);
-            return Ok(machinery);
+            Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+            if (companyIdFromClaims is Guid companyId)
+            {
+                var machinery = await _machineryService.GetMachineryByCompanyIdAsync(companyId);
+                return Ok(machinery);
+            }
+            
+            return Unauthorized();
         }
 
         [HttpGet("{id}")]

@@ -1,11 +1,14 @@
-﻿using Flaadestation.Service.DTO.EmployeeDTO;
+﻿using Flaadestation.ASP.Utils;
+using Flaadestation.Service.DTO.EmployeeDTO;
 using Flaadestation.Service.DTO.LicenseDTO;
 using Flaadestation.Service.Interfaces;
 using Flaadestation.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LicenseController : Controller
@@ -17,15 +20,30 @@ namespace Flaadestation.ASP.Controllers
             _licenseService = licenseService;
         }
 
-        [HttpGet("license/{companyId}")]
-        public async Task<IActionResult> GetLicensesByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetLicensesByCompany()
         {
-            var licenses = await _licenseService.GetLicensesByCompanyIdAsync(companyId);
-            return Ok(licenses);
+            try
+            {
+
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var licenses = await _licenseService.GetLicensesByCompanyIdAsync(companyId);
+                    return Ok(licenses);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetLicensesByCompany(string userId)
+        public async Task<IActionResult> GetLicenseByUser(string userId)
         {
             var license = await _licenseService.GetLicensesByUserIdAsync(userId);
 
@@ -45,6 +63,7 @@ namespace Flaadestation.ASP.Controllers
 
             return Ok(license);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> CreateLicense([FromBody] LicenseRequestDTO licenseRequest)

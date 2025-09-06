@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
-import { employeeService, EmployeeModel, HttpError, DEFAULT_COMPANY_ID } from '../../Services/employeeService';
-import { vehicleService, VehicleModel } from '../../Services/VehicleService';
+import { employeeService, EmployeeModel, HttpError } from '../../Services/EmployeeService';
 import EmployeeModal, { type EmployeeFormData } from '../EmployeeComponent/EmployeeModal';
+import { useAuth } from '../../Auth/AuthContext';
 
 export default function EmployeeComponent() {
+  const { user } = useAuth();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEmployee, setSelectedEmployee] = useState<EmployeeModel | null>(null);
+  
 
   useEffect(() => {
     loadEmployees();
@@ -19,11 +21,7 @@ export default function EmployeeComponent() {
       setLoading(true);
       setError(null);
 
-      if (!DEFAULT_COMPANY_ID) {
-        throw new Error('Company ID ikke konfigureret. Kontakt administrator.');
-      }
-
-      const employeeModels = await employeeService.getAllEmployees(DEFAULT_COMPANY_ID);
+      const employeeModels = await employeeService.getAllEmployees();
       setEmployees(employeeModels);
     } catch (err) {
       let errorMessage = 'Ukendt fejl';
@@ -69,7 +67,7 @@ export default function EmployeeComponent() {
         emp.data.itemId === updatedEmployee.data.itemId ? updatedEmployee : emp
       ));
     } else {
-      await employeeService.createEmployee(formData, DEFAULT_COMPANY_ID);
+      await employeeService.createEmployee(formData, user!.companyId);
       await loadEmployees(); // Reload all employees to get complete data
     }
   };
