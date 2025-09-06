@@ -1,12 +1,16 @@
 import React from "react";
 import "./SidebarComponent.css";
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../Auth/AuthContext";
 
 interface SidebarProps {
   isOpen: boolean;
 }
 
 const SidebarComponent: React.FC<SidebarProps> = ({ isOpen }) => {
+  const { user } = useAuth();
+console.log(user);
+
   return (
     <div
       className={`bg-dark text-white position-fixed top-0 start-0 h-100 p-3 sidebar ${
@@ -67,6 +71,18 @@ const SidebarComponent: React.FC<SidebarProps> = ({ isOpen }) => {
             Kort
           </NavLink>
         </li>
+        {user?.isCompanyOwner && (
+          <li className="nav-item">
+          <NavLink
+            to="/licenses"
+            className={({ isActive }) =>
+              `nav-link sidebar-link ${isActive ? "active-link" : ""}`
+            }
+          >
+            Licenser
+          </NavLink>
+        </li>
+        )}
       </ul>
     </div>
   );

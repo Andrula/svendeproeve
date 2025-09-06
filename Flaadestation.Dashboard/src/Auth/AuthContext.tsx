@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setUser({
           id: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
           email: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-          isCompanyOwner: claims["isCompanyOwner"] === "true",
+          isCompanyOwner: claims["IsCompanyOwner"] === "true",
           companyId: claims["CompanyId"]
         });
       })
@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser({
         id: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
         email: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
-        isCompanyOwner: claims["isCompanyOwner"] === "true",
+        isCompanyOwner: claims["IsCompanyOwner"] === "true",
         companyId: claims["companyId"]
       });
       return true;
