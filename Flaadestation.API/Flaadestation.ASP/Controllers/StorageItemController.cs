@@ -1,10 +1,12 @@
 ﻿using Flaadestation.Service.DTO.StorageItemDTO;
 using Flaadestation.Service.Interfaces;
 using Flaadestation.Service.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class StorageItemController : Controller

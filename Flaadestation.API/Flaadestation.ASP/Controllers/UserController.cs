@@ -27,6 +27,7 @@ namespace Flaadestation.ASP.Controllers
             _licenseService = licenseService;
         }
 
+        [Authorize]
         [HttpGet]
         public IActionResult GetUser()
         {
@@ -63,8 +64,8 @@ namespace Flaadestation.ASP.Controllers
             }
         }
 
-        [HttpGet("logout")]
         [Authorize]
+        [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
             try
@@ -109,6 +110,7 @@ namespace Flaadestation.ASP.Controllers
                     return BadRequest("Couldn't find new user");
 
                 await _userManager.AddClaimAsync(createdUser, new Claim("IsCompanyOwner", createdUser.IsCompanyOwner.ToString().ToLower(), ClaimValueTypes.Boolean));
+                await _userManager.AddClaimAsync(createdUser, new Claim("CompanyId", createdUser.CompanyId.ToString().ToUpper()));
 
                 await _licenseService.CreateLicenseAsync(new LicenseRequestDTO
                 {
@@ -155,6 +157,7 @@ namespace Flaadestation.ASP.Controllers
                     return BadRequest("Couldn't find new user");
 
                 await _userManager.AddClaimAsync(createdUser, new Claim("IsCompanyOwner", createdUser.IsCompanyOwner.ToString().ToLower(), ClaimValueTypes.Boolean));
+                await _userManager.AddClaimAsync(createdUser, new Claim("CompanyId", createdUser.CompanyId.ToString().ToUpper()));
 
                 await _licenseService.UpdateLicenseByIdAsync(license.Company.CompanyId, new LicenseRequestDTO
                 {

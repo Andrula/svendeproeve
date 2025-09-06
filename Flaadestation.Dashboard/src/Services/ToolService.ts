@@ -1,4 +1,4 @@
-import { HttpClient } from '../Services/httpClient';
+import { HttpClient } from './HttpClient';
 import { type Tool, ToolModel } from '../Models/Tool';
 import type { ToolFormData } from '../Components/ToolComponent/ToolModal';
 
@@ -9,6 +9,7 @@ interface CreateToolRequest extends ToolFormData {
 const httpClient = new HttpClient({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 30000,
+  withCredentials: true
 });
 
 export class ToolService {
@@ -18,8 +19,8 @@ export class ToolService {
     this.httpClient = httpClient;
   }
 
-  async getAllTools(companyId: string): Promise<ToolModel[]> {
-    const tools = await this.httpClient.get<Tool[]>(`/Tool/company/${companyId}`);
+  async getAllTools(): Promise<ToolModel[]> {
+    const tools = await this.httpClient.get<Tool[]>(`/Tool/company`);
     return tools.map(tool => new ToolModel(tool));
   }
 
@@ -50,6 +51,5 @@ export class ToolService {
 
 export const toolService = new ToolService(httpClient);
 
-export const DEFAULT_COMPANY_ID = import.meta.env.VITE_COMPANY_ID || '';
-export { HttpError } from './httpClient';
+export { HttpError } from './HttpClient';
 export { ToolModel } from '../Models/Tool';

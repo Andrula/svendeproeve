@@ -2,9 +2,12 @@
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Flaadestation.ASP.Utils;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class JobController : ControllerBase
@@ -16,11 +19,24 @@ namespace Flaadestation.ASP.Controllers
             _jobService = jobService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetJobsByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetJobsByCompany()
         {
-            var jobs = await _jobService.GetJobsByCompanyAsync(companyId);
-            return Ok(jobs);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var jobs = await _jobService.GetJobsByCompanyAsync(companyId);
+                    return Ok(jobs);
+                }
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

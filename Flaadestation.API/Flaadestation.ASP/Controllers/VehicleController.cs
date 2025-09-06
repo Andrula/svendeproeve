@@ -1,9 +1,12 @@
-﻿using Flaadestation.Service.DTO.VehicleDTO;
+﻿using Flaadestation.ASP.Utils;
+using Flaadestation.Service.DTO.VehicleDTO;
 using Flaadestation.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VehicleController : Controller
@@ -14,11 +17,26 @@ namespace Flaadestation.ASP.Controllers
             _vehicleService = vehicleService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetVehiclesByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetVehiclesByCompany()
         {
-            var vehicles = await _vehicleService.GetVehiclesByCompanyAsync(companyId);
-            return Ok(vehicles);
+            try
+            {
+
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var vehicles = await _vehicleService.GetVehiclesByCompanyAsync(companyId);
+                    return Ok(vehicles);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

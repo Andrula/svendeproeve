@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { MachineryModel } from '../../Models/Machinery'; 
 import { 
   machineryService, 
-  HttpError, 
-  DEFAULT_COMPANY_ID 
-} from '../../Services/machineryService'; 
+  HttpError 
+} from '../../Services/MachineryService'; 
 import MachineryModal, { type MachineryFormData } from './MachineryModal';
+import { useAuth } from '../../Auth/AuthContext';
 
 export default function MachineryComponent() {
+  const { user } = useAuth();
   const [machinery, setMachinery] = useState<MachineryModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -23,11 +24,7 @@ export default function MachineryComponent() {
       setLoading(true);
       setError(null);
 
-      if (!DEFAULT_COMPANY_ID) {
-        throw new Error('Company ID ikke konfigureret. Kontakt administrator.');
-      }
-
-      const machineryModels = await machineryService.getAllMachinery(DEFAULT_COMPANY_ID);
+      const machineryModels = await machineryService.getAllMachinery();
       setMachinery(machineryModels);
     } catch (err) {
       let errorMessage = 'Ukendt fejl';
@@ -73,7 +70,7 @@ export default function MachineryComponent() {
         item.data.itemId === updatedMachinery.data.itemId ? updatedMachinery : item
       ));
     } else {
-      const newMachinery = await machineryService.createMachinery(formData, DEFAULT_COMPANY_ID);
+      const newMachinery = await machineryService.createMachinery(formData, user!.companyId);
       setMachinery([...machinery, newMachinery]);
     }
   };

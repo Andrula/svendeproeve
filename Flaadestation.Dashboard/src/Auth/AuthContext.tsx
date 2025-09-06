@@ -5,10 +5,12 @@ type User = {
   id: string;
   email: string;
   isCompanyOwner: boolean;
+  companyId: string;
 };
 
 type AuthContextType = {
   user: User | null;
+  loading: Boolean;
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => Promise<void>;
   registerOwner: (data: RegisterOwnerRequest) => Promise<boolean>;
@@ -26,6 +28,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     httpClient.get<any>("/user")
@@ -35,9 +38,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
           email: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
           isCompanyOwner: claims["isCompanyOwner"] === "true",
+          companyId: claims["CompanyId"]
         });
       })
-      .catch(() => setUser(null));
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   }, []);
 
   const login = async (email: string, password: string) => {
@@ -50,6 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
         email: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
         isCompanyOwner: claims["isCompanyOwner"] === "true",
+        companyId: claims["companyId"]
       });
       return true;
     } catch (e) {
@@ -91,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, registerOwner, registerStaff, verifyLicenseKey }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, registerOwner, registerStaff, verifyLicenseKey }}>
       {children}
     </AuthContext.Provider>
   );

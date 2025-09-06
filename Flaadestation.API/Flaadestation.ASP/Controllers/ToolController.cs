@@ -1,9 +1,12 @@
-﻿using Flaadestation.Service.DTO.ToolDTO;
+﻿using Flaadestation.ASP.Utils;
+using Flaadestation.Service.DTO.ToolDTO;
 using Flaadestation.Service.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ToolController : Controller
@@ -14,11 +17,25 @@ namespace Flaadestation.ASP.Controllers
             _toolService = toolService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetToolsByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetToolsByCompany()
         {
-            var tools = await _toolService.GetToolsByCompanyAsync(companyId);
-            return Ok(tools);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var tools = await _toolService.GetToolsByCompanyAsync(companyId);
+                    return Ok(tools);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]

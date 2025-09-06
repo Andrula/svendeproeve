@@ -1,4 +1,4 @@
-import { HttpClient } from '../Services/httpClient';
+import { HttpClient } from './HttpClient';
 import { type Machinery, MachineryModel } from '../Models/Machinery';
 import type { MachineryFormData } from '../Components/MachineryComponent/MachineryModal';
 
@@ -9,6 +9,7 @@ interface CreateMachineryRequest extends MachineryFormData {
 const httpClient = new HttpClient({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 30000,
+  withCredentials: true
 });
 
 export class MachineryService {
@@ -18,8 +19,8 @@ export class MachineryService {
     this.httpClient = httpClient;
   }
 
-  async getAllMachinery(companyId: string): Promise<MachineryModel[]> {
-    const response = await this.httpClient.get<any>(`/Machinery/company/${companyId}`);
+  async getAllMachinery(): Promise<MachineryModel[]> {
+    const response = await this.httpClient.get<any>(`/Machinery/company`);
     console.log('Raw API response:', response);
 
     if (response.length > 0) {
@@ -58,6 +59,5 @@ export class MachineryService {
 
 export const machineryService = new MachineryService(httpClient);
 
-export const DEFAULT_COMPANY_ID = import.meta.env.VITE_COMPANY_ID || '';
-export { HttpError } from './httpClient';
+export { HttpError } from './HttpClient';
 export { MachineryModel } from '../Models/Machinery';

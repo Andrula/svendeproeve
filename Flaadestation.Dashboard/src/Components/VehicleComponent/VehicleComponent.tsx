@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { VehicleModel } from "../../Models/Vehicle";
 import {
-  DEFAULT_COMPANY_ID,
   HttpError,
   vehicleService,
 } from "../../Services/VehicleService";
 import VehicleModal, { type VehicleFormData } from './VehicleModal';
 import VehicleInventoryModal from './VehicleInventoryModal';
+import { useAuth } from "../../Auth/AuthContext";
 
 export default function VehicleComponent() {
+  const { user } = useAuth();
   const [vehicles, setVehicles] = useState<VehicleModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -26,13 +27,7 @@ export default function VehicleComponent() {
       setLoading(true);
       setError(null);
 
-      if (!DEFAULT_COMPANY_ID) {
-        throw new Error("Company ID ikke konfigureret. Kontakt administrator.");
-      }
-
-      const vehicleModels = await vehicleService.getAllVehicles(
-        DEFAULT_COMPANY_ID
-      );
+      const vehicleModels = await vehicleService.getAllVehicles();
       setVehicles(vehicleModels);
     } catch (err) {
       let errorMessage = "Ukendt fejl";
@@ -88,7 +83,7 @@ export default function VehicleComponent() {
         vehicle.data.itemId === updatedVehicle.data.itemId ? updatedVehicle : vehicle
       ));
     } else {
-      await vehicleService.createVehicle(formData, DEFAULT_COMPANY_ID);
+      await vehicleService.createVehicle(formData, user!.companyId);
       await loadVehicles(); // Reload all vehicles to get complete data
     }
   };
