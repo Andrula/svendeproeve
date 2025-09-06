@@ -50,7 +50,7 @@ export default function ToolModal({ isOpen, onClose, onSave, tool, title }: Tool
 
   const loadVehicles = async () => {
     try {
-      const vehicleModels = await vehicleService.getAllVehicles(import.meta.env.VITE_COMPANY_ID || '');
+      const vehicleModels = await vehicleService.getAllVehicles();
       setVehicles(vehicleModels);
     } catch (error) {
       console.error('Error loading vehicles:', error);

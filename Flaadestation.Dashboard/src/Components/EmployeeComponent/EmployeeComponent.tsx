@@ -97,7 +97,7 @@ export default function EmployeeComponent() {
   }
 
   return (
-    <div className="position-relative" style={{ minHeight: '100vh' }}>
+    <div className="position-relative">
       <div className="container mt-4">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Medarbejdere</h1>

@@ -69,7 +69,7 @@ export default function EmployeeModal({ isOpen, onClose, onSave, employee, title
 
     const loadVehicles = async () => {
         try {
-            const vehicleModels = await vehicleService.getAllVehicles(import.meta.env.VITE_COMPANY_ID || '');
+            const vehicleModels = await vehicleService.getAllVehicles();
             setVehicles(vehicleModels);
         } catch (error) {
             console.error('Error loading vehicles:', error);

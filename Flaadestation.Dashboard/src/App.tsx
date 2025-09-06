@@ -13,6 +13,7 @@ import HomeComponent from "./Components/HomeComponent/HomeComponent";
 import LoginComponent from "./Components/LoginComponent/LoginComponent";
 import RegisterComponent from "./Components/RegisterComponent/RegisterComponent";
 import CheckoutComponent from "./Components/CheckoutComponent/CheckoutComponent";
+import LicenseComponent from "./Components/LicenseComponent/LicenseComponent";
 
 function App() {
   return (
@@ -102,6 +103,18 @@ function App() {
                 <div className="container">
                   <ProtectedRoute>
                     <ToolComponent />
+                  </ProtectedRoute>
+                </div>
+              </div>
+            }
+          />
+          <Route
+            path="/licenses"
+            element={
+              <div className="position-relative p-4 h-100">
+                <div className="container">
+                  <ProtectedRoute>
+                    <LicenseComponent />
                   </ProtectedRoute>
                 </div>
               </div>
