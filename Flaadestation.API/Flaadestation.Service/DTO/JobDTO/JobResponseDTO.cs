@@ -7,6 +7,7 @@ namespace Flaadestation.Service.DTO.JobDTO
         public Guid JobId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public Guid AddressId { get; set; }
         public DateTime ScheduledStart { get; set; }
         public DateTime ScheduledEnd { get; set; }
         public List<JobCustomerResponseDTO> Customers { get; set; } = [];

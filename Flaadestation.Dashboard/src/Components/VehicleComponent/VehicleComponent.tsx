@@ -226,7 +226,7 @@ export default function VehicleComponent() {
                           <>
                             <p><strong>Medarbejdere:</strong></p>
                             <div className="mb-2">
-                              {vehicleModel.employees.map((employee, index) => (
+                              {vehicleModel.employees.map((employee) => (
                                 <span key={employee.itemId} className="badge bg-secondary me-1 mb-1">
                                   {employee.firstName} {employee.lastName}
                                 </span>

@@ -104,7 +104,7 @@ export default function LicenseComponent() {
                         <strong className="text-app-primary">
                           {license.data.licenseKey.toUpperCase()}
                         </strong>
-                        {isAvailable && (
+                        {!isAvailable && (
                           <span className="badge bg-success">Ledig</span>
                         )}
                       </h5>
