@@ -5,7 +5,6 @@ import { JobModel } from "../../Models/Job";
 import { jobService } from "../../Services/JobService";
 import { dawaService } from "../../Services/DawaService";
 import { JobMarkerComponent } from "../JobMarkerComponent/JobMarkerComponent";
-import { Polygon } from "../MapComponent/Polygon";
 
 
 export default function GoogleMap() {
