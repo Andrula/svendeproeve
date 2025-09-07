@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Flaadestation.ASP.Utils;
 
 namespace Flaadestation.ASP.Controllers
 {
@@ -21,11 +22,25 @@ namespace Flaadestation.ASP.Controllers
             _baseService = baseService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetBasesByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetBasesByCompany()
         {
-            var bases = await _baseService.GetBasesByCompanyAsync(companyId);
-            return Ok(bases);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var bases = await _baseService.GetBasesByCompanyAsync(companyId);
+                    return Ok(bases);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpGet("{id}")]

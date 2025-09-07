@@ -151,6 +151,7 @@ namespace Flaadestation.Service.Services
                 JobId = job.JobId,
                 Title = job.Title,
                 Description = job.Description,
+                AddressId = job.AddressId,
                 ScheduledStart = job.ScheduledStart,
                 ScheduledEnd = job.ScheduledEnd,
                 Customers = job.Customers.Select(customer => new JobCustomerResponseDTO

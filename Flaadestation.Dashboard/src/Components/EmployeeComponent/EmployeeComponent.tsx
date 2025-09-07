@@ -151,7 +151,7 @@ export default function EmployeeComponent() {
                         <p><strong>Stilling:</strong> {employee.data.occupation.name}</p>
                         <p><strong>Email:</strong> {employee.data.email}</p>
                         <p><strong>Telefon:</strong> {employee.formatPhoneNumber()}</p>
-                        <p><strong>Tilknyttet:</strong> {employee.data.defaultStorage.name}</p>
+                        <p><strong>Tilknyttet:</strong> {employee.data.vehicle ? (<>{employee.data.vehicle.model}</>) : (<>{employee.data.defaultStorage?.name}</>)}</p>
                         {employee.data.note && (
                           <>
                             <p><strong>Note:</strong> {employee.data.note}</p>

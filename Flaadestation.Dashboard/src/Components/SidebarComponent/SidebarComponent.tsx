@@ -9,7 +9,6 @@ interface SidebarProps {
 
 const SidebarComponent: React.FC<SidebarProps> = ({ isOpen }) => {
   const { user } = useAuth();
-console.log(user);
 
   return (
     <div

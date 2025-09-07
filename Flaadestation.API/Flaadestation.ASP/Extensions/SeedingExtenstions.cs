@@ -51,13 +51,13 @@ namespace Flaadestation.ASP.Extensions
                     {
                         CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
                         Name = "Hvirts Entrepenør A/S",
-                        AddressId = new Guid("0A3F507B-321E-32B8-E044-0003BA298018")
+                        AddressId = new Guid("DC863FC9-A5B6-4832-839D-6862E8F2014D")
                     },
                     new Company
                     {
                         CompanyId = new Guid("D74F0E90-EDB4-4A6C-A282-F3CC9D7D613A"),
                         Name = "Byggecenter Fyn A/S",
-                        AddressId = new Guid("A48646AD-BE62-4A15-97DE-AFD124056462")
+                        AddressId = new Guid("3D1D79C6-E5E6-4E44-9293-37ACCC1FE28F")
                     }
                 };
 
@@ -122,7 +122,7 @@ namespace Flaadestation.ASP.Extensions
                         Name = "Hovedlager Odense",
                         CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
                         StorageId = new Guid("A4111111-1111-1111-1111-111111111111"),
-                        AddressId = new Guid("0A3F507B-321E-32B8-E044-0003BA298018")
+                        AddressId = new Guid("0A3F50B4-B83E-32B8-E044-0003BA298018")
                     },
                     new Base
                     {
@@ -130,7 +130,7 @@ namespace Flaadestation.ASP.Extensions
                         Name = "Lager København",
                         CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
                         StorageId = new Guid("A4222222-2222-2222-2222-222222222222"),
-                        AddressId = new Guid("A48646AD-BE62-4A15-97DE-AFD124056462")
+                        AddressId = new Guid("DC863FC9-A5B6-4832-839D-6862E8F2014D")
                     }
                 };
 
@@ -250,7 +250,7 @@ namespace Flaadestation.ASP.Extensions
                         Email = "kontakt@kk.dk",
                         Phone = "33663366",
                         CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
-                        AddressId = new Guid("0A3F507B-321E-32B8-E044-0003BA298018")
+                        AddressId = new Guid("7141865A-85C3-460D-AA30-DD3E273EBB9E")
                     },
                     new Customer
                     {
@@ -283,7 +283,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 12, 20, 16, 0, 0),
                         CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
                         StorageId = new Guid("A4222341-2222-2222-2222-222222222222"),
-                        AddressId = new Guid("0A3F507B-321E-32B8-E044-0003BA298018")
+                        AddressId = new Guid("70865C44-D570-44E7-A6F5-6F7C90ADD725")
                     },
                     new Job
                     {
@@ -294,7 +294,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 11, 30, 15, 0, 0),
                         CompanyId = new Guid("2432B27A-08AB-4623-B4E9-12834F822C47"),
                         StorageId = new Guid("A4222341-2222-2255-9988-222222222222"),
-                        AddressId = new Guid("A48646AD-BE62-4A15-97DE-AFD124056462")
+                        AddressId = new Guid("E5430358-D5D7-48D6-BCBC-324AF7476BCB")
                     }
                 };
 
@@ -446,7 +446,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 12, 20, 23, 59, 59),
                         Note = "Tildelt Københavns Rådhus projekt",
                         ItemId = new Guid("E1111111-1111-1111-1111-111111111111"),
-                        StorageId = new Guid("A4222222-2222-2222-2222-222222222222")
+                        StorageId = new Guid("A4222341-2222-2222-2222-222222222222")
                     },
                     new StorageItem
                     {
@@ -455,7 +455,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 12, 20, 23, 59, 59),
                         Note = "Tildelt Københavns Rådhus projekt - elektrisk arbejde",
                         ItemId = new Guid("E2222222-2222-2222-2222-222222222222"),
-                        StorageId = new Guid("A4222222-2222-2222-2222-222222222222")
+                        StorageId = new Guid("A4222341-2222-2222-2222-222222222222")
                     },
                     new StorageItem
                     {
@@ -464,7 +464,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 12, 20, 23, 59, 59),
                         Note = "Udstationeret til Københavns Rådhus projekt",
                         ItemId = new Guid("A2111111-1111-1111-1111-111111111111"),
-                        StorageId = new Guid("A4222222-2222-2222-2222-222222222222")
+                        StorageId = new Guid("A4222341-2222-2222-2222-222222222222")
                     },
                     new StorageItem
                     {
@@ -473,7 +473,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 11, 30, 23, 59, 59),
                         Note = "Tildelt Odense Park projekt",
                         ItemId = new Guid("A3111111-1111-3211-1111-523111111111"),
-                        StorageId = new Guid("A4111111-1111-1111-1111-111111111111")
+                        StorageId = new Guid("A4222341-2222-2255-9988-222222222222")
                     },
                     new StorageItem
                     {
@@ -482,7 +482,7 @@ namespace Flaadestation.ASP.Extensions
                         ScheduledEnd = new DateTime(2025, 12, 20, 23, 59, 59),
                         Note = "Transport til Københavns Rådhus projekt",
                         ItemId = new Guid("F1111111-2312-1111-1111-136111111111"),
-                        StorageId = new Guid("A4222222-2222-2222-2222-222222222222")
+                        StorageId = new Guid("A4222341-2222-2222-2222-222222222222")
                     }
                 };
 

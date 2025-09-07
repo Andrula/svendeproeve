@@ -4,4 +4,5 @@ export interface Storage {
   name: string;
   storageId: string;
   addressId: string;
+  // TODO: liste af items(storageitems)/default items
 }
