@@ -1,0 +1,169 @@
+.map-container {
+  width: 100%;
+  height: 100% !important;
+}
+
+.map-container {
+  width: 100%;
+  height: calc(100vh - 60px);
+}
+
+.map-container *:before, .map-container *:after {
+  box-sizing: border-box;
+}
+
+.map-container .material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+.gmnoprint.gm-style-mtc-bbw {
+  border-radius: 50px !important;
+  overflow: hidden !important;
+  background: var(--bs-dark) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 
+    0 8px 32px rgba(0,0,0,0.2),
+    0 1px 0 rgba(255,255,255,0.1) inset !important;
+  margin: 15px !important;
+  transition: all 0.3s ease !important;
+}
+
+.gm-style-mtc button {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  padding: 0 24px !important;
+  height: 48px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: #fff !important;
+  width: 100px !important;
+  min-width: 100px !important;
+}
+
+.gm-style-mtc button[aria-checked="true"] {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: var(--app-primary) !important;
+  font-weight: bold !important;
+}
+
+.gm-style-mtc button:hover:not([aria-checked="true"]) {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--app-primary-light) !important;
+}
+
+.gm-style-mtc button[aria-checked="true"]:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: var(--app-primary) !important;
+}
+
+.gm-style-mtc:first-child button {
+  border-top-left-radius: 50px !important;
+  border-bottom-left-radius: 50px !important;
+}
+
+.gm-style-mtc:last-child button {
+  border-top-right-radius: 50px !important;
+  border-bottom-right-radius: 50px !important;
+}
+
+.gm-style-mtc ul {
+  display: none !important;
+}
+
+.gm-bundled-control {
+  background: var(--bs-dark) !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(20px) !important;
+  padding: 4px !important;
+}
+
+.gm-bundled-control button {
+  background: var(--bs-dark) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  width: 48px !important;
+  height: 48px !important;
+  margin: -10px !important;
+  transition: all 0.3s ease !important;
+}
+
+.gm-bundled-control button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: var(--app-primary-light) !important;
+}
+
+.gm-fullscreen-control {
+  background: var(--bs-dark) !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2) !important;
+  backdrop-filter: blur(20px) !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+
+.gm-fullscreen-control button {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: none !important;
+  border-radius: 50% !important;
+  color: #fff !important;
+  width: 100% !important;
+  height: 100% !important;
+  transition: all 0.3s ease !important;
+}
+
+.gm-fullscreen-control button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: var(--app-primary-light) !important;
+}
+
+.gm-bundled-control {
+    background: transparent !important;
+}
+
+.gm-bundled-control button img {
+  filter: invert(52%) sepia(88%) saturate(2086%) hue-rotate(16deg) brightness(101%) contrast(101%) !important;
+}
+
+.gm-fullscreen-control img {
+  filter: invert(52%) sepia(88%) saturate(2086%) hue-rotate(16deg) brightness(101%) contrast(101%) !important;
+}
+
+.gm-fullscreen-control button img {
+  filter: invert(52%) sepia(88%) saturate(2086%) hue-rotate(16deg) brightness(101%) contrast(101%) !important;
+}
+
+.gm-fullscreen-control svg {
+  filter: invert(52%) sepia(88%) saturate(2086%) hue-rotate(16deg) brightness(101%) contrast(101%) !important;
+}
+
+.gm-bundled-control svg {
+  filter: invert(52%) sepia(88%) saturate(2086%) hue-rotate(16deg) brightness(101%) contrast(101%) !important;
+}
+
+.gm-style-cc {
+  display: none !important;
+}
+
+.gm-style a[href*="maps.google.com"] {
+  display: none !important;
+}
+
