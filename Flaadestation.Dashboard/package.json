@@ -10,8 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@react-google-maps/api": "^2.20.7",
+    "@vis.gl/react-google-maps": "^1.5.5",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "classnames": "^2.5.1",
+    "date-fns": "^4.1.0",
+    "lucide-react": "^0.542.0",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^7.8.2",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",

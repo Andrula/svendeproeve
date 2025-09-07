@@ -1,7 +1,8 @@
-﻿using Flaadestation.ASP.DTO.CustomerDTO;
+﻿using Flaadestation.Service.DTO.CustomerDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Flaadestation.ASP.Utils;
 
 namespace Flaadestation.ASP.Controllers
 {
@@ -16,12 +17,26 @@ namespace Flaadestation.ASP.Controllers
             _customerService = customerService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetCustomersByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetCustomersByCompany()
         {
-            var customers = await _customerService.GetCustomersByCompanyAsync(companyId);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
 
-            return Ok(customers);
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var customers = await _customerService.GetCustomersByCompanyAsync(companyId);
+
+                    return Ok(customers);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet("{id}")]
@@ -53,7 +68,7 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequestDTO request)
+        public async Task<IActionResult> CreateCustomer([FromBody] CustomerRequestDTO request)
         {
             var customer = new Customer
             {
@@ -77,7 +92,7 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCustomer(Guid id, [FromBody] UpdateCustomerRequestDTO request)
+        public async Task<IActionResult> UpdateCustomer(Guid id, [FromBody] CustomerRequestDTO request)
         {
             var customer = new Customer
             {

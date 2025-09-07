@@ -16,6 +16,7 @@ namespace Flaadestation.Repository.Database.Entities
         public List<Base> Bases { get; set; } = [];
         public List<Job> Jobs { get; set; } = [];
         public List<Customer> Customers { get; set; } = [];
+        public List<License> Licenses { get; set; } = [];
 
     }
 }

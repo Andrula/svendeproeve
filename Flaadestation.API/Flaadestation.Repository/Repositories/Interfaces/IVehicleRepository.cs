@@ -9,5 +9,6 @@ namespace Flaadestation.Repository.Repositories.Interfaces
 {
     public interface IVehicleRepository : IRepository<Vehicle>
     {
+        Task<IEnumerable<Vehicle>> GetVehiclesByCompanyIdAsync(Guid companyId);
     }
 }

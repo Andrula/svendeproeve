@@ -1,13 +1,16 @@
-﻿using Flaadestation.ASP.DTO.BaseDTO;
+﻿using Flaadestation.Service.DTO.BaseDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Flaadestation.Service.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Flaadestation.ASP.Utils;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BaseController : ControllerBase
@@ -19,11 +22,25 @@ namespace Flaadestation.ASP.Controllers
             _baseService = baseService;
         }
 
-        [HttpGet("company/{companyId}")]
-        public async Task<IActionResult> GetBasesByCompany(Guid companyId)
+        [HttpGet("company")]
+        public async Task<IActionResult> GetBasesByCompany()
         {
-            var bases = await _baseService.GetBasesByCompanyAsync(companyId);
-            return Ok(bases);
+            try
+            {
+                Guid? companyIdFromClaims = AuthenticationUtils.GetCompanyIdFromClaims(User);
+
+                if (companyIdFromClaims is Guid companyId)
+                {
+                    var bases = await _baseService.GetBasesByCompanyAsync(companyId);
+                    return Ok(bases);
+                }
+
+                return Unauthorized();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
 
         [HttpGet("{id}")]
@@ -33,39 +50,15 @@ namespace Flaadestation.ASP.Controllers
             if (baseEntity == null)
                 return NotFound();
 
-            var response = new BaseResponseDTO
-            {
-                BaseId = baseEntity.BaseId,
-                Name = baseEntity.Name,
-                CompanyId = baseEntity.CompanyId,
-                AddressId = baseEntity.AddressId,
-            };
-            return Ok(response);
+            return Ok(baseEntity);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBase([FromBody] CreateBaseRequestDTO request)
+        public async Task<IActionResult> CreateBase([FromBody] BaseRequestDTO request)
         {
-            var baseEntity = new Base
-            {
-                BaseId = Guid.NewGuid(),
-                Name = request.Name,
-                CompanyId = request.CompanyId,
-                AddressId = request.AddressId,
-                StorageId = Guid.NewGuid()
-            };
-
             try
             {
-                var created = await _baseService.CreateBaseAsync(baseEntity);
-
-                var response = new BaseResponseDTO
-                {
-                    BaseId = created.BaseId,
-                    Name = created.Name,
-                    CompanyId = created.CompanyId,
-                    AddressId = created.AddressId,
-                };
+                var response = await _baseService.CreateBaseAsync(request);
 
                 return Ok(response);
             }
@@ -76,17 +69,16 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateBase(Guid id, [FromBody] UpdateBaseRequestDTO request)
+        public async Task<IActionResult> UpdateBase(Guid id, [FromBody] BaseRequestDTO request)
         {
             try
             {
-                var updated = await _baseService.UpdateBaseAsync(id, request.Name);
+                var updated = await _baseService.UpdateBaseAsync(id, request);
                 if (updated == null)
                     return NotFound();
 
-                var updatedBaseResponse = new BaseResponseDTO
+                var updatedBaseResponse = new BaseRequestDTO
                 {
-                    BaseId = updated.BaseId,
                     Name = updated.Name,
                     CompanyId = updated.CompanyId,
                     AddressId = updated.AddressId
