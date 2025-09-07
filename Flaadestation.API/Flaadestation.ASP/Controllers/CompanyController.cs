@@ -1,12 +1,14 @@
 ﻿using Azure.Core;
-using Flaadestation.ASP.DTO;
-using Flaadestation.ASP.DTO.CompanyDTO;
+using Flaadestation.Service.DTO;
+using Flaadestation.Service.DTO.CompanyDTO;
 using Flaadestation.Repository.Database.Entities;
 using Flaadestation.Service.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Flaadestation.ASP.Controllers
 {
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class CompanyController : ControllerBase
@@ -29,18 +31,11 @@ namespace Flaadestation.ASP.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateCompany([FromBody] CreateCompanyRequestDTO request)
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyRequestDTO request)
         {
-            var company = new Company
-            {
-                CompanyId = Guid.NewGuid(),
-                Name = request.Name,
-                AddressId = request.AddressId
-            };
-
             try
             {
-                var created = await _companyService.CreateCompanyAsync(company);
+                var created = await _companyService.CreateCompanyAsync(request);
                 return Ok(created);
             }
             catch (InvalidOperationException ex)

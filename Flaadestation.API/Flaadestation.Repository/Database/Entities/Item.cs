@@ -12,11 +12,13 @@ namespace Flaadestation.Repository.Database.Entities
         public Guid ItemId { get; set; }
         public ItemType ItemType { get; set; }
         public string Note { get; set; } = string.Empty;
+        public Guid? DefaultStorageId { get; set; }
         public Guid CompanyId { get; set; }
-        public Guid ImageId { get; set; }
+        public Guid? ImageId { get; set; }
 
         public Company? Company { get; set; }
         public Image? Image { get; set; }
+        public Storage? DefaultStorage { get; set; }
         public List<StorageItem> StorageItems { get; set; } = [];
         public bool IsAvailableAt(DateTime checkTime)
         {

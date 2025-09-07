@@ -9,5 +9,6 @@ namespace Flaadestation.Repository.Repositories.Interfaces
 {
     public interface IToolRepository : IRepository<Tool>
     {
+        Task<IEnumerable<Tool>> GetToolsByCompanyIdAsync(Guid companyId);
     }
 }

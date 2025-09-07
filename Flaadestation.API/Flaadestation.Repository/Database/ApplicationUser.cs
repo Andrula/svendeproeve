@@ -11,7 +11,8 @@ namespace Flaadestation.Repository.Database
     public class ApplicationUser : IdentityUser
     {
         public Guid CompanyId { get; set; }
-
+        public bool IsCompanyOwner { get; set; }
         public Company? Company { get; set; }
+        public License? License { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Flaadestation.Repository.Database.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,6 +10,7 @@ using System.Net;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using static Flaadestation.Shared.Constants;
 
 namespace Flaadestation.Repository.Database
 {
@@ -20,6 +22,7 @@ namespace Flaadestation.Repository.Database
 
         }
 
+        public DbSet<License> Licenses { get; set; }
         public DbSet<Item> Items { get; set; }
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
@@ -37,6 +40,21 @@ namespace Flaadestation.Repository.Database
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            // ============================
+            // License ↔ User
+            // ============================
+            builder.Entity<License>()
+                .HasOne(l => l.User)
+                .WithOne(u => u.License)
+                .HasForeignKey<License>(l => l.UserId);
+
+            // ============================
+            // License ↔ Company
+            // ============================
+            builder.Entity<License>()
+                .HasOne(l => l.Company)
+                .WithMany(c => c.Licenses)
+                .HasForeignKey(l => l.CompanyId);
 
             // ============================
             // TPT inheritance mapping
@@ -156,6 +174,15 @@ namespace Flaadestation.Repository.Database
                 .HasOne(i => i.Image)
                 .WithOne(img => img.Item)
                 .HasForeignKey<Item>(i => i.ImageId);
+
+            // ============================
+            // Items ↔ DefaultStorage
+            // ============================
+            builder.Entity<Item>()
+                .HasOne(i => i.DefaultStorage)
+                .WithMany(s => s.ItemsWithThisStorageAsDefault)
+                .HasForeignKey(i => i.DefaultStorageId)
+                .OnDelete(DeleteBehavior.ClientSetNull);
 
             base.OnModelCreating(builder);
         }

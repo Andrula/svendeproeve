@@ -1,4 +1,5 @@
 
+using Flaadestation.ASP.Extensions;
 using Flaadestation.Repository.Database;
 using Flaadestation.Repository.Repositories;
 using Flaadestation.Repository.Repositories.Interfaces;
@@ -17,19 +18,9 @@ namespace Flaadestation.ASP
 
             // Add services to the container.
 
-            // repositories
-            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
-            builder.Services.AddScoped<IOccupationRepository, OccupationRepository>();
-            builder.Services.AddScoped<IBaseRepository, BaseRepository>();
-            builder.Services.AddScoped<IStorageRepository, StorageRepository>();
-            builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+            builder.Services.AddRepositories();
+            builder.Services.AddBusinessServices();
 
-            // services
-            builder.Services.AddScoped<ICompanyService, CompanyService>();
-            builder.Services.AddScoped<IOccupationService, OccupationService>();
-            builder.Services.AddScoped<IBaseService, BaseService>();
-            builder.Services.AddScoped<IStorageService, StorageService>();
-            builder.Services.AddScoped<ICustomerService, CustomerService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -43,7 +34,8 @@ namespace Flaadestation.ASP
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
-                //options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedAccount = false;
             })
                 .AddEntityFrameworkStores<ApplicationDBContext>()
                 .AddDefaultTokenProviders();
@@ -54,6 +46,17 @@ namespace Flaadestation.ASP
                 options.Cookie.HttpOnly = true;
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173")
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -61,7 +64,11 @@ namespace Flaadestation.ASP
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+
+                app.SeedDatabaseAsync().GetAwaiter().GetResult();
             }
+
+            app.UseCors("AllowReactApp");
 
             app.UseHttpsRedirection();
 

@@ -11,5 +11,6 @@ namespace Flaadestation.Repository.Repositories.Interfaces
     {
         Task<IEnumerable<Employee>> GetEmployeesByOccupationAsync(Guid occupationId);
         Task<IEnumerable<Employee>> GetAvailableEmployeesAsync(DateTime? startTime, DateTime? endTime);
+        Task<IEnumerable<Employee>> GetEmployeesByCompanyIdAsync(Guid companyId);
     }
 }
