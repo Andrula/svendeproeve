@@ -1,4 +1,4 @@
-.custom-marker {
+.custom-base-marker {
   position: relative;
   transform: translateY(-5px);
   transition: all 0.2s ease-in-out;
@@ -49,11 +49,11 @@
   color: #12271e;
 }
 
-.custom-pin .image-container {
+.custom-base-marker .custom-pin .image-container {
   cursor: pointer;
   width: 100%;
   height: 100%;
-  background-color: #b88b2e;
+  background-color: var(--bs-blue);
   max-width: 68px;
   background-position: 50% 50%;
   background-size: cover;
@@ -72,11 +72,11 @@
   transition: font-size 0.2s ease-in-out;
 }
 
-.custom-marker.hovered {
+.custom-base-marker.hovered {
   transform: translateY(-9px);
 }
 
-.custom-marker.hovered .custom-pin {
+.custom-base-marker.hovered .custom-pin {
   height: 68px;
   width: 68px;
   border-radius: 50%;
@@ -86,29 +86,29 @@
   font-size: 26px;
 }
 
-.custom-marker.hovered .tip {
+.custom-base-marker.hovered .tip {
   transform: translateY(23%) translateX(-50%) rotate(45deg) scale(1.4);
 }
 
-.custom-marker.clicked {
+.custom-base-marker.clicked {
   transform: translateY(-9px);
 }
 
-.custom-marker.clicked .custom-pin {
+.custom-base-marker.clicked .custom-pin {
   background-color: #12271e;
   border-radius: 8px;
   width: auto;
   height: 317px;
 }
 
-.custom-marker.clicked .custom-pin .image-container {
+.custom-base-marker.clicked .custom-pin .image-container {
   border-radius: 8px 0 0 8px;
   animation: fadeIn 0.7s ease-in-out;
 
   width: 68px;
 }
 
-.custom-marker.clicked .custom-pin .details-container {
+.custom-base-marker.clicked .custom-pin .details-container {
   max-width: 400px;
   opacity: 1;
   visibility: visible;
@@ -116,19 +116,19 @@
   animation: slideInFadeIn 0.7s ease-in-out;
 }
 
-.custom-marker.clicked .custom-pin .details-container .close-button {
+.custom-base-marker.clicked .custom-pin .details-container .close-button {
   display: flex;
 }
 
-.custom-marker.clicked .custom-pin .details-container .close-button span {
+.custom-base-marker.clicked .custom-pin .details-container .close-button span {
   font-size: 24px;
 }
 
-.custom-marker.clicked .tip {
+.custom-base-marker.clicked .tip {
   transform: translateY(23%) translateX(-50%) rotate(45deg) scale(1.4);
 }
 
-.details-container {
+.custom-base-marker .details-container {
   cursor: default;
   display: flex;
   flex-direction: row;
@@ -141,7 +141,7 @@
   visibility: hidden;
 }
 
-.marker-content {
+.custom-base-marker .marker-content {
   flex-grow: 1;
   width: 20rem;
   padding: 24px;
@@ -151,7 +151,7 @@
   overflow-y: auto;
 }
 
-.tab-bar {
+.custom-base-marker .tab-bar {
   width: 48px;
   background-color: #f3f3f3;
   border-left: 1px solid #ddd;
@@ -167,7 +167,7 @@ hr {
   color: #bbbbbb;
 }
 
-.tab-button {
+.custom-base-marker .tab-button {
   flex-grow: 1;
   width: 100%;
   background: none;
@@ -179,16 +179,16 @@ hr {
   transition: background-color 0.2s, color 0.2s;
 }
 
-.tab-button:hover {
+.custom-base-marker .tab-button:hover {
   color: #fff;
-  background-color: #b88b2e;
+  background-color: var(--bs-blue);
 }
 
-.tab-button-info {
+.custom-base-marker .tab-button-info {
   font-size: 14px;
 }
 
-.marker-content h2 {
+.custom-base-marker .marker-content h2 {
   color: #18342a;
   font-size: 20px;
   font-style: normal;
@@ -198,7 +198,7 @@ hr {
   margin: 0;
 }
 
-.marker-content p {
+.custom-base-marker .marker-content p {
   color: #18342a;
   font-size: 14px;
   font-style: normal;
@@ -208,7 +208,7 @@ hr {
   margin: 0;
 }
 
-.marker-content .description {
+.custom-base-marker .marker-content .description {
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -216,13 +216,13 @@ hr {
   letter-spacing: 0.2px;
 }
 
-.details {
+.custom-base-marker .details {
   display: flex;
   flex-direction: row;
   gap: 16px;
 }
 
-.details .detail_item {
+.custom-base-marker .details .detail_item {
   color: #404040;
   font-size: 14px;
   font-style: normal;
@@ -235,27 +235,10 @@ hr {
   gap: 4px;
 }
 
-.details .detail_item span,
-.details .detail_item svg {
+.custom-base-marker .details .detail_item span,
+.custom-base-marker .details .detail_item svg {
   font-size: 17px;
-  color: #b88b2e;
-}
-
-.dates-section {
-  margin: auto 0 0 0;
-}
-
-.date-range {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #1a5c3a;
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.date-range svg {
-  color: #b88b2e;
+  color: var(--bs-blue);
 }
 
 @keyframes slideInFadeIn {
