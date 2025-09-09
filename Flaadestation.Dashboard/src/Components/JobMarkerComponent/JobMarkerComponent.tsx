@@ -121,7 +121,7 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
         position={position}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={classNames("custom-marker", { clicked: isClicked, hovered })}
+        className={classNames("custom-job-marker", { clicked: isClicked, hovered })}
         zIndex={isClicked ? 1000 : hovered ? 500 : 1}
       >
         {renderCustomPin()}
