@@ -1,36 +1,34 @@
 import { useState, type FunctionComponent } from "react";
-import "./JobMarkerComponent.css";
+import "./BaseMarkerComponent.css";
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 import classNames from "classnames";
-import type { JobModel } from "../../Services/JobService";
-import { format } from "date-fns";
-import { Calendar } from "lucide-react";
+import type { BaseModel } from "../../Services/BaseService";
 
 interface Props {
-  job: JobModel;
+  base: BaseModel;
   activeMarkerId: string | null;
-  setMarkerJobId: (id: string | null) => void;
+  setMarkerBaseId: (id: string | null) => void;
 }
 
-export const JobMarkerComponent: FunctionComponent<Props> = ({
-  job,
+export const BaseMarkerComponent: FunctionComponent<Props> = ({
+  base,
   activeMarkerId: activeMarkerId,
-  setMarkerJobId: setActiveMarkerId,
+  setMarkerBaseId: setActiveMarkerId,
 }) => {
   const [hovered, setHovered] = useState(false);
 
   const position = {
-    lat: job.data.address.y,
-    lng: job.data.address.x,
+    lat: base.data.address.y,
+    lng: base.data.address.x,
   };
 
-  const isClicked = activeMarkerId === job.data.jobId;
+  const isClicked = activeMarkerId === base.data.baseId;
 
   const handleClick = () => {
     if (isClicked) {
       setActiveMarkerId(null);
     } else {
-      setActiveMarkerId(job.data.jobId);
+      setActiveMarkerId(base.data.baseId);
     }
   };
   
@@ -50,24 +48,14 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
               </span>
             ) : (
               <span className="icon">
-                <i className="bi bi-tools"></i>
+                <i className="bi bi-house-fill"></i>
               </span>
             )}
           </div>
 
           <div className="details-container">
             <div className="marker-content">
-              <h2>{job.data.title}</h2>
-              <p className="description">{job.data.description}</p>
-              <div className="dates-section">
-                <div className="date-range">
-                  <Calendar size={16} />
-                  <span>
-                    {format(new Date(job.data.scheduledStart), "dd-MM-yyyy")} -{" "}
-                    {format(new Date(job.data.scheduledEnd), "dd-MM-yyyy")}
-                  </span>
-                </div>
-              </div>
+              <h2>{base.data.name}</h2>
             </div>
 
             <div className="tab-bar">
@@ -75,8 +63,8 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 <i className="bi bi-truck"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
-                  {job.data.storage.vehicles.length +
-                    job.data.storage.defaultVehicles.length}
+                  {base.data.storage.vehicles.length +
+                    base.data.storage.defaultVehicles.length}
                 </small>
               </button>
               <hr />
@@ -84,8 +72,8 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 <i className="bi bi-person"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
-                  {job.data.storage.employees.length +
-                    job.data.storage.defaultEmployees.length}
+                  {base.data.storage.employees.length +
+                    base.data.storage.defaultEmployees.length}
                 </small>
               </button>
               <hr />
@@ -93,8 +81,8 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 <i className="bi bi-wrench"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
-                  {job.data.storage.tools.length +
-                    job.data.storage.defaultTools.length}
+                  {base.data.storage.tools.length +
+                    base.data.storage.defaultTools.length}
                 </small>
               </button>
               <hr />
@@ -102,8 +90,8 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 <i className="bi bi-truck-front"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
-                  {job.data.storage.machines.length +
-                    job.data.storage.defaultMachines.length}
+                  {base.data.storage.machines.length +
+                    base.data.storage.defaultMachines.length}
                 </small>
               </button>
             </div>
@@ -121,7 +109,7 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
         position={position}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className={classNames("custom-job-marker", { clicked: isClicked, hovered })}
+        className={classNames("custom-base-marker", { clicked: isClicked, hovered })}
         zIndex={isClicked ? 1000 : hovered ? 500 : 1}
       >
         {renderCustomPin()}

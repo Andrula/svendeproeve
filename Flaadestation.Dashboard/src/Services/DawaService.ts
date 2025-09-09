@@ -1,4 +1,5 @@
 import { AddressModel } from "../Models/Address";
+import type { BaseModel } from "./BaseService";
 import { HttpClient } from "./HttpClient";
 import type { JobModel } from "./JobService";
 
@@ -60,6 +61,19 @@ export class DawaService {
             
             if (address) {
                 job.data.address = new AddressModel(address);
+            }
+        });
+    }
+
+    async fillAddressesOnBases(bases: BaseModel[]): Promise<void> {
+        const addressIds = bases.map(b => b.data.addressId);
+        const response = await this.httpClient.get<DawaMiniResponse[]>(`/adresser?id=${addressIds.join('|')}&struktur=mini`)
+        
+        bases.forEach(base => {
+            const address = response.find(dr => dr.id == base.data.addressId)
+            
+            if (address) {
+                base.data.address = new AddressModel(address);
             }
         });
     }

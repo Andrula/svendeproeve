@@ -5,10 +5,14 @@ import { JobModel } from "../../Models/Job";
 import { jobService } from "../../Services/JobService";
 import { dawaService } from "../../Services/DawaService";
 import { JobMarkerComponent } from "../JobMarkerComponent/JobMarkerComponent";
+import type { BaseModel } from "../../Models/Base";
+import { baseService } from "../../Services/BaseService";
+import { BaseMarkerComponent } from "../BaseMarkerComponent/BaseMarkerComponent";
 
 
 export default function GoogleMap() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
+  const [bases, setBases] = useState<BaseModel[]>([]);
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
@@ -20,13 +24,17 @@ export default function GoogleMap() {
     const jobModels = await jobService.getJobsByCompany();
     await dawaService.fillAddressesOnJobs(jobModels);
     setJobs(jobModels);
+
+    const baseModels = await baseService.getBasesByCompany();
+    await dawaService.fillAddressesOnBases(baseModels);
+    setBases(baseModels);
   };
 
   const denmarkBounds = {
-    north: 57.75,
-    south: 54.56,
-    west: 8.08,
-    east: 15.16
+    north: 57.85,
+    south: 54.26,
+    west: 7.90,
+    east: 15.26
   }
 
   return (
@@ -52,6 +60,15 @@ export default function GoogleMap() {
               job={job}
               activeMarkerId={activeMarkerId}
               setMarkerJobId={setActiveMarkerId}
+            />
+          ))}
+
+          {bases.map((base) => (
+            <BaseMarkerComponent
+              key={base.data.baseId}
+              base={base}
+              activeMarkerId={activeMarkerId}
+              setMarkerBaseId={setActiveMarkerId}
             />
           ))}
         </Map>
