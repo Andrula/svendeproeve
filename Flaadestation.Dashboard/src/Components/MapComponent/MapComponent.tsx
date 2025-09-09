@@ -1,11 +1,13 @@
 import "./MapComponent.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { JobModel } from "../../Models/Job";
 import { jobService } from "../../Services/JobService";
 import { dawaService } from "../../Services/DawaService";
 import { JobMarkerComponent } from "../JobMarkerComponent/JobMarkerComponent";
 
+type SortField = 'name' | 'defaultStorage' | 'availability' | 'currentAssignment';
+type SortDirection = 'asc' | 'desc';
 
 export default function GoogleMap() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
