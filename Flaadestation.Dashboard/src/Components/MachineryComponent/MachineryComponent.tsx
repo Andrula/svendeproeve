@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { MachineryModel } from '../../Models/Machinery'; 
 import { 
   machineryService, 
@@ -6,6 +6,9 @@ import {
 } from '../../Services/MachineryService'; 
 import MachineryModal, { type MachineryFormData } from './MachineryModal';
 import { useAuth } from '../../Auth/AuthContext';
+
+type SortField = 'name' | 'defaultStorage' | 'availability' | 'currentAssignment';
+type SortDirection = 'asc' | 'desc';
 
 export default function MachineryComponent() {
   const { user } = useAuth();
@@ -15,9 +18,87 @@ export default function MachineryComponent() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedMachinery, setSelectedMachinery] = useState<MachineryModel | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState<SortField>('name');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
   useEffect(() => {
     loadMachinery();
   }, []);
+
+
+  const filteredAndSortedMachinery = useMemo(() => {
+    let filtered = machinery;
+
+
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = machinery.filter(item => {
+        return (
+          item.name.toLowerCase().includes(searchLower) ||
+          item.note?.toLowerCase().includes(searchLower) ||
+          item.data.defaultStorage?.name.toLowerCase().includes(searchLower) ||
+          item.currentAssignment?.note.toLowerCase().includes(searchLower) ||
+          item.nextAssignment?.note.toLowerCase().includes(searchLower)
+        );
+      });
+    }
+
+
+    const sorted = [...filtered].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortField) {
+        case 'name':
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
+        case 'defaultStorage':
+          aValue = a.data.defaultStorage?.name.toLowerCase() || '';
+          bValue = b.data.defaultStorage?.name.toLowerCase() || '';
+          break;
+        case 'availability':
+          aValue = a.isAvailable ? 1 : 0;
+          bValue = b.isAvailable ? 1 : 0;
+          break;
+        case 'currentAssignment':
+          aValue = a.currentAssignment ? 1 : 0;
+          bValue = b.currentAssignment ? 1 : 0;
+          break;
+        default:
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } 
+      else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return sorted;
+  }, [machinery, searchTerm, sortField, sortDirection]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+    const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <i className="bi bi-arrow-down-up text-muted"></i>;
+    }
+    return sortDirection === 'asc' 
+      ? <i className="bi bi-arrow-up" style={{color: '#fff'}}></i>
+      : <i className="bi bi-arrow-down" style={{color: '#fff'}}></i>;
+  };
 
   const loadMachinery = async () => {
     try {
@@ -121,114 +202,182 @@ export default function MachineryComponent() {
           </div>
         )}
 
-        {!error && machinery.length === 0 ? (
-          <div className="alert alert-info">
-            Ingen maskiner fundet.
-          </div>
-        ) : (
-          <div className="row">
-            {machinery.map((machineryItem) => {
-              const currentAssignment = machineryItem.currentAssignment;
-              const nextAssignment = machineryItem.nextAssignment;
+        {!error && (
+          <>
 
-              return (
-                <div
-                  key={machineryItem.data.itemId}
-                  className="col-md-6 col-lg-6 mb-3 d-flex"
-                >
-                  <div className="card w-100">
-                    <div className="card-header bg-dark">
-                      <h5 className="card-title d-flex justify-content-between align-items-center">
-                        <strong className="text-app-primary">
-                          {machineryItem.name}
-                        </strong>
-                        {machineryItem.isAvailable && (
-                          <span className="badge bg-success">Ledig</span>
-                        )}
-                      </h5>
-                    </div>
-                    <div className="card-body">
-                      <div className="card-text">
-                        {machineryItem.data.defaultStorage ? (
-                          <p><strong>Standard lager:</strong> {machineryItem.data.defaultStorage.name}</p>
-                        ) : (
-                          <p className="text-muted fst-italic">ingen standard lager registreret</p>
-                        )}
-                        {machineryItem.note ? (
-                          <>
-                            <p><strong>Note:</strong> {machineryItem.note}</p>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-muted fst-italic">
-                              ingen note registreret
-                            </p>
-                          </>
-                        )}
-                        {currentAssignment ? (
-                          <>
-                            <strong>Nuværende opgave:</strong>
-                            <div className="bg-light p-2 rounded small">
-                              <small className="text-muted">
-                                {currentAssignment.storage.name}
-                                <br />
-                                {currentAssignment.note}
-                                <br />
-                                {new Date(
-                                    currentAssignment.scheduledStart
-                                ).toLocaleDateString("da-DK")}{" "}
-                                -{" "}
-                                {new Date(
-                                    currentAssignment.scheduledEnd
-                                ).toLocaleDateString("da-DK")}
-                              </small>
-                            </div>
-                          </>
-                        ) : nextAssignment ? (
-                          <>
-                            <strong>Næste opgave:</strong>
-                            <div className="bg-light p-2 rounded small">
-                              <small className="text-muted">
-                                {nextAssignment.note}
-                                <br />
-                                {new Date(
-                                    nextAssignment.scheduledStart
-                                ).toLocaleDateString("da-DK")}{" "}
-                                -{" "}
-                                {new Date(
-                                    nextAssignment.scheduledEnd
-                                ).toLocaleDateString("da-DK")}
-                              </small>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-muted fst-italic">
-                              Ikke allokeret til nogle opgaver
-                            </p>
-                          </>
-                        )}
+            <div className="row mb-4">
+              <div className="col-md-8">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Søg efter maskinenavn, noter, lager..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button
+                      className="btn btn-outline-secondary"
+                      type="button"
+                      onClick={() => setSearchTerm('')}
+                    >
+                      <i className="bi bi-x"></i>
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="btn-group w-100" role="group">
+                  <button
+                    type="button"
+                    className={`btn ${sortField === 'name' ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => handleSort('name')}
+                  >
+                    Navn {getSortIcon('name')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${sortField === 'availability' ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => handleSort('availability')}
+                  >
+                    Status {getSortIcon('availability')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${sortField === 'defaultStorage' ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => handleSort('defaultStorage')}
+                  >
+                    Lager {getSortIcon('defaultStorage')}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <small className="text-muted">
+                Viser {filteredAndSortedMachinery.length} af {machinery.length} maskiner
+                {searchTerm && (
+                  <span> (filtreret efter "{searchTerm}")</span>
+                )}
+              </small>
+            </div>
+
+            {filteredAndSortedMachinery.length === 0 ? (
+              <div className="alert alert-info">
+                {searchTerm ? 
+                  `Ingen maskiner matchede søgningen "${searchTerm}".` : 
+                  'Ingen maskiner fundet.'
+                }
+              </div>
+            ) : (
+              <div className="row">
+                {filteredAndSortedMachinery.map((machineryItem) => {
+                  const currentAssignment = machineryItem.currentAssignment;
+                  const nextAssignment = machineryItem.nextAssignment;
+
+                  return (
+                    <div
+                      key={machineryItem.data.itemId}
+                      className="col-md-6 col-lg-6 mb-3 d-flex"
+                    >
+                      <div className="card w-100">
+                        <div className="card-header bg-dark">
+                          <h5 className="card-title d-flex justify-content-between align-items-center">
+                            <strong className="text-app-primary">
+                              {machineryItem.name}
+                            </strong>
+                            {machineryItem.isAvailable && (
+                              <span className="badge bg-success">Ledig</span>
+                            )}
+                          </h5>
+                        </div>
+                        <div className="card-body">
+                          <div className="card-text">
+                            {machineryItem.data.defaultStorage ? (
+                              <p><strong>Standard lager:</strong> {machineryItem.data.defaultStorage.name}</p>
+                            ) : (
+                              <p className="text-muted fst-italic">ingen standard lager registreret</p>
+                            )}
+                            {machineryItem.note ? (
+                              <>
+                                <p><strong>Note:</strong> {machineryItem.note}</p>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-muted fst-italic">
+                                  ingen note registreret
+                                </p>
+                              </>
+                            )}
+                            {currentAssignment ? (
+                              <>
+                                <strong>Nuværende opgave:</strong>
+                                <div className="bg-light p-2 rounded small">
+                                  <small className="text-muted">
+                                    {currentAssignment.storage.name}
+                                    <br />
+                                    {currentAssignment.note}
+                                    <br />
+                                    {new Date(
+                                        currentAssignment.scheduledStart
+                                    ).toLocaleDateString("da-DK")}{" "}
+                                    -{" "}
+                                    {new Date(
+                                        currentAssignment.scheduledEnd
+                                    ).toLocaleDateString("da-DK")}
+                                  </small>
+                                </div>
+                              </>
+                            ) : nextAssignment ? (
+                              <>
+                                <strong>Næste opgave:</strong>
+                                <div className="bg-light p-2 rounded small">
+                                  <small className="text-muted">
+                                    {nextAssignment.note}
+                                    <br />
+                                    {new Date(
+                                        nextAssignment.scheduledStart
+                                    ).toLocaleDateString("da-DK")}{" "}
+                                    -{" "}
+                                    {new Date(
+                                        nextAssignment.scheduledEnd
+                                    ).toLocaleDateString("da-DK")}
+                                  </small>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-muted fst-italic">
+                                  Ikke allokeret til nogle opgaver
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <div className="card-footer d-flex justify-content-between">
+                          <button 
+                            className="btn btn-sm btn-outline-primary me-2"
+                            onClick={() => openEditModal(machineryItem)}
+                          >
+                            <i className="bi bi-pencil"></i> Rediger
+                          </button>
+                          <button 
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDeleteMachinery(machineryItem)}
+                          >
+                            <i className="bi bi-trash"></i> Slet
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="card-footer d-flex justify-content-between">
-                      <button 
-                        className="btn btn-sm btn-outline-primary me-2"
-                        onClick={() => openEditModal(machineryItem)}
-                      >
-                        <i className="bi bi-pencil"></i> Rediger
-                      </button>
-                      <button 
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => handleDeleteMachinery(machineryItem)}
-                      >
-                        <i className="bi bi-trash"></i> Slet
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
 
         {modalOpen && (
@@ -240,12 +389,6 @@ export default function MachineryComponent() {
             title={selectedMachinery ? 'Rediger maskine' : 'Tilføj ny maskine'}
           />
         )}
-
-        <div className="mt-3">
-          <small className="text-muted">
-            Viser {machinery.length} maskiner
-          </small>
-        </div>
       </div>
     </div>
   );
