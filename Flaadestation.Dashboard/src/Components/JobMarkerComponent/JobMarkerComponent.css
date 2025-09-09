@@ -1,4 +1,4 @@
-.custom-marker {
+.custom-job-marker {
   position: relative;
   transform: translateY(-5px);
   transition: all 0.2s ease-in-out;
@@ -18,7 +18,7 @@
   transition: all 0.2s ease-in-out;
 }
 
-.custom-pin {
+.custom-job-marker .custom-pin {
   position: relative;
   height: 48px;
   width: 48px;
@@ -37,7 +37,7 @@
     border-radius 0.2s ease-in-out;
 }
 
-.custom-pin .close-button {
+.custom-job-marker .custom-pin .close-button {
   display: none;
   position: absolute;
   top: 8px;
@@ -49,7 +49,7 @@
   color: #12271e;
 }
 
-.custom-pin .image-container {
+.custom-job-marker .custom-pin .image-container {
   cursor: pointer;
   width: 100%;
   height: 100%;
@@ -65,50 +65,50 @@
   align-items: center;
 }
 
-.custom-pin .image-container .icon {
+.custom-job-marker .custom-pin .image-container .icon {
   color: #fff;
   position: absolute;
   font-size: 18px;
   transition: font-size 0.2s ease-in-out;
 }
 
-.custom-marker.hovered {
+.custom-job-marker.hovered {
   transform: translateY(-9px);
 }
 
-.custom-marker.hovered .custom-pin {
+.custom-job-marker.hovered .custom-pin {
   height: 68px;
   width: 68px;
   border-radius: 50%;
 }
 
-.image-container:hover .icon {
+.custom-job-marker .image-container:hover .icon {
   font-size: 26px;
 }
 
-.custom-marker.hovered .tip {
+.custom-job-marker.hovered .tip {
   transform: translateY(23%) translateX(-50%) rotate(45deg) scale(1.4);
 }
 
-.custom-marker.clicked {
+.custom-job-marker.clicked {
   transform: translateY(-9px);
 }
 
-.custom-marker.clicked .custom-pin {
+.custom-job-marker.clicked .custom-pin {
   background-color: #12271e;
   border-radius: 8px;
   width: auto;
   height: 317px;
 }
 
-.custom-marker.clicked .custom-pin .image-container {
+.custom-job-marker.clicked .custom-pin .image-container {
   border-radius: 8px 0 0 8px;
   animation: fadeIn 0.7s ease-in-out;
 
   width: 68px;
 }
 
-.custom-marker.clicked .custom-pin .details-container {
+.custom-job-marker.clicked .custom-pin .details-container {
   max-width: 400px;
   opacity: 1;
   visibility: visible;
@@ -116,19 +116,19 @@
   animation: slideInFadeIn 0.7s ease-in-out;
 }
 
-.custom-marker.clicked .custom-pin .details-container .close-button {
+.custom-job-marker.clicked .custom-pin .details-container .close-button {
   display: flex;
 }
 
-.custom-marker.clicked .custom-pin .details-container .close-button span {
+.custom-job-marker.clicked .custom-pin .details-container .close-button span {
   font-size: 24px;
 }
 
-.custom-marker.clicked .tip {
+.custom-job-marker.clicked .tip {
   transform: translateY(23%) translateX(-50%) rotate(45deg) scale(1.4);
 }
 
-.details-container {
+.custom-job-marker .details-container {
   cursor: default;
   display: flex;
   flex-direction: row;
@@ -141,7 +141,7 @@
   visibility: hidden;
 }
 
-.marker-content {
+.custom-job-marker .marker-content {
   flex-grow: 1;
   width: 20rem;
   padding: 24px;
@@ -151,7 +151,7 @@
   overflow-y: auto;
 }
 
-.tab-bar {
+.custom-job-marker .tab-bar {
   width: 48px;
   background-color: #f3f3f3;
   border-left: 1px solid #ddd;
@@ -167,7 +167,7 @@ hr {
   color: #bbbbbb;
 }
 
-.tab-button {
+.custom-job-marker .tab-button {
   flex-grow: 1;
   width: 100%;
   background: none;
@@ -179,16 +179,16 @@ hr {
   transition: background-color 0.2s, color 0.2s;
 }
 
-.tab-button:hover {
+.custom-job-marker .tab-button:hover {
   color: #fff;
   background-color: #b88b2e;
 }
 
-.tab-button-info {
+.custom-job-marker .tab-button-info {
   font-size: 14px;
 }
 
-.marker-content h2 {
+.custom-job-marker .marker-content h2 {
   color: #18342a;
   font-size: 20px;
   font-style: normal;
@@ -198,7 +198,7 @@ hr {
   margin: 0;
 }
 
-.marker-content p {
+.custom-job-marker .marker-content p {
   color: #18342a;
   font-size: 14px;
   font-style: normal;
@@ -208,7 +208,7 @@ hr {
   margin: 0;
 }
 
-.marker-content .description {
+.custom-job-marker .marker-content .description {
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -216,13 +216,13 @@ hr {
   letter-spacing: 0.2px;
 }
 
-.details {
+.custom-job-marker .details {
   display: flex;
   flex-direction: row;
   gap: 16px;
 }
 
-.details .detail_item {
+.custom-job-marker .details .detail_item {
   color: #404040;
   font-size: 14px;
   font-style: normal;
@@ -235,8 +235,8 @@ hr {
   gap: 4px;
 }
 
-.details .detail_item span,
-.details .detail_item svg {
+.custom-job-marker .details .detail_item span,
+.custom-job-marker .details .detail_item svg {
   font-size: 17px;
   color: #b88b2e;
 }
