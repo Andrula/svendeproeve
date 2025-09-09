@@ -25,7 +25,7 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                    <HomeComponent />
+                  <HomeComponent />
                 </div>
               </div>
             }
@@ -35,7 +35,7 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                    <LoginComponent />
+                  <LoginComponent />
                 </div>
               </div>
             }
@@ -45,7 +45,7 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                    <RegisterComponent />
+                  <RegisterComponent />
                 </div>
               </div>
             }
@@ -55,7 +55,7 @@ function App() {
             element={
               <div className="position-relative p-4 h-100">
                 <div className="container">
-                    <CheckoutComponent />
+                  <CheckoutComponent />
                 </div>
               </div>
             }
@@ -123,9 +123,11 @@ function App() {
           <Route
             path="/map"
             element={
-              <ProtectedRoute>
-                <MapComponent />
-              </ProtectedRoute>
+              <div className="position-relative h-100" style={{ padding: 0 }}>
+                <ProtectedRoute>
+                  <MapComponent />
+                </ProtectedRoute>
+              </div>
             }
           />
         </Routes>
