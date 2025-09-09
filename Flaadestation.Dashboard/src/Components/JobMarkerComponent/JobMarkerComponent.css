@@ -1,5 +1,4 @@
 .custom-marker {
-  cursor: pointer;
   position: relative;
   transform: translateY(-5px);
   transition: all 0.2s ease-in-out;
@@ -48,10 +47,10 @@
   box-shadow: none;
   background: none;
   color: #12271e;
-  cursor: pointer;
 }
 
 .custom-pin .image-container {
+  cursor: pointer;
   width: 100%;
   height: 100%;
   background-color: #b88b2e;
@@ -85,7 +84,7 @@
   border-radius: 50%;
 }
 
-.custom-marker.hovered .custom-pin .image-container .icon {
+.image-container:hover .icon {
   font-size: 26px;
 }
 
@@ -102,17 +101,19 @@
 .custom-marker.clicked .custom-pin {
   background-color: #12271e;
   border-radius: 8px;
-  width: fit-content;
-  max-width: 650px;
+  width: auto;
   height: 317px;
 }
 
 .custom-marker.clicked .custom-pin .image-container {
   border-radius: 8px 0 0 8px;
+  animation: fadeIn 0.7s ease-in-out;
+
+  width: 68px;
 }
 
 .custom-marker.clicked .custom-pin .details-container {
-  max-width: 380px;
+  max-width: 400px;
   opacity: 1;
   visibility: visible;
 
@@ -132,6 +133,9 @@
 }
 
 .details-container {
+  cursor: default;
+  display: flex;
+  flex-direction: row;
   background-color: #fff;
   height: 100%;
   opacity: 0;
@@ -142,14 +146,50 @@
 }
 
 .marker-content {
-  height: 100%;
+  flex-grow: 1;
+  width: 20rem;
   padding: 24px;
-  overflow: hidden;
-
   display: flex;
   flex-direction: column;
-  justify-content: center;
   gap: 16px;
+  overflow-y: auto;
+}
+
+.tab-bar {
+  width: 48px;
+  background-color: #f3f3f3;
+  border-left: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 0 8px 8px 0;
+}
+
+hr {
+  margin: 0;
+  width: 80%;
+  color: #bbbbbb;
+}
+
+.tab-button {
+  flex-grow: 1;
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #666;
+  padding: 8px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.tab-button:hover {
+  color: #fff;
+  background-color: #b88b2e;
+}
+
+.tab-button-info {
+  font-size: 14px;
 }
 
 .marker-content h2 {
@@ -206,7 +246,7 @@
 }
 
 .dates-section {
-  margin: 8px 0;
+  margin: auto 0 0 0;
 }
 
 .date-range {
@@ -230,13 +270,27 @@
   }
 
   75% {
-    max-width: 380px;
+    max-width: 400px;
     opacity: 0;
     visibility: hidden;
   }
 
   100% {
-    max-width: 380px;
+    max-width: 400px;
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    width: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  75% {
+    width: 68px;
     opacity: 1;
     visibility: visible;
   }

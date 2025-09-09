@@ -1,6 +1,6 @@
 import "./MapComponent.css";
 import { useEffect, useState } from "react";
-import {  APIProvider, Map } from "@vis.gl/react-google-maps";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { JobModel } from "../../Models/Job";
 import { jobService } from "../../Services/JobService";
 import { dawaService } from "../../Services/DawaService";
@@ -8,6 +8,7 @@ import { JobMarkerComponent } from "../JobMarkerComponent/JobMarkerComponent";
 
 export default function GoogleMap() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
+  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
   useEffect(() => {
@@ -34,8 +35,10 @@ export default function GoogleMap() {
         >
           {jobs.map((job) => (
             <JobMarkerComponent
-            key={job.data.jobId}
+              key={job.data.jobId}
               job={job}
+              activeMarkerId={activeMarkerId}
+              setMarkerJobId={setActiveMarkerId}
             />
           ))}
         </Map>
