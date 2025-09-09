@@ -9,6 +9,7 @@ import { JobMarkerComponent } from "../JobMarkerComponent/JobMarkerComponent";
 
 export default function GoogleMap() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
+  const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
   useEffect(() => {
@@ -49,6 +50,8 @@ export default function GoogleMap() {
             <JobMarkerComponent
               key={job.data.jobId}
               job={job}
+              activeMarkerId={activeMarkerId}
+              setMarkerJobId={setActiveMarkerId}
             />
           ))}
         </Map>
