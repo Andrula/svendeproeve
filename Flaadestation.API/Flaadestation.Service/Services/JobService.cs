@@ -318,13 +318,16 @@ namespace Flaadestation.Service.Services
             return job.Storage!.ItemsWithThisStorageAsDefault
                 .Where(i =>
                     (
-                        (i is Employee e && (e.VehicleId == null || e.VehicleId == Guid.Empty)) ||
-                        (i is Tool t && (t.VehicleId != null || t.VehicleId != Guid.Empty))
+                        (i is Employee e && e.VehicleId != null && e.VehicleId != Guid.Empty)
+                        || (i is Tool t && t.VehicleId != null && t.VehicleId != Guid.Empty)
+                        || (i is Vehicle)
+                        || (i is Machinery)
                     )
                     &&
                     !i.StorageItems.Any(si =>
                         si.ScheduledStart.Date <= DateTime.Today &&
-                        si.ScheduledEnd.Date >= DateTime.Today)).ToList();
+                        si.ScheduledEnd.Date >= DateTime.Today))
+                .ToList();
         }
     }
 }
