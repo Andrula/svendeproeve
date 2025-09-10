@@ -126,23 +126,13 @@ export default function GoogleMap() {
     return bases.filter((base: BaseModel) => {
       const matchesBase = base.data.name.toLowerCase().includes(searchLower);
 
-      const matchesVehicles = vehicles.some((vehicle: any) => {
-        const vehicleMatches = vehicle.model.toLowerCase().includes(searchLower) ||
-          vehicle.licensePlate?.toLowerCase().includes(searchLower);
-        if (!vehicleMatches) return false;
-
-        const belongsToBase = vehicle.defaultStorage?.relevantId === base.data.baseId;
-        if (!belongsToBase) return false;
-
-        const hasActiveStorageItem = vehicle.storageItems?.some((item: any) => {
-          const now = new Date();
-          const itemStart = new Date(item.scheduledStart);
-          const itemEnd = new Date(item.scheduledEnd);
-          return now >= itemStart && now <= itemEnd;
-        });
-
-        return !hasActiveStorageItem;
-      });
+      const matchesVehicles = base.data.storage.vehicles.some((vehicle: any) =>
+        vehicle.model.toLowerCase().includes(searchLower) ||
+        vehicle.licensePlate?.toLowerCase().includes(searchLower)
+      ) || base.data.storage.defaultVehicles.some((vehicle: any) =>
+        vehicle.model.toLowerCase().includes(searchLower) ||
+        vehicle.licensePlate?.toLowerCase().includes(searchLower)
+      );
 
       const matchesEmployees = employees.some((employee: any) => {
         const firstName = employee.data?.firstName || employee.firstName;
@@ -240,8 +230,10 @@ export default function GoogleMap() {
       if (!user?.companyId) {
         throw new Error('No company ID available');
       }
-      await jobService.createJob(formData, user.companyId);
-      await loadAllData(); 
+
+      const newJob = await jobService.createJob(formData, user.companyId);
+      await loadAllData();
+
     } catch (error) {
       console.error('Error creating job:', error);
       throw error;
@@ -253,8 +245,10 @@ export default function GoogleMap() {
       if (!user?.companyId) {
         throw new Error('No company ID available');
       }
-      await baseService.createBase(formData, user.companyId);
-      await loadAllData(); 
+
+      const newBase = await baseService.createBase(formData, user.companyId);
+      await loadAllData();
+
     } catch (error) {
       console.error('Error creating base:', error);
       throw error;
