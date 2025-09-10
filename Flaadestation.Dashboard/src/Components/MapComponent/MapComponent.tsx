@@ -1,5 +1,5 @@
 import "./MapComponent.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { JobModel } from "../../Models/Job";
 import { jobService } from "../../Services/JobService";
@@ -240,7 +240,7 @@ export default function GoogleMap() {
       if (!user?.companyId) {
         throw new Error('No company ID available');
       }
-      const newJob = await jobService.createJob(formData, user.companyId);
+      await jobService.createJob(formData, user.companyId);
       await loadAllData(); 
     } catch (error) {
       console.error('Error creating job:', error);
@@ -253,7 +253,7 @@ export default function GoogleMap() {
       if (!user?.companyId) {
         throw new Error('No company ID available');
       }
-      const newBase = await baseService.createBase(formData, user.companyId);
+      await baseService.createBase(formData, user.companyId);
       await loadAllData(); 
     } catch (error) {
       console.error('Error creating base:', error);
