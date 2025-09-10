@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { VehicleModel } from "../../Models/Vehicle";
 import {
   HttpError,
@@ -7,6 +7,9 @@ import {
 import VehicleModal, { type VehicleFormData } from './VehicleModal';
 import VehicleInventoryModal from './VehicleInventoryModal';
 import { useAuth } from "../../Auth/AuthContext";
+
+type SortField = 'model' | 'licensePlate' | 'availability' | 'currentAssignment' | 'defaultStorage';
+type SortDirection = 'asc' | 'desc';
 
 export default function VehicleComponent() {
   const { user } = useAuth();
@@ -18,9 +21,92 @@ export default function VehicleComponent() {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleModel | null>(null);
   const [selectedInventoryVehicle, setSelectedInventoryVehicle] = useState<VehicleModel | null>(null);
 
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState<SortField>('model');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+
   useEffect(() => {
     loadVehicles();
   }, []);
+
+  const filteredAndSortedVehicles = useMemo(() => {
+    let filtered = vehicles;
+
+    if (searchTerm.trim()) {
+      const searchLower = searchTerm.toLowerCase();
+      filtered = vehicles.filter(item => {
+        return (
+          item.model.toLowerCase().includes(searchLower) ||
+          item.licensePlate?.toLowerCase().includes(searchLower) ||
+          item.data.note?.toLowerCase().includes(searchLower) ||
+          item.data.defaultStorage?.name.toLowerCase().includes(searchLower) ||
+          item.currentAssignment?.note.toLowerCase().includes(searchLower) ||
+          item.nextAssignment?.note.toLowerCase().includes(searchLower) ||
+          item.employees.some(emp => 
+            `${emp.firstName} ${emp.lastName}`.toLowerCase().includes(searchLower)
+          )
+        );
+      });
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortField) {
+        case 'model':
+          aValue = a.model.toLowerCase();
+          bValue = b.model.toLowerCase();
+          break;
+        case 'licensePlate':
+          aValue = a.licensePlate?.toLowerCase() || '';
+          bValue = b.licensePlate?.toLowerCase() || '';
+          break;
+        case 'defaultStorage':
+          aValue = a.data.defaultStorage?.name.toLowerCase() || '';
+          bValue = b.data.defaultStorage?.name.toLowerCase() || '';
+          break;
+        case 'availability':
+          aValue = a.isAvailable ? 1 : 0;
+          bValue = b.isAvailable ? 1 : 0;
+          break;
+        case 'currentAssignment':
+          aValue = a.currentAssignment ? 1 : 0;
+          bValue = b.currentAssignment ? 1 : 0;
+          break;
+        default:
+          aValue = a.model.toLowerCase();
+          bValue = b.model.toLowerCase();
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
+      } 
+      else {
+        return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
+      }
+    });
+
+    return sorted;
+  }, [vehicles, searchTerm, sortField, sortDirection]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) {
+      return <i className="bi bi-arrow-down-up text-muted"></i>;
+    }
+    return sortDirection === 'asc' 
+      ? <i className="bi bi-arrow-up" style={{color: '#fff'}}></i>
+      : <i className="bi bi-arrow-down" style={{color: '#fff'}}></i>;
+  };
 
   const loadVehicles = async () => {
     try {
@@ -84,7 +170,7 @@ export default function VehicleComponent() {
       ));
     } else {
       await vehicleService.createVehicle(formData, user!.companyId);
-      await loadVehicles(); // Reload all vehicles to get complete data
+      await loadVehicles();
     }
   };
 
@@ -138,147 +224,214 @@ export default function VehicleComponent() {
           </div>
         )}
 
-        {!error && vehicles.length === 0 ? (
-          <div className="alert alert-info">
-            Ingen køretøjer fundet.
-          </div>
-        ) : (
-          <div className="row">
-            {vehicles.map((vehicleModel) => {
-              const currentAssignment = vehicleModel.currentAssignment;
-              const nextAssignment = vehicleModel.nextAssignment;
+        {!error && (
+          <>
+            <div className="row mb-4">
+              <div className="col-md-8">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Søg efter model, nummerplade, medarbejdere, lager..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                  {searchTerm && (
+                    <button
+                      className="btn btn-outline-secondary"
+                      type="button"
+                      onClick={() => setSearchTerm('')}
+                    >
+                      <i className="bi bi-x"></i>
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="col-md-4">
+                <div className="btn-group w-100" role="group">
+                  <button
+                    type="button"
+                    className={`btn ${sortField === 'model' ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => handleSort('model')}
+                  >
+                    Model {getSortIcon('model')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${sortField === 'availability' ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => handleSort('availability')}
+                  >
+                    Status {getSortIcon('availability')}
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn ${sortField === 'licensePlate' ? 'btn-primary' : 'btn-outline-primary'}`}
+                    onClick={() => handleSort('licensePlate')}
+                  >
+                    Nummerplade {getSortIcon('licensePlate')}
+                  </button>
+                </div>
+              </div>
+            </div>
 
-              const isLedig = !currentAssignment;
+            <div className="mb-3">
+              <small className="text-muted">
+                Viser {filteredAndSortedVehicles.length} af {vehicles.length} køretøjer
+                {searchTerm && (
+                  <span> (søgning: "{searchTerm}")</span>
+                )}
+              </small>
+            </div>
 
-              return (
-                <div
-                  key={vehicleModel.data.itemId}
-                  className="col-md-6 col-lg-6 mb-3 d-flex"
-                >
-                  <div className="card w-100">
-                    <div className="card-header bg-dark">
-                      <h5 className="card-title d-flex justify-content-between align-items-center">
-                        <strong className="text-app-primary">
-                          {vehicleModel.model}
-                        </strong>
-                        {isLedig && (
-                          <span className="badge bg-success">Ledig</span>
-                        )}
-                      </h5>
-                    </div>
-                    <div className="card-body">
-                      <div className="card-text">
-                        {vehicleModel.licensePlate ? (
-                          <p><strong>Nummerplade:</strong> {vehicleModel.licensePlate}</p>
-                        ) : (
-                          <p className="text-muted fst-italic">
-                            Ingen nummerplade registreret
-                          </p>
-                        )}
-                        <p><strong>Tilknyttet:</strong> {vehicleModel.data.defaultStorage.name}</p>
-                        {vehicleModel.data.note && (
-                          <>
-                            <p><strong>Note:</strong> {vehicleModel.data.note}</p>
-                          </>
-                        )}
-                        {currentAssignment ? (
-                          <>
-                            <strong>Nuværende opgave:</strong>
-                            <div className="bg-light p-2 rounded small">
-                              <small className="text-muted">
-                                {currentAssignment.note}
+            {filteredAndSortedVehicles.length === 0 ? (
+              <div className="alert alert-info">
+                {searchTerm ? 
+                  `Ingen køretøjer matchede søgningen "${searchTerm}".` : 
+                  'Ingen køretøjer fundet.'
+                }
+              </div>
+            ) : (
+              <div className="row">
+                {filteredAndSortedVehicles.map((vehicleModel) => {
+                  const currentAssignment = vehicleModel.currentAssignment;
+                  const nextAssignment = vehicleModel.nextAssignment;
+
+                  const isLedig = !currentAssignment;
+
+                  return (
+                    <div
+                      key={vehicleModel.data.itemId}
+                      className="col-md-6 col-lg-6 mb-3 d-flex"
+                    >
+                      <div className="card w-100">
+                        <div className="card-header bg-dark">
+                          <h5 className="card-title d-flex justify-content-between align-items-center">
+                            <strong className="text-app-primary">
+                              {vehicleModel.model}
+                            </strong>
+                            {isLedig && (
+                              <span className="badge bg-success">Ledig</span>
+                            )}
+                          </h5>
+                        </div>
+                        <div className="card-body">
+                          <div className="card-text">
+                            {vehicleModel.licensePlate ? (
+                              <p><strong>Nummerplade:</strong> {vehicleModel.licensePlate}</p>
+                            ) : (
+                              <p className="text-muted fst-italic">
+                                Ingen nummerplade registreret
+                              </p>
+                            )}
+                            <p><strong>Tilknyttet:</strong> {vehicleModel.data.defaultStorage.name}</p>
+                            {vehicleModel.data.note && (
+                              <>
+                                <p><strong>Note:</strong> {vehicleModel.data.note}</p>
+                              </>
+                            )}
+                            {currentAssignment ? (
+                              <>
+                                <strong>Nuværende opgave:</strong>
+                                <div className="bg-light p-2 rounded small">
+                                  <small className="text-muted">
+                                    {currentAssignment.note}
+                                    <br />
+                                    {new Date(
+                                      currentAssignment.scheduledStart
+                                    ).toLocaleDateString("da-DK")}{" "}
+                                    -{" "}
+                                    {new Date(
+                                      currentAssignment.scheduledEnd
+                                    ).toLocaleDateString("da-DK")}
+                                  </small>
+                                </div>
+                              </>
+                            ) : nextAssignment ? (
+                              <>
+                                <strong>Næste opgave:</strong>
+                                <div className="bg-light p-2 rounded small">
+                                  <small className="text-muted">
+                                    {nextAssignment.note}
+                                    <br />
+                                    {new Date(
+                                      nextAssignment.scheduledStart
+                                    ).toLocaleDateString("da-DK")}{" "}
+                                    -{" "}
+                                    {new Date(
+                                      nextAssignment.scheduledEnd
+                                    ).toLocaleDateString("da-DK")}
+                                  </small>
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-muted fst-italic">
+                                  Ikke allokeret til nogle opgaver
+                                </p>
+                              </>
+                            )}
+                            {vehicleModel.employees.length > 0 ? (
+                              <>
+                                <p><strong>Medarbejdere:</strong></p>
+                                <div className="mb-2">
+                                  {vehicleModel.employees.map((employee) => (
+                                    <span key={employee.itemId} className="badge bg-secondary me-1 mb-1">
+                                      {employee.firstName} {employee.lastName}
+                                    </span>
+                                  ))}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-muted fst-italic">
+                                  Ingen medarbejdere allokeret
+                                </p>
+                              </>
+                            )}
+                            {vehicleModel.tools.length > 0 ? (
+                              <>
+                                <button
+                                  className="btn btn-primary btn-sm"
+                                  onClick={() => openInventoryModal(vehicleModel)}
+                                >
+                                  <i className="bi bi-eye me-1"></i>
+                                  Se indhold ({vehicleModel.tools.length})
+                                </button>
                                 <br />
-                                {new Date(
-                                  currentAssignment.scheduledStart
-                                ).toLocaleDateString("da-DK")}{" "}
-                                -{" "}
-                                {new Date(
-                                  currentAssignment.scheduledEnd
-                                ).toLocaleDateString("da-DK")}
-                              </small>
-                            </div>
-                          </>
-                        ) : nextAssignment ? (
-                          <>
-                            <strong>Næste opgave:</strong>
-                            <div className="bg-light p-2 rounded small">
-                              <small className="text-muted">
-                                {nextAssignment.note}
-                                <br />
-                                {new Date(
-                                  nextAssignment.scheduledStart
-                                ).toLocaleDateString("da-DK")}{" "}
-                                -{" "}
-                                {new Date(
-                                  nextAssignment.scheduledEnd
-                                ).toLocaleDateString("da-DK")}
-                              </small>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-muted fst-italic">
-                              Ikke allokeret til nogle opgaver
-                            </p>
-                          </>
-                        )}
-                        {vehicleModel.employees.length > 0 ? (
-                          <>
-                            <p><strong>Medarbejdere:</strong></p>
-                            <div className="mb-2">
-                              {vehicleModel.employees.map((employee) => (
-                                <span key={employee.itemId} className="badge bg-secondary me-1 mb-1">
-                                  {employee.firstName} {employee.lastName}
-                                </span>
-                              ))}
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-muted fst-italic">
-                              Ingen medarbejdere allokeret
-                            </p>
-                          </>
-                        )}
-                        {vehicleModel.tools.length > 0 ? (
-                          <>
-                            <button
-                              className="btn btn-primary btn-sm"
-                              onClick={() => openInventoryModal(vehicleModel)}
-                            >
-                              <i className="bi bi-eye me-1"></i>
-                              Se indhold ({vehicleModel.tools.length})
-                            </button>
-                            <br />
-                          </>
-                        ) : (
-                          <>
-                            <p className="text-muted fst-italic">
-                              Intet værktøj allokeret
-                            </p>
-                          </>
-                        )}
+                              </>
+                            ) : (
+                              <>
+                                <p className="text-muted fst-italic">
+                                  Intet værktøj allokeret
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <div className="card-footer d-flex justify-content-between">
+                          <button
+                            className="btn btn-sm btn-outline-primary me-2"
+                            onClick={() => openEditModal(vehicleModel)}
+                          >
+                            <i className="bi bi-pencil"></i> Rediger
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => handleDeleteVehicle(vehicleModel)}
+                          >
+                            <i className="bi bi-trash"></i> Slet
+                          </button>
+                        </div>
                       </div>
                     </div>
-                    <div className="card-footer d-flex justify-content-between">
-                      <button
-                        className="btn btn-sm btn-outline-primary me-2"
-                        onClick={() => openEditModal(vehicleModel)}
-                      >
-                        <i className="bi bi-pencil"></i> Rediger
-                      </button>
-                      <button
-                        className="btn btn-sm btn-outline-danger"
-                        onClick={() => handleDeleteVehicle(vehicleModel)}
-                      >
-                        <i className="bi bi-trash"></i> Slet
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
 
         {modalOpen && (
@@ -298,12 +451,6 @@ export default function VehicleComponent() {
             vehicle={selectedInventoryVehicle}
           />
         )}
-
-        <div className="mt-3">
-          <small className="text-muted">
-            Viser {vehicles.length} køretøjer
-          </small>
-        </div>
       </div>
     </div>
   );
