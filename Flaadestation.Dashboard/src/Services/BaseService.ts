@@ -1,9 +1,10 @@
 import { HttpClient } from './HttpClient';
 import { type Base, BaseModel } from '../Models/Base';
+import { type BaseFormData } from '../Components/MapComponent/MapModal';
 
-// interface CreateBaseRequest extends BaseFormData {
-//   companyId: string;
-// }
+interface CreateBaseRequest extends BaseFormData {
+  companyId: string;
+}
 
 const httpClient = new HttpClient({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -20,34 +21,33 @@ export class BaseService {
 
   async getBasesByCompany(): Promise<BaseModel[]> {
     const bases = await this.httpClient.get<Base[]>(`/Base/company`);
-    return bases.map(emp => new BaseModel(emp));
+    return bases.map(base => new BaseModel(base));
   }
 
   async deleteBase(id: string): Promise<void> {
     await this.httpClient.delete(`/Base/${id}`);
   }
 
- async getBaseById(id: string): Promise<BaseModel> {
+  async getBaseById(id: string): Promise<BaseModel> {
     const base = await this.httpClient.get<Base>(`/Base/${id}`);
     return new BaseModel(base);
   }
 
-//   async createBase(baseData: BaseFormData, companyId: string): Promise<BaseModel> {
-//     const requestData: CreateBaseRequest = {
-//       ...baseData,
-//       companyId
-//     };
+  async createBase(baseData: BaseFormData, companyId: string): Promise<BaseModel> {
+    const requestData: CreateBaseRequest = {
+      ...baseData,
+      companyId
+    };
     
-//     const base = await this.httpClient.post<Base>('/Base', requestData);
-//     return new BaseModel(base);
-//   }
+    const base = await this.httpClient.post<Base>('/Base', requestData);
+    return new BaseModel(base);
+  }
 
-//   async updateBase(id: string, baseData: BaseFormData): Promise<BaseModel> {
-//     const base = await this.httpClient.put<Base>(`/Base/${id}`, baseData);
-//     return new BaseModel(base);
-//   }
+  async updateBase(id: string, baseData: BaseFormData): Promise<BaseModel> {
+    const base = await this.httpClient.put<Base>(`/Base/${id}`, baseData);
+    return new BaseModel(base);
+  }
 }
-
 
 export const baseService = new BaseService(httpClient);
 
