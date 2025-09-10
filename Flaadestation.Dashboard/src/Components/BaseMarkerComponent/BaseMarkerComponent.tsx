@@ -3,17 +3,22 @@ import "./BaseMarkerComponent.css";
 import { AdvancedMarker } from "@vis.gl/react-google-maps";
 import classNames from "classnames";
 import type { BaseModel } from "../../Services/BaseService";
+import { ItemType } from "../../Constants/ItemType";
 
 interface Props {
   base: BaseModel;
   activeMarkerId: string | null;
   setMarkerBaseId: (id: string | null) => void;
+  setSelectedBase: (base:BaseModel | null) => void;
+  openModal: (itemType: ItemType) => void;
 }
 
 export const BaseMarkerComponent: FunctionComponent<Props> = ({
   base,
   activeMarkerId: activeMarkerId,
   setMarkerBaseId: setActiveMarkerId,
+  setSelectedBase,
+  openModal
 }) => {
   const [hovered, setHovered] = useState(false);
 
@@ -26,8 +31,10 @@ export const BaseMarkerComponent: FunctionComponent<Props> = ({
 
   const handleClick = () => {
     if (isClicked) {
+      setSelectedBase(null);
       setActiveMarkerId(null);
     } else {
+      setSelectedBase(base);
       setActiveMarkerId(base.data.baseId);
     }
   };
@@ -59,7 +66,7 @@ export const BaseMarkerComponent: FunctionComponent<Props> = ({
             </div>
 
             <div className="tab-bar">
-              <button className="tab-button" style={{borderRadius: "0 6px 0 0"}}>
+              <button className="tab-button" style={{borderRadius: "0 6px 0 0"}} onClick={() => openModal(ItemType.Vehicle)}>
                 <i className="bi bi-truck"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
@@ -68,7 +75,7 @@ export const BaseMarkerComponent: FunctionComponent<Props> = ({
                 </small>
               </button>
               <hr />
-              <button className="tab-button">
+              <button className="tab-button" onClick={() =>openModal(ItemType.Employee)}>
                 <i className="bi bi-person"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
@@ -77,7 +84,7 @@ export const BaseMarkerComponent: FunctionComponent<Props> = ({
                 </small>
               </button>
               <hr />
-              <button className="tab-button">
+              <button className="tab-button" onClick={() =>openModal(ItemType.Tool)}>
                 <i className="bi bi-wrench"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
@@ -86,7 +93,7 @@ export const BaseMarkerComponent: FunctionComponent<Props> = ({
                 </small>
               </button>
               <hr />
-              <button className="tab-button" style={{borderRadius: "0 0 6px 0"}}>
+              <button className="tab-button" style={{borderRadius: "0 0 6px 0"}} onClick={() =>openModal(ItemType.Mahinery)}>
                 <i className="bi bi-truck-front"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">

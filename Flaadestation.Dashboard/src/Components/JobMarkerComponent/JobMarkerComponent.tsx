@@ -5,17 +5,22 @@ import classNames from "classnames";
 import type { JobModel } from "../../Services/JobService";
 import { format } from "date-fns";
 import { Calendar } from "lucide-react";
+import { ItemType } from "../../Constants/ItemType";
 
 interface Props {
   job: JobModel;
   activeMarkerId: string | null;
   setMarkerJobId: (id: string | null) => void;
+  setSelectedJob: (job:JobModel | null) => void;
+  openModal: (itemType: ItemType) => void;
 }
 
 export const JobMarkerComponent: FunctionComponent<Props> = ({
   job,
   activeMarkerId: activeMarkerId,
   setMarkerJobId: setActiveMarkerId,
+  setSelectedJob,
+  openModal
 }) => {
   const [hovered, setHovered] = useState(false);
 
@@ -28,8 +33,10 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
 
   const handleClick = () => {
     if (isClicked) {
+      setSelectedJob(null)
       setActiveMarkerId(null);
     } else {
+      setSelectedJob(job)
       setActiveMarkerId(job.data.jobId);
     }
   };
@@ -71,7 +78,7 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
             </div>
 
             <div className="tab-bar">
-              <button className="tab-button" style={{borderRadius: "0 6px 0 0"}}>
+              <button className="tab-button" style={{borderRadius: "0 6px 0 0"}} onClick={() =>openModal(ItemType.Vehicle)}>
                 <i className="bi bi-truck"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
@@ -80,7 +87,7 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 </small>
               </button>
               <hr />
-              <button className="tab-button">
+              <button className="tab-button" onClick={() =>openModal(ItemType.Employee)}>
                 <i className="bi bi-person"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
@@ -89,7 +96,7 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 </small>
               </button>
               <hr />
-              <button className="tab-button">
+              <button className="tab-button" onClick={() =>openModal(ItemType.Tool)}>
                 <i className="bi bi-wrench"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
@@ -98,7 +105,7 @@ export const JobMarkerComponent: FunctionComponent<Props> = ({
                 </small>
               </button>
               <hr />
-              <button className="tab-button" style={{borderRadius: "0 0 6px 0"}}>
+              <button className="tab-button" style={{borderRadius: "0 0 6px 0"}} onClick={() =>openModal(ItemType.Mahinery)}>
                 <i className="bi bi-truck-front"></i>
                 <br></br>
                 <small className="tab-button-info fst-italic">
