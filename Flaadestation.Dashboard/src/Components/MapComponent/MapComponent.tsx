@@ -12,10 +12,13 @@ import { vehicleService } from "../../Services/VehicleService";
 import { toolService } from "../../Services/ToolService";
 import { machineryService } from "../../Services/MachineryService";
 import { employeeService } from "../../Services/EmployeeService";
+import { useAuth } from "../../Auth/AuthContext";
+import MapModal, { type JobFormData, type BaseFormData } from "./MapModal";
 
 type MarkerFilter = 'all' | 'jobs' | 'bases';
 
 export default function GoogleMap() {
+  const { user } = useAuth();
   const [jobs, setJobs] = useState<JobModel[]>([]);
   const [bases, setBases] = useState<BaseModel[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -25,6 +28,7 @@ export default function GoogleMap() {
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [markerFilter, setMarkerFilter] = useState<MarkerFilter>('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [creationModalOpen, setCreationModalOpen] = useState(false);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
   useEffect(() => {
@@ -32,25 +36,29 @@ export default function GoogleMap() {
   }, []);
 
   const loadAllData = async () => {
-    const jobModels = await jobService.getJobsByCompany();
-    await dawaService.fillAddressesOnJobs(jobModels);
-    setJobs(jobModels);
+    try {
+      const jobModels = await jobService.getJobsByCompany();
+      await dawaService.fillAddressesOnJobs(jobModels);
+      setJobs(jobModels);
 
-    const baseModels = await baseService.getBasesByCompany();
-    await dawaService.fillAddressesOnBases(baseModels);
-    setBases(baseModels);
+      const baseModels = await baseService.getBasesByCompany();
+      await dawaService.fillAddressesOnBases(baseModels);
+      setBases(baseModels);
 
-    const allVehicles = await vehicleService.getAllVehicles();
-    setVehicles(allVehicles);
+      const allVehicles = await vehicleService.getAllVehicles();
+      setVehicles(allVehicles);
 
-    const allTools = await toolService.getAllTools();
-    setTools(allTools);
+      const allTools = await toolService.getAllTools();
+      setTools(allTools);
 
-    const allMachinery = await machineryService.getAllMachinery();
-    setMachinery(allMachinery);
+      const allMachinery = await machineryService.getAllMachinery();
+      setMachinery(allMachinery);
 
-    const allEmployees = await employeeService.getAllEmployees();
-    setEmployees(allEmployees);
+      const allEmployees = await employeeService.getAllEmployees();
+      setEmployees(allEmployees);
+    } catch (error) {
+      console.error('Error loading data:', error);
+    }
   };
 
   const filteredJobs = useMemo(() => {
@@ -109,14 +117,23 @@ export default function GoogleMap() {
     return bases.filter((base: BaseModel) => {
       const matchesBase = base.data.name.toLowerCase().includes(searchLower);
 
-      const matchesVehicles = base.data.storage.vehicles.some((vehicle: any) =>
-        vehicle.model.toLowerCase().includes(searchLower) ||
-        vehicle.licensePlate?.toLowerCase().includes(searchLower)
-      ) || base.data.storage.defaultVehicles.some((vehicle: any) =>
-        vehicle.model.toLowerCase().includes(searchLower) ||
-        vehicle.licensePlate?.toLowerCase().includes(searchLower)
-      );
+      const matchesVehicles = vehicles.some((vehicle: any) => {
+        const vehicleMatches = vehicle.model.toLowerCase().includes(searchLower) ||
+          vehicle.licensePlate?.toLowerCase().includes(searchLower);
+        if (!vehicleMatches) return false;
 
+        const belongsToBase = vehicle.defaultStorage?.relevantId === base.data.baseId;
+        if (!belongsToBase) return false;
+
+        const hasActiveStorageItem = vehicle.storageItems?.some((item: any) => {
+          const now = new Date();
+          const itemStart = new Date(item.scheduledStart);
+          const itemEnd = new Date(item.scheduledEnd);
+          return now >= itemStart && now <= itemEnd;
+        });
+
+        return !hasActiveStorageItem;
+      });
 
       const matchesEmployees = employees.some((employee: any) => {
         const firstName = employee.data?.firstName || employee.firstName;
@@ -209,6 +226,32 @@ export default function GoogleMap() {
     });
   }, [bases, vehicles, tools, machinery, employees, jobs, searchTerm]);
 
+  const handleCreateJob = async (formData: JobFormData) => {
+    try {
+      if (!user?.companyId) {
+        throw new Error('No company ID available');
+      }
+      const newJob = await jobService.createJob(formData, user.companyId);
+      await loadAllData(); 
+    } catch (error) {
+      console.error('Error creating job:', error);
+      throw error;
+    }
+  };
+
+  const handleCreateBase = async (formData: BaseFormData) => {
+    try {
+      if (!user?.companyId) {
+        throw new Error('No company ID available');
+      }
+      const newBase = await baseService.createBase(formData, user.companyId);
+      await loadAllData(); 
+    } catch (error) {
+      console.error('Error creating base:', error);
+      throw error;
+    }
+  };
+
   const denmarkBounds = {
     north: 57.85,
     south: 54.26,
@@ -283,6 +326,18 @@ export default function GoogleMap() {
         <div className="map-filter-controls">
           <div className="filter-buttons">
             <button
+              className="filter-btn filter-btn-create"
+              onClick={() => setCreationModalOpen(true)}
+              title="Opret ny opgave eller base"
+              style={{
+                backgroundColor: '#28a745',
+                marginBottom: '12px'
+              }}
+            >
+              <i className="bi bi-plus"></i>
+            </button>
+
+            <button
               className={`filter-btn filter-btn-job ${markerFilter === 'jobs' ? 'active' : ''}`}
               onClick={() => setMarkerFilter(markerFilter === 'jobs' ? 'all' : 'jobs')}
               title="Vis opgaver"
@@ -300,6 +355,14 @@ export default function GoogleMap() {
           </div>
         </div>
       </APIProvider>
+
+      <MapModal
+        isOpen={creationModalOpen}
+        onClose={() => setCreationModalOpen(false)}
+        onSaveJob={handleCreateJob}
+        onSaveBase={handleCreateBase}
+        title="Opret ny opgave eller base"
+      />
     </div>
   );
 }

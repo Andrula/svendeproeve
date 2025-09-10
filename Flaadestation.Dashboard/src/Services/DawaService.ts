@@ -33,57 +33,63 @@ export interface DawaMiniResponse {
     x: number;
     y: number;
     href: string;
+    adressebetegnelse?: string;
 }
 
 export class DawaService {
     httpClient: HttpClient;
-
+    
     constructor(httpClient: HttpClient) {
         this.httpClient = httpClient;
     }
-
-    async getAutoComplete(query: string): Promise<AddressModel[]> {
+    
+    async getAutoComplete(query: string): Promise<DawaSearchResponse[]> {
         const response = await this.httpClient.get<DawaSearchResponse[]>(`/adresser/autocomplete?q=${query}&per_side=10`);
-        return response.map(res => new AddressModel(res.adresse))
+        return response;
     }
-
+    
+    async autocompleteAddress(query: string): Promise<DawaSearchResponse[]> {
+        return this.getAutoComplete(query);
+    }
+    
     async getAddressById(addressId: string): Promise<AddressModel> {
-        const response = await this.httpClient.get<DawaSearchResponse>(`/adresser/${addressId}`);
-        return new AddressModel(response.adresse)
+        const response = await this.httpClient.get<DawaMiniResponse>(`/adresser/${addressId}`);
+        return new AddressModel(response)
     }
-
+    
+    async getAddress(addressId: string): Promise<AddressModel> {
+        return this.getAddressById(addressId);
+    }
+    
     async fillAddressesOnJobs(jobs: JobModel[]): Promise<void> {
         const addressIds = jobs.map(j => j.data.addressId);
         const response = await this.httpClient.get<DawaMiniResponse[]>(`/adresser?id=${addressIds.join('|')}&struktur=mini`)
-        
+                
         jobs.forEach(job => {
             const address = response.find(dr => dr.id == job.data.addressId)
-            
+                        
             if (address) {
                 job.data.address = new AddressModel(address);
             }
         });
     }
-
+    
     async fillAddressesOnBases(bases: BaseModel[]): Promise<void> {
         const addressIds = bases.map(b => b.data.addressId);
         const response = await this.httpClient.get<DawaMiniResponse[]>(`/adresser?id=${addressIds.join('|')}&struktur=mini`)
-        
+                
         bases.forEach(base => {
             const address = response.find(dr => dr.id == base.data.addressId)
-            
+                        
             if (address) {
                 base.data.address = new AddressModel(address);
             }
         });
     }
-    
-
-    
-
+            
 }
 
 export const dawaService = new DawaService(httpClient);
 
 export { HttpError } from './HttpClient';
-export { AddressModel } from '../Models/Address'
+export { AddressModel } from '../Models/Address';
