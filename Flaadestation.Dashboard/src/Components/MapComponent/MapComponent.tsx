@@ -8,21 +8,30 @@ import { JobMarkerComponent } from "../JobMarkerComponent/JobMarkerComponent";
 import type { BaseModel } from "../../Models/Base";
 import { baseService } from "../../Services/BaseService";
 import { BaseMarkerComponent } from "../BaseMarkerComponent/BaseMarkerComponent";
+import { vehicleService } from "../../Services/VehicleService";
+import { toolService } from "../../Services/ToolService";
+import { machineryService } from "../../Services/MachineryService";
+import { employeeService } from "../../Services/EmployeeService";
 
 type MarkerFilter = 'all' | 'jobs' | 'bases';
 
 export default function GoogleMap() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
   const [bases, setBases] = useState<BaseModel[]>([]);
+  const [vehicles, setVehicles] = useState<any[]>([]);
+  const [tools, setTools] = useState<any[]>([]);
+  const [machinery, setMachinery] = useState<any[]>([]);
+  const [employees, setEmployees] = useState<any[]>([]);
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
   const [markerFilter, setMarkerFilter] = useState<MarkerFilter>('all');
+  const [searchTerm, setSearchTerm] = useState('');
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
   useEffect(() => {
-    loadJobs();
+    loadAllData();
   }, []);
 
-  const loadJobs = async () => {
+  const loadAllData = async () => {
     const jobModels = await jobService.getJobsByCompany();
     await dawaService.fillAddressesOnJobs(jobModels);
     setJobs(jobModels);
@@ -30,7 +39,175 @@ export default function GoogleMap() {
     const baseModels = await baseService.getBasesByCompany();
     await dawaService.fillAddressesOnBases(baseModels);
     setBases(baseModels);
+
+    const allVehicles = await vehicleService.getAllVehicles();
+    setVehicles(allVehicles);
+
+    const allTools = await toolService.getAllTools();
+    setTools(allTools);
+
+    const allMachinery = await machineryService.getAllMachinery();
+    setMachinery(allMachinery);
+
+    const allEmployees = await employeeService.getAllEmployees();
+    setEmployees(allEmployees);
   };
+
+  const filteredJobs = useMemo(() => {
+    if (!searchTerm.trim()) return jobs;
+
+    const searchLower = searchTerm.toLowerCase();
+
+    return jobs.filter((job: JobModel) => {
+      const now = new Date();
+      const jobStart = new Date(job.data.scheduledStart);
+      const jobEnd = new Date(job.data.scheduledEnd);
+      const isActiveJob = now >= jobStart && now <= jobEnd;
+
+      if (!isActiveJob) return false;
+
+      const matchesJob = job.data.title.toLowerCase().includes(searchLower) ||
+        job.data.description?.toLowerCase().includes(searchLower);
+
+      const matchesEmployees = job.data.storage.employees.some((emp: any) =>
+        emp.firstName.toLowerCase().includes(searchLower) ||
+        emp.lastName.toLowerCase().includes(searchLower)
+      ) || job.data.storage.defaultEmployees.some((emp: any) =>
+        emp.firstName.toLowerCase().includes(searchLower) ||
+        emp.lastName.toLowerCase().includes(searchLower)
+      );
+
+      const matchesVehicles = job.data.storage.vehicles.some((vehicle: any) =>
+        vehicle.model.toLowerCase().includes(searchLower) ||
+        vehicle.licensePlate?.toLowerCase().includes(searchLower)
+      ) || job.data.storage.defaultVehicles.some((vehicle: any) =>
+        vehicle.model.toLowerCase().includes(searchLower) ||
+        vehicle.licensePlate?.toLowerCase().includes(searchLower)
+      );
+
+      const matchesTools = job.data.storage.tools.some((tool: any) =>
+        tool.name.toLowerCase().includes(searchLower)
+      ) || job.data.storage.defaultTools.some((tool: any) =>
+        tool.name.toLowerCase().includes(searchLower)
+      );
+
+      const matchesMachinery = job.data.storage.machines.some((machine: any) =>
+        machine.name.toLowerCase().includes(searchLower)
+      ) || job.data.storage.defaultMachines.some((machine: any) =>
+        machine.name.toLowerCase().includes(searchLower)
+      );
+
+      return matchesJob || matchesEmployees || matchesVehicles || matchesTools || matchesMachinery;
+    });
+  }, [jobs, searchTerm]);
+
+  const filteredBases = useMemo(() => {
+    if (!searchTerm.trim()) return bases;
+
+    const searchLower = searchTerm.toLowerCase();
+
+    return bases.filter((base: BaseModel) => {
+      const matchesBase = base.data.name.toLowerCase().includes(searchLower);
+
+      const matchesVehicles = base.data.storage.vehicles.some((vehicle: any) =>
+        vehicle.model.toLowerCase().includes(searchLower) ||
+        vehicle.licensePlate?.toLowerCase().includes(searchLower)
+      ) || base.data.storage.defaultVehicles.some((vehicle: any) =>
+        vehicle.model.toLowerCase().includes(searchLower) ||
+        vehicle.licensePlate?.toLowerCase().includes(searchLower)
+      );
+
+
+      const matchesEmployees = employees.some((employee: any) => {
+        const firstName = employee.data?.firstName || employee.firstName;
+        const lastName = employee.data?.lastName || employee.lastName;
+        const employeeMatches = firstName.toLowerCase().includes(searchLower) ||
+          lastName.toLowerCase().includes(searchLower);
+        if (!employeeMatches) return false;
+
+        const belongsToBase = employee.data?.defaultStorage?.relevantId === base.data.baseId;
+        if (!belongsToBase) return false;
+
+        const hasActiveStorageItem = employee.currentAssignment !== null;
+        return !hasActiveStorageItem;
+      }) || base.data.storage.defaultEmployees.some((emp: any) => {
+        const employeeMatches = emp.firstName.toLowerCase().includes(searchLower) ||
+          emp.lastName.toLowerCase().includes(searchLower);
+        if (!employeeMatches) return false;
+
+        const hasActiveJob = jobs.some((job: JobModel) => {
+          const now = new Date();
+          const jobStart = new Date(job.data.scheduledStart);
+          const jobEnd = new Date(job.data.scheduledEnd);
+          const isActiveJob = now >= jobStart && now <= jobEnd;
+
+          if (!isActiveJob) return false;
+
+          return job.data.storage.defaultEmployees.some((jobEmp: any) =>
+            jobEmp.firstName === emp.firstName && jobEmp.lastName === emp.lastName
+          );
+        });
+
+        return !hasActiveJob;
+      });
+
+      const matchesTools = tools.some((tool: any) => {
+        const toolMatches = tool.name.toLowerCase().includes(searchLower);
+        if (!toolMatches) return false;
+
+        const belongsToBase = tool.data?.defaultStorage?.relevantId === base.data.baseId;
+        if (!belongsToBase) return false;
+
+        const hasActiveStorageItem = tool.currentAssignment !== null;
+        return !hasActiveStorageItem;
+      }) || base.data.storage.defaultTools.some((tool: any) => {
+        const toolMatches = tool.name.toLowerCase().includes(searchLower);
+        if (!toolMatches) return false;
+
+        const hasActiveJob = jobs.some((job: JobModel) => {
+          const now = new Date();
+          const jobStart = new Date(job.data.scheduledStart);
+          const jobEnd = new Date(job.data.scheduledEnd);
+          const isActiveJob = now >= jobStart && now <= jobEnd;
+
+          if (!isActiveJob) return false;
+
+          return job.data.storage.defaultTools.some((jobTool: any) => jobTool.name === tool.name);
+        });
+
+        return !hasActiveJob;
+      });
+
+      const matchesMachinery = machinery.some((machine: any) => {
+        const machineMatches = machine.name.toLowerCase().includes(searchLower);
+        if (!machineMatches) return false;
+
+        const belongsToBase = machine.data?.defaultStorage?.relevantId === base.data.baseId;
+        if (!belongsToBase) return false;
+
+        const hasActiveStorageItem = machine.currentAssignment !== null;
+        return !hasActiveStorageItem;
+      }) || base.data.storage.defaultMachines.some((machine: any) => {
+        const machineMatches = machine.name.toLowerCase().includes(searchLower);
+        if (!machineMatches) return false;
+
+        const hasActiveJob = jobs.some((job: JobModel) => {
+          const now = new Date();
+          const jobStart = new Date(job.data.scheduledStart);
+          const jobEnd = new Date(job.data.scheduledEnd);
+          const isActiveJob = now >= jobStart && now <= jobEnd;
+
+          if (!isActiveJob) return false;
+
+          return job.data.storage.defaultMachines.some((jobMachine: any) => jobMachine.name === machine.name);
+        });
+
+        return !hasActiveJob;
+      });
+
+      return matchesBase || matchesEmployees || matchesVehicles || matchesTools || matchesMachinery;
+    });
+  }, [bases, vehicles, tools, machinery, employees, jobs, searchTerm]);
 
   const denmarkBounds = {
     north: 57.85,
@@ -58,7 +235,7 @@ export default function GoogleMap() {
             width: "100%",
           }}
         >
-          {shouldShowJobs && jobs.map((job) => (
+          {shouldShowJobs && filteredJobs.map((job) => (
             <JobMarkerComponent
               key={job.data.jobId}
               job={job}
@@ -67,7 +244,7 @@ export default function GoogleMap() {
             />
           ))}
 
-          {shouldShowBases && bases.map((base) => (
+          {shouldShowBases && filteredBases.map((base) => (
             <BaseMarkerComponent
               key={base.data.baseId}
               base={base}
@@ -76,6 +253,32 @@ export default function GoogleMap() {
             />
           ))}
         </Map>
+
+        <div className="map-search-controls">
+          <div className="search-input-container">
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="bi bi-search"></i>
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Søg efter medarbejdere, køretøjer, værktøj..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              {searchTerm && (
+                <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                >
+                  <i className="bi bi-x"></i>
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
 
         <div className="map-filter-controls">
           <div className="filter-buttons">
@@ -86,7 +289,7 @@ export default function GoogleMap() {
             >
               <i className="bi bi-tools"></i>
             </button>
-            
+
             <button
               className={`filter-btn filter-btn-base ${markerFilter === 'bases' ? 'active' : ''}`}
               onClick={() => setMarkerFilter(markerFilter === 'bases' ? 'all' : 'bases')}
