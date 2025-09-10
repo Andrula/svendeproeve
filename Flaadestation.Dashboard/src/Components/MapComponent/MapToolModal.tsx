@@ -83,7 +83,7 @@ export const MapToolModal: FunctionComponent<ToolModalProps> = ({
             {activeTools.length > 0 ? (
               <>
                 <h6>
-                  <strong>Værktøj med en aktiv allokering:</strong>
+                  <strong>Værktøj med en aktiv allokering</strong>
                 </h6>
                 <div className="accordion" id="toolAccordion">
                   {activeTools.map((tool) => (
@@ -166,7 +166,7 @@ export const MapToolModal: FunctionComponent<ToolModalProps> = ({
               </>
             ) : (
               <h6 className="text-muted fst-italic">
-                Ingen aktivt allokerede værtkøjer
+                Ingen aktivt allokerede værktøjer
               </h6>
             )}
 
@@ -175,7 +175,7 @@ export const MapToolModal: FunctionComponent<ToolModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Værktøj allokeret til dette job gennem standardlager
+                    Værktøj allokeret til denne lokation  gennem standardlager
                   </strong>
                 </h6>
                 <div className="accordion" id="toolAccordion">
@@ -232,7 +232,7 @@ export const MapToolModal: FunctionComponent<ToolModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Værktøj allokeret til dette job i fremtiden:
+                    Værktøj allokeret til denne lokation  i fremtiden
                   </strong>
                 </h6>
                 <div className="accordion" id="toolAccordion">

@@ -83,7 +83,7 @@ export const MapEmployeeModal: FunctionComponent<EmployeeModalProps> = ({
             {activeEmployees.length > 0 ? (
               <>
                 <h6>
-                  <strong>Medarbejdere med en aktiv allokering:</strong>
+                  <strong>Medarbejdere med en aktiv allokering</strong>
                 </h6>
                 <div className="accordion" id="employeeAccordion">
                   {activeEmployees.map((employee) => (
@@ -175,7 +175,7 @@ export const MapEmployeeModal: FunctionComponent<EmployeeModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Medarbejdere allokeret til dette job gennem standardlager
+                    Medarbejdere allokeret til denne lokation gennem standardlager
                   </strong>
                 </h6>
                 <div className="accordion" id="employeeAccordion">
@@ -232,7 +232,7 @@ export const MapEmployeeModal: FunctionComponent<EmployeeModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Medarbejdere allokeret til dette job i fremtiden:
+                    Medarbejdere allokeret til denne lokation i fremtiden
                   </strong>
                 </h6>
                 <div className="accordion" id="employeeAccordion">

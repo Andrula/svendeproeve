@@ -81,7 +81,7 @@ export const MapVehicleModal: FunctionComponent<VehicleModalProps> = ({
             {activeVehicles.length > 0 ? (
               <>
                 <h6>
-                  <strong>Køretøjer med en aktiv allokering:</strong>
+                  <strong>Køretøjer med en aktiv allokering</strong>
                 </h6>
                 <div className="accordion" id="vehicleAccordion">
                   {activeVehicles.map((vehicle) => (
@@ -214,7 +214,7 @@ export const MapVehicleModal: FunctionComponent<VehicleModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Køretøjer allokeret til dette job gennem standardlager
+                    Køretøjer allokeret til denne lokation gennem standardlager
                   </strong>
                 </h6>
                 <div className="accordion" id="vehicleAccordion">
@@ -311,7 +311,7 @@ export const MapVehicleModal: FunctionComponent<VehicleModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Køretøjer allokeret til dette job i fremtiden:
+                    Køretøjer allokeret til denne lokation  i fremtiden
                   </strong>
                 </h6>
                 <div className="accordion" id="vehicleAccordion">
