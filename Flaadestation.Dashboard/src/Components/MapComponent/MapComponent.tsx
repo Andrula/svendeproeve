@@ -9,13 +9,13 @@ import type { BaseModel } from "../../Models/Base";
 import { baseService } from "../../Services/BaseService";
 import { BaseMarkerComponent } from "../BaseMarkerComponent/BaseMarkerComponent";
 
-type SortField = 'name' | 'defaultStorage' | 'availability' | 'currentAssignment';
-type SortDirection = 'asc' | 'desc';
+type MarkerFilter = 'all' | 'jobs' | 'bases';
 
 export default function GoogleMap() {
   const [jobs, setJobs] = useState<JobModel[]>([]);
   const [bases, setBases] = useState<BaseModel[]>([]);
   const [activeMarkerId, setActiveMarkerId] = useState<string | null>(null);
+  const [markerFilter, setMarkerFilter] = useState<MarkerFilter>('all');
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string;
 
   useEffect(() => {
@@ -37,7 +37,10 @@ export default function GoogleMap() {
     south: 54.26,
     west: 7.90,
     east: 15.26
-  }
+  };
+
+  const shouldShowJobs = markerFilter === 'all' || markerFilter === 'jobs';
+  const shouldShowBases = markerFilter === 'all' || markerFilter === 'bases';
 
   return (
     <div className="map-container">
@@ -55,8 +58,7 @@ export default function GoogleMap() {
             width: "100%",
           }}
         >
-
-          {jobs.map((job) => (
+          {shouldShowJobs && jobs.map((job) => (
             <JobMarkerComponent
               key={job.data.jobId}
               job={job}
@@ -65,7 +67,7 @@ export default function GoogleMap() {
             />
           ))}
 
-          {bases.map((base) => (
+          {shouldShowBases && bases.map((base) => (
             <BaseMarkerComponent
               key={base.data.baseId}
               base={base}
@@ -74,6 +76,26 @@ export default function GoogleMap() {
             />
           ))}
         </Map>
+
+        <div className="map-filter-controls">
+          <div className="filter-buttons">
+            <button
+              className={`filter-btn filter-btn-job ${markerFilter === 'jobs' ? 'active' : ''}`}
+              onClick={() => setMarkerFilter(markerFilter === 'jobs' ? 'all' : 'jobs')}
+              title="Vis opgaver"
+            >
+              <i className="bi bi-tools"></i>
+            </button>
+            
+            <button
+              className={`filter-btn filter-btn-base ${markerFilter === 'bases' ? 'active' : ''}`}
+              onClick={() => setMarkerFilter(markerFilter === 'bases' ? 'all' : 'bases')}
+              title="Vis baser"
+            >
+              <i className="bi bi-house-fill"></i>
+            </button>
+          </div>
+        </div>
       </APIProvider>
     </div>
   );

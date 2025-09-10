@@ -167,3 +167,82 @@
   display: none !important;
 }
 
+
+.map-filter-controls {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.filter-btn {
+  width: 48px;
+  height: 48px;
+  padding: 4px;
+  background-color: #12271e;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.filter-btn:hover {
+  transform: scale(1.1);
+}
+
+.filter-btn i {
+  color: #fff;
+  font-size: 18px;
+  transition: font-size 0.2s ease-in-out;
+}
+
+.filter-btn:hover i {
+  font-size: 22px;
+}
+
+.filter-btn-job {
+  background-color: #12271e;
+}
+
+.filter-btn-job i {
+  color: #b88b2e;
+}
+
+.filter-btn-job.active {
+  background-color: #b88b2e;
+}
+
+.filter-btn-job.active i {
+  color: #fff;
+}
+
+.filter-btn-base {
+  background-color: #12271e;
+}
+
+.filter-btn-base i {
+  color: var(--bs-blue);
+}
+
+.filter-btn-base.active {
+  background-color: var(--bs-blue);
+}
+
+.filter-btn-base.active i {
+  color: #fff;
+}
+
