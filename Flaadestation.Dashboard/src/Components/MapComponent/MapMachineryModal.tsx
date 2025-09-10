@@ -83,7 +83,7 @@ export const MapMachineryModal: FunctionComponent<MachineryModalProps> = ({
             {activeMachines.length > 0 ? (
               <>
                 <h6>
-                  <strong>Maskiner med en aktiv allokering:</strong>
+                  <strong>Maskiner med en aktiv allokering</strong>
                 </h6>
                 <div className="accordion" id="machineryAccordion">
                   {activeMachines.map((machinery) => (
@@ -175,7 +175,7 @@ export const MapMachineryModal: FunctionComponent<MachineryModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Maskiner allokeret til dette job gennem standardlager
+                    Maskiner allokeret til denne lokation gennem standardlager
                   </strong>
                 </h6>
                 <div className="accordion" id="machineryAccordion">
@@ -232,7 +232,7 @@ export const MapMachineryModal: FunctionComponent<MachineryModalProps> = ({
                 <hr className="mx-auto my-3"></hr>
                 <h6>
                   <strong>
-                    Maskiner allokeret til dette job i fremtiden:
+                    Maskiner allokeret til denne lokation i fremtiden
                   </strong>
                 </h6>
                 <div className="accordion" id="machineryAccordion">
