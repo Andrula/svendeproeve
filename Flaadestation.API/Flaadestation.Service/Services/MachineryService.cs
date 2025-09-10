@@ -22,6 +22,9 @@ namespace Flaadestation.Service.Services
             _machineryRepository = machineryRepository;
             _storageItemRepository = storageItemRepository;
         }
+
+
+
         public async Task<MachineryResponseDTO> CreateMachineryAsync(MachineryRequestDTO request)
         {
             var machinery = MapRequestToMachinery(request);
