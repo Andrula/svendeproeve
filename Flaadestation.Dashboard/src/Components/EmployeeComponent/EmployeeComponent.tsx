@@ -1,30 +1,47 @@
-import { useState, useEffect, useMemo } from 'react';
-import { employeeService, EmployeeModel, HttpError } from '../../Services/EmployeeService';
-import EmployeeModal, { type EmployeeFormData } from '../EmployeeComponent/EmployeeModal';
-import { useAuth } from '../../Auth/AuthContext';
+import { useState, useEffect, useMemo } from "react";
+import {
+  employeeService,
+  EmployeeModel,
+  HttpError,
+} from "../../Services/EmployeeService";
+import EmployeeModal, {
+  type EmployeeFormData,
+} from "../EmployeeComponent/EmployeeModal";
+import { useAuth } from "../../Auth/AuthContext";
+import { StorageItemModal } from "../StorageItemModal/StorageItemModal";
+import { StorageItemModel } from "../../Models/StorageItem";
 
-type SortField = 'name' | 'defaultStorage' | 'availability' | 'currentAssignment' | 'phone' | 'occupation' | 'email';
-type SortDirection = 'asc' | 'desc';
+type SortField =
+  | "name"
+  | "defaultStorage"
+  | "availability"
+  | "currentAssignment"
+  | "phone"
+  | "occupation"
+  | "email";
+type SortDirection = "asc" | "desc";
 
 export default function EmployeeComponent() {
   const { user } = useAuth();
   const [employees, setEmployees] = useState<EmployeeModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [storageItemModalOpen, setStorageItemModalOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedEmployee, setSelectedEmployee] = useState<EmployeeModel | null>(null);
+  const [selectedEmployee, setSelectedEmployee] =
+    useState<EmployeeModel | null>(null);
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortField, setSortField] = useState<SortField>('name');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  const [selectedOccupation, setSelectedOccupation] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortField, setSortField] = useState<SortField>("name");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+  const [selectedOccupation, setSelectedOccupation] = useState<string>("");
 
   useEffect(() => {
     loadEmployees();
   }, []);
 
   const uniqueOccupations = useMemo(() => {
-    const occupations = employees.map(emp => emp.employee.occupation.name);
+    const occupations = employees.map((emp) => emp.employee.occupation.name);
     return [...new Set(occupations)].sort();
   }, [employees]);
 
@@ -33,7 +50,7 @@ export default function EmployeeComponent() {
 
     if (searchTerm.trim()) {
       const searchLower = searchTerm.toLowerCase();
-      filtered = filtered.filter(item => {
+      filtered = filtered.filter((item) => {
         return (
           item.fullName.toLowerCase().includes(searchLower) ||
           item.employee.email.toLowerCase().includes(searchLower) ||
@@ -47,8 +64,8 @@ export default function EmployeeComponent() {
     }
 
     if (selectedOccupation) {
-      filtered = filtered.filter(item => 
-        item.employee.occupation.name === selectedOccupation
+      filtered = filtered.filter(
+        (item) => item.employee.occupation.name === selectedOccupation
       );
     }
 
@@ -57,31 +74,31 @@ export default function EmployeeComponent() {
       let bValue: string | number;
 
       switch (sortField) {
-        case 'name':
+        case "name":
           aValue = a.fullName.toLowerCase();
           bValue = b.fullName.toLowerCase();
           break;
-        case 'defaultStorage':
-          aValue = a.data.defaultStorage?.name.toLowerCase() || '';
-          bValue = b.data.defaultStorage?.name.toLowerCase() || '';
+        case "defaultStorage":
+          aValue = a.data.defaultStorage?.name.toLowerCase() || "";
+          bValue = b.data.defaultStorage?.name.toLowerCase() || "";
           break;
-        case 'availability':
+        case "availability":
           aValue = a.isAvailable ? 1 : 0;
           bValue = b.isAvailable ? 1 : 0;
           break;
-        case 'currentAssignment':
+        case "currentAssignment":
           aValue = a.currentAssignment ? 1 : 0;
           bValue = b.currentAssignment ? 1 : 0;
           break;
-        case 'email':
+        case "email":
           aValue = a.employee.email ? 1 : 0;
           bValue = b.employee.email ? 1 : 0;
           break;
-        case 'phone':
+        case "phone":
           aValue = a.employee.phone ? 1 : 0;
           bValue = b.employee.phone ? 1 : 0;
           break;
-        case 'occupation':
+        case "occupation":
           aValue = a.employee.occupation.name ? 1 : 0;
           bValue = b.employee.occupation.name ? 1 : 0;
           break;
@@ -90,10 +107,9 @@ export default function EmployeeComponent() {
           bValue = b.fullName.toLowerCase();
       }
 
-      if (sortDirection == 'asc') {
+      if (sortDirection == "asc") {
         return aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
-      }
-      else {
+      } else {
         return aValue < bValue ? 1 : aValue > bValue ? -1 : 0;
       }
     });
@@ -103,10 +119,10 @@ export default function EmployeeComponent() {
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
     } else {
       setSortField(field);
-      setSortDirection('asc');
+      setSortDirection("asc");
     }
   };
 
@@ -114,9 +130,11 @@ export default function EmployeeComponent() {
     if (sortField !== field) {
       return <i className="bi bi-arrow-down-up text-muted"></i>;
     }
-    return sortDirection === 'asc'
-      ? <i className="bi bi-arrow-up" style={{ color: '#fff' }}></i>
-      : <i className="bi bi-arrow-down" style={{ color: '#fff' }}></i>;
+    return sortDirection === "asc" ? (
+      <i className="bi bi-arrow-up" style={{ color: "#fff" }}></i>
+    ) : (
+      <i className="bi bi-arrow-down" style={{ color: "#fff" }}></i>
+    );
   };
 
   const loadEmployees = async () => {
@@ -127,7 +145,7 @@ export default function EmployeeComponent() {
       const employeeModels = await employeeService.getAllEmployees();
       setEmployees(employeeModels);
     } catch (err) {
-      let errorMessage = 'Ukendt fejl';
+      let errorMessage = "Ukendt fejl";
 
       if (err instanceof HttpError) {
         if (err.isClientError) {
@@ -142,7 +160,7 @@ export default function EmployeeComponent() {
       }
 
       setError(`Fejl ved indlæsning af medarbejdere: ${errorMessage}`);
-      console.error('Fejl ved indlæsning af medarbejdere:', err);
+      console.error("Fejl ved indlæsning af medarbejdere:", err);
     } finally {
       setLoading(false);
     }
@@ -158,17 +176,34 @@ export default function EmployeeComponent() {
     setModalOpen(true);
   };
 
+  const openStorageItemModal = (employee: EmployeeModel) => {
+    setSelectedEmployee(employee);
+    setStorageItemModalOpen(true);
+  };
+
   const closeModal = () => {
     setModalOpen(false);
     setSelectedEmployee(null);
   };
 
+  const closeStorageItemModal = () => {
+    setStorageItemModalOpen(false);
+    setSelectedEmployee(null);
+  };
+
   const handleSaveEmployee = async (formData: EmployeeFormData) => {
     if (selectedEmployee) {
-      const updatedEmployee = await employeeService.updateEmployee(selectedEmployee.data.itemId, formData);
-      setEmployees(employees.map(emp =>
-        emp.data.itemId === updatedEmployee.data.itemId ? updatedEmployee : emp
-      ));
+      const updatedEmployee = await employeeService.updateEmployee(
+        selectedEmployee.data.itemId,
+        formData
+      );
+      setEmployees(
+        employees.map((emp) =>
+          emp.data.itemId === updatedEmployee.data.itemId
+            ? updatedEmployee
+            : emp
+        )
+      );
     } else {
       await employeeService.createEmployee(formData, user!.companyId);
       await loadEmployees();
@@ -176,12 +211,16 @@ export default function EmployeeComponent() {
   };
 
   const handleDeleteEmployee = async (employee: EmployeeModel) => {
-    if (window.confirm(`Er du sikker på, at du vil slette ${employee.fullName}?`)) {
+    if (
+      window.confirm(`Er du sikker på, at du vil slette ${employee.fullName}?`)
+    ) {
       try {
         await employeeService.deleteEmployee(employee.data.itemId);
-        setEmployees(employees.filter(emp => emp.data.itemId !== employee.data.itemId));
+        setEmployees(
+          employees.filter((emp) => emp.data.itemId !== employee.data.itemId)
+        );
       } catch (err) {
-        console.error('Error deleting employee:', err);
+        console.error("Error deleting employee:", err);
       }
     }
   };
@@ -212,10 +251,7 @@ export default function EmployeeComponent() {
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
-            <button
-              className="btn btn-link p-0 ms-2"
-              onClick={loadEmployees}
-            >
+            <button className="btn btn-link p-0 ms-2" onClick={loadEmployees}>
               Prøv igen
             </button>
           </div>
@@ -240,7 +276,7 @@ export default function EmployeeComponent() {
                     <button
                       className="btn btn-outline-secondary"
                       type="button"
-                      onClick={() => setSearchTerm('')}
+                      onClick={() => setSearchTerm("")}
                     >
                       <i className="bi bi-x"></i>
                     </button>
@@ -254,7 +290,7 @@ export default function EmployeeComponent() {
                   onChange={(e) => setSelectedOccupation(e.target.value)}
                 >
                   <option value="">Alle stillinger</option>
-                  {uniqueOccupations.map(occupation => (
+                  {uniqueOccupations.map((occupation) => (
                     <option key={occupation} value={occupation}>
                       {occupation}
                     </option>
@@ -265,17 +301,25 @@ export default function EmployeeComponent() {
                 <div className="btn-group w-100" role="group">
                   <button
                     type="button"
-                    className={`btn ${sortField === 'name' ? 'btn-primary' : 'btn-outline-primary'}`}
-                    onClick={() => handleSort('name')}
+                    className={`btn ${
+                      sortField === "name"
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                    }`}
+                    onClick={() => handleSort("name")}
                   >
-                    Navn {getSortIcon('name')}
+                    Navn {getSortIcon("name")}
                   </button>
                   <button
                     type="button"
-                    className={`btn ${sortField === 'availability' ? 'btn-primary' : 'btn-outline-primary'}`}
-                    onClick={() => handleSort('availability')}
+                    className={`btn ${
+                      sortField === "availability"
+                        ? "btn-primary"
+                        : "btn-outline-primary"
+                    }`}
+                    onClick={() => handleSort("availability")}
                   >
-                    Status {getSortIcon('availability')}
+                    Status {getSortIcon("availability")}
                   </button>
                 </div>
               </div>
@@ -283,10 +327,9 @@ export default function EmployeeComponent() {
 
             <div className="mb-3">
               <small className="text-muted">
-                Viser {filteredAndSortedEmployees.length} af {employees.length} medarbejdere
-                {searchTerm && (
-                  <span> (søgning: "{searchTerm}")</span>
-                )}
+                Viser {filteredAndSortedEmployees.length} af {employees.length}{" "}
+                medarbejdere
+                {searchTerm && <span> (søgning: "{searchTerm}")</span>}
                 {selectedOccupation && (
                   <span> (stilling: "{selectedOccupation}")</span>
                 )}
@@ -295,10 +338,9 @@ export default function EmployeeComponent() {
 
             {filteredAndSortedEmployees.length === 0 ? (
               <div className="alert alert-info">
-                {searchTerm ? 
-                  `Ingen medarbejdere matchede søgningen "${searchTerm}".` : 
-                  'Ingen medarbejdere fundet.'
-                }
+                {searchTerm
+                  ? `Ingen medarbejdere matchede søgningen "${searchTerm}".`
+                  : "Ingen medarbejdere fundet."}
               </div>
             ) : (
               <div className="row">
@@ -325,14 +367,31 @@ export default function EmployeeComponent() {
                           </h5>
                         </div>
                         <div className="card-body">
-                          <div className="card-text">
-                            <p><strong>Stilling:</strong> {employee.data.occupation.name}</p>
-                            <p><strong>Email:</strong> {employee.data.email}</p>
-                            <p><strong>Telefon:</strong> {employee.formatPhoneNumber()}</p>
-                            <p><strong>Tilknyttet:</strong> {employee.data.vehicle ? (<>{employee.data.vehicle.model}</>) : (<>{employee.data.defaultStorage?.name}</>)}</p>
+                          <div className="card-text h-100 d-flex flex-column">
+                            <p>
+                              <strong>Stilling:</strong>{" "}
+                              {employee.data.occupation.name}
+                            </p>
+                            <p>
+                              <strong>Email:</strong> {employee.data.email}
+                            </p>
+                            <p>
+                              <strong>Telefon:</strong>{" "}
+                              {employee.formatPhoneNumber()}
+                            </p>
+                            <p>
+                              <strong>Tilknyttet:</strong>{" "}
+                              {employee.data.vehicle ? (
+                                <>{employee.data.vehicle.model}</>
+                              ) : (
+                                <>{employee.data.defaultStorage?.name}</>
+                              )}
+                            </p>
                             {employee.data.note && (
                               <>
-                                <p><strong>Note:</strong> {employee.data.note}</p>
+                                <p>
+                                  <strong>Note:</strong> {employee.data.note}
+                                </p>
                               </>
                             )}
                             {currentAssignment ? (
@@ -378,6 +437,14 @@ export default function EmployeeComponent() {
                                 </p>
                               </>
                             )}
+                            <div className="col-12 mt-auto">
+                              <button
+                                className="btn btn-outline-primary mt-3"
+                                onClick={() => openStorageItemModal(employee)}
+                              >
+                                Administrér allokeringer
+                              </button>
+                            </div>
                           </div>
                         </div>
                         <div className="card-footer d-flex justify-content-between">
@@ -409,7 +476,22 @@ export default function EmployeeComponent() {
             onClose={closeModal}
             onSave={handleSaveEmployee}
             employee={selectedEmployee}
-            title={selectedEmployee ? 'Rediger medarbejder' : 'Tilføj ny medarbejder'}
+            title={
+              selectedEmployee ? "Rediger medarbejder" : "Tilføj ny medarbejder"
+            }
+          />
+        )}
+
+        {storageItemModalOpen && (
+          <StorageItemModal
+            storageItems={
+              selectedEmployee?.data.storageItems.map(
+                storageItem => new StorageItemModel(storageItem)
+              ) || []
+            }
+            user={user!}
+            itemId={selectedEmployee?.data.itemId || ""}
+            onClose={closeStorageItemModal}
           />
         )}
       </div>

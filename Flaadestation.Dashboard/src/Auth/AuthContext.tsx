@@ -1,12 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { HttpClient } from "../Services/HttpClient";
-
-type User = {
-  id: string;
-  email: string;
-  isCompanyOwner: boolean;
-  companyId: string;
-};
+import type { User } from "../Models/user";
 
 type AuthContextType = {
   user: User | null;
@@ -35,8 +29,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       .then(res => {
         const claims = res;
         setUser({
-          id: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+          userId: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
           email: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+          userName: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
           isCompanyOwner: claims["IsCompanyOwner"] === "true",
           companyId: claims["CompanyId"]
         });
@@ -52,8 +47,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const res = await httpClient.get<any>("/user");
       const claims = res;
       setUser({
-        id: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
+        userId: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"],
         email: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress"],
+        userName: claims["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"],
         isCompanyOwner: claims["IsCompanyOwner"] === "true",
         companyId: claims["companyId"]
       });

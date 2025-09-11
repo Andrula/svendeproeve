@@ -132,7 +132,6 @@ export default function MapModal({ isOpen, onClose, onSaveJob, onSaveBase, title
     setAddressQuery('');
     setAddressSuggestions([]);
     setSelectedAddress(null);
-    // Clear the addressId when switching types
     if (type === 'job') {
       setJobData({ ...jobData, addressId: '' });
     } else {

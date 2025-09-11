@@ -46,7 +46,6 @@ export class EmployeeModel {
       }) || null;
     }
     
-    // If no vehicle, use employee's own assignments
     return this.employee.storageItems.find(item => {
       const start = new Date(item.scheduledStart);
       const end = new Date(item.scheduledEnd);
